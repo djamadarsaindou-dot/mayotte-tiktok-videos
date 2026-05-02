@@ -30,6 +30,9 @@ Titre : {title}
 Faits vérifiés (utilise UNIQUEMENT ces faits, sans en ajouter d'autres) :
 {facts}
 
+INDICES VISUELS POUR LE SUJET (à utiliser comme inspiration pour les image_prompt) :
+{visual_hints}
+
 À éviter : {avoid}
 
 Renvoie UNIQUEMENT du JSON valide :
@@ -40,18 +43,30 @@ Renvoie UNIQUEMENT du JSON valide :
     {{
       "idea": "1 phrase d'idée (12-18 mots) — utilise UN des faits ci-dessus",
       "fact_used": "le fait précis utilisé (copie-colle depuis la liste)",
-      "visuals": ["3 mots-clés EN ANGLAIS visuel 1", "3 mots-clés visuel 2 (différent)", "3 mots-clés visuel 3 (différent)"],
-      "image_prompt": "description en ANGLAIS d'une scène cinématique vertical 9:16 photoréaliste pour fallback IA"
+      "visuals": [
+        "PHRASE EN ANGLAIS décrivant une SCÈNE PHYSIQUE CONCRÈTE visible à l'écran (objet+action+lieu) — ex: 'aerial drone shot turquoise tropical lagoon coral reef'",
+        "PHRASE EN ANGLAIS d'une autre scène concrète, angle différent — ex: 'fishermen pulling traditional net on shallow water'",
+        "PHRASE EN ANGLAIS troisième scène concrète — ex: 'close-up colorful tropical fish swimming coral'"
+      ],
+      "image_prompt": "description en ANGLAIS riche et détaillée d'une scène cinématique vertical 9:16 photoréaliste de Mayotte (utilise les indices visuels ci-dessus). Inclus toujours : tropical Indian Ocean island, lush green, photorealistic"
     }}
   ]
 }}
 
-CONTRAINTES STRICTES :
+CONTRAINTES STRICTES POUR LES VISUELS (essentiel pour la qualité) :
+- INTERDIT : abstractions ("ancient tradition", "sisterhood", "cultural heritage", "hopeful expression", "emotional moment"). Pexels ne sait pas chercher ça.
+- OBLIGATOIRE : phrases visuelles décrivant CE QUI EST À L'ÉCRAN. Format : « action + sujet + lieu/objet », ex :
+    ✅ "elderly woman teaching young girl to weave palm leaves"
+    ✅ "wooden boat sailing on turquoise tropical lagoon"
+    ✅ "colorful market stall tropical fruits vendor"
+    ❌ "rich heritage" / "deep tradition" / "moment of joy"
+- Chaque visual de 6 à 10 mots, suffisamment précis pour qu'un moteur de stock vidéo trouve des résultats
+- Préfère des éléments universellement filmés : pêcheurs, lagon, marché, danse, cuisine, plantes tropicales, cérémonie en plein air, enfants, vieillards souriants
+
+CONTRAINTES STRICTES NARRATIVES :
 - EXACTEMENT {n_scenes} scènes
-- Construction narrative : intro accrocheuse → développement (au moins 4-5 angles concrets) → exemple ou témoignage → conclusion mémorable
-- Chaque scène doit s'appuyer sur UN fait précis de la liste — pas d'invention
-- Visuels SPÉCIFIQUES : ne te contente pas de "tropical island", décris ce qui doit être à l'écran
-- Si la liste de faits a moins de {n_scenes} éléments, certains faits peuvent être développés sur 2-3 scènes différentes (sous des angles distincts)
+- Construction : intro accrocheuse → développement (4-5 angles concrets) → exemple ou témoignage → conclusion mémorable
+- Chaque scène s'appuie sur UN fait précis de la liste — pas d'invention
 """
 
 
@@ -183,6 +198,7 @@ def _build_plan_for_knowledge(theme: str) -> tuple[dict, str, str]:
     """Renvoie (plan, context_for_expand, anchor_id)."""
     entry = random_topic_for(theme)
     facts_str = "\n".join(f"  • {f}" for f in entry["key_facts"])
+    visual_hints_str = "\n".join(f"  • {h}" for h in entry.get("visual_hints", []))
     avoid_str = ", ".join(entry["avoid"]) if entry["avoid"] else "rien de spécifique"
 
     print(f"   🎯 Sujet ancré : {entry['title']}")
@@ -190,6 +206,7 @@ def _build_plan_for_knowledge(theme: str) -> tuple[dict, str, str]:
     user_prompt = PLAN_PROMPT_KNOWLEDGE.format(
         title=entry["title"],
         facts=facts_str,
+        visual_hints=visual_hints_str or "  (aucun, utilise le contexte général Mayotte)",
         avoid=avoid_str,
         n_scenes=NUM_SCENES,
     )
