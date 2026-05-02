@@ -1,0 +1,178 @@
+{
+  "title": "Prix carburants : Mayotte impactée",
+  "topic": "actu_mayotte",
+  "topic_label": "Actu Mayotte",
+  "hook": "Les prix des carburants évoluent à Mayotte, qu'est-ce que cela signifie pour les Mahorais ?",
+  "scenes": [
+    {
+      "narration": "Découvrons comment cette évolution historique affecte réellement la vie quotidienne des Mahorais sur l'île de Mayotte aujourd'hui lentement mais sûrement chaque jour.",
+      "visuals": [
+        "beach",
+        "palm trees",
+        "lagoon"
+      ],
+      "image_prompt": "Aerial view of a beautiful Mahorais beach with palm trees and a crystal-clear lagoon in the background",
+      "fact_used": null
+    },
+    {
+      "narration": "Les Mahorais subissent les conséquences du contexte économique mondial avec des prix de carburants en constante augmentation chaque jour sans répit réellement.",
+      "visuals": [
+        "oil",
+        "barrel",
+        "market"
+      ],
+      "image_prompt": "A close-up of a oil barrel with a stock market screen in the background showing fluctuations in oil prices",
+      "fact_used": null
+    },
+    {
+      "narration": "Les Mahorais sont également fortement impactés par les nombreuses tensions géopolitiques mondiales actuelles qui influencent leur vie quotidienne et leur avenir collectif.",
+      "visuals": [
+        "news",
+        "headlines",
+        "tension"
+      ],
+      "image_prompt": "A newsroom with journalists working in the background and a screen showing breaking news headlines about geopolitical tensions",
+      "fact_used": null
+    },
+    {
+      "narration": "Les Mahorais subissent désormais les conséquences directes du prix du pétrole brut en constante augmentation quotidienne dans leur vie quotidienne.",
+      "visuals": [
+        "oil",
+        "price",
+        "increase"
+      ],
+      "image_prompt": "A graph showing the increase in oil prices with a red arrow pointing upwards",
+      "fact_used": null
+    },
+    {
+      "narration": "Les Mahorais constatent une hausse significative des prix des carburants, notamment du gazole, qui impacte leur pouvoir d'achat quotidien de manière considérable.",
+      "visuals": [
+        "gas",
+        "station",
+        "prices"
+      ],
+      "image_prompt": "A gas station with a sign showing the prices of different types of fuel",
+      "fact_used": null
+    },
+    {
+      "narration": "Les Mahorais notent toutefois que le sans plomb reste relativement stable dans cette hausse générale des prix à Mayotte actuellement.",
+      "visuals": [
+        "gas",
+        "pump",
+        "stable"
+      ],
+      "image_prompt": "A close-up of a gas pump with a stable price displayed on the screen",
+      "fact_used": null
+    },
+    {
+      "narration": "Les Mahorais constatent que le gazole a bondi de 25 centimes d'un coup soudain et inattendu récemment dans tout le département insulaire de Mayotte aujourd'hui.",
+      "visuals": [
+        "diesel",
+        "price",
+        "increase"
+      ],
+      "image_prompt": "A graph showing the increase in diesel prices with a red arrow pointing upwards",
+      "fact_used": null
+    },
+    {
+      "narration": "Les Mahorais craignent désormais une augmentation significative de leurs dépenses quotidiennes à cause de ce nouveau prix élevé du gazole actuellement.",
+      "visuals": [
+        "people",
+        "daily life",
+        "impact"
+      ],
+      "image_prompt": "A montage of people going about their daily lives in Mayotte with a subtle hint of the impact of the price increase",
+      "fact_used": null
+    },
+    {
+      "narration": "Les Mahorais cherchent activement des alternatives pour leurs déplacements quotidiens, pour améliorer leur qualité de vie et réduire leurs coûts de transport quotidien.",
+      "visuals": [
+        "cars",
+        "buses",
+        "traffic"
+      ],
+      "image_prompt": "A busy road in Mayotte with cars, buses, and motorcycles",
+      "fact_used": null
+    },
+    {
+      "narration": "Les Mahorais cherchent à soutenir l'économie locale pour stabiliser les prix et favoriser le développement durable de leur territoire mahorais chaque jour.",
+      "visuals": [
+        "market",
+        "vendors",
+        "local"
+      ],
+      "image_prompt": "A bustling local market in Mayotte with vendors selling their goods",
+      "fact_used": null
+    },
+    {
+      "narration": "Les Mahorais redoutent maintenant l'impact économique et social sur leurs entreprises locales et leur communauté, qui pourrait être significatif et durable dans le temps.",
+      "visuals": [
+        "business",
+        "owners",
+        "concerned"
+      ],
+      "image_prompt": "A business owner in Mayotte looking concerned while checking their finances",
+      "fact_used": null
+    },
+    {
+      "narration": "Les Mahorais réagissent avec inquiétude face à cette hausse qui va impacter leur quotidien et leur budget familial directement chaque jour.",
+      "visuals": [
+        "people",
+        "interviews",
+        "reactions"
+      ],
+      "image_prompt": "A series of interviews with Mahorais people sharing their thoughts and reactions to the price increase",
+      "fact_used": null
+    },
+    {
+      "narration": "Les Mahorais cherchent désormais des solutions pour faire face à cette augmentation significative et trouver des moyens pour y remédier efficacement chaque jour.",
+      "visuals": [
+        "solar",
+        "energy",
+        "alternatives"
+      ],
+      "image_prompt": "A solar panel installation in Mayotte with a person explaining the benefits of renewable energy",
+      "fact_used": null
+    },
+    {
+      "narration": "Les Mahorais lancent des initiatives locales innovantes pour atténuer l'impact du prix élevé des carburants sur leur quotidien et leur économie locale actuellement.",
+      "visuals": [
+        "community",
+        "projects",
+        "initiatives"
+      ],
+      "image_prompt": "A community project in Mayotte focused on sustainability and reducing carbon footprint",
+      "fact_used": null
+    },
+    {
+      "narration": "Les Mahorais se tournent désormais vers l'avenir de l'énergie renouvelable à Mayotte avec espoir et ambition pour un développement durable et respectueux de l'environnement.",
+      "visuals": [
+        "future",
+        "energy",
+        "mayotte"
+      ],
+      "image_prompt": "A futuristic visual representation of Mayotte with a mix of traditional and renewable energy sources",
+      "fact_used": null
+    },
+    {
+      "narration": "Les Mahorais restent confiants dans leur capacité à relever ces défis énergétiques complexes pour un avenir meilleur et durable ensemble localement.",
+      "visuals": [
+        "mayotte",
+        "future",
+        "hope"
+      ],
+      "image_prompt": "A stunning sunset over the lagoon in Mayotte with a sense of hope and optimism for the future",
+      "fact_used": null
+    }
+  ],
+  "duration": 124.368,
+  "word_count": 355,
+  "num_clips": 48,
+  "sources_used": {
+    "Wikimedia (Mayotte)": 9,
+    "Pexels vidéo": 39
+  },
+  "voice": "fr-FR-HenriNeural",
+  "created_at": "2026-05-02T16:25:29.255189",
+  "video_file": "20260502_161427_prix-carburants-mayotte-impactée.mp4"
+}

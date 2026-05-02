@@ -1,0 +1,178 @@
+{
+  "title": "Cette source sacrée de Mayotte cache un mystère 💧✨",
+  "topic": "legende_mahoraise",
+  "topic_label": "Légende mahoraise",
+  "hook": "Et si l’eau de cette fontaine avait des pouvoirs magiques ? Découvrez son secret.",
+  "scenes": [
+    {
+      "narration": "Direction le cœur de Mayotte où les Mahorais vénèrent depuis toujours cette source mystérieuse de Combani, au pouvoir presque magique.",
+      "visuals": [
+        "lush greenery",
+        "hidden spring",
+        "mystical atmosphere"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic cinematic shot of a hidden spring in the heart of Mayotte, surrounded by dense tropical greenery, with soft sunlight filtering through the leaves, creating a mystical and serene atmosphere.",
+      "fact_used": "La source de Combani, au centre de l'île, est considérée comme sacrée"
+    },
+    {
+      "narration": "À Mayotte, les habitants vous diront avec conviction que cette source sacrée soigne les corps et réalise les rêves les plus profonds.",
+      "visuals": [
+        "villagers gathering",
+        "ritual offerings",
+        "tranquil water"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic shot of Mahorais villagers gathered around the sacred spring of Combani, placing ritual offerings near the tranquil water, with a sense of reverence and community.",
+      "fact_used": "La source de Combani, au centre de l'île, est considérée comme sacrée"
+    },
+    {
+      "narration": "Les Mahorais croient que les eaux du lagon mahorais ont des vertus de fertilité et de guérison naturelle pour le corps.",
+      "visuals": [
+        "elderly woman",
+        "praying hands",
+        "clear water"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic close-up of an elderly Mahorais woman with praying hands near the clear water of Combani spring, her face reflecting hope and faith in the legend.",
+      "fact_used": "Selon la légende, ses eaux auraient des vertus de fertilité et de guérison"
+    },
+    {
+      "narration": "Et à la fontaine de Combani, ce sont surtout les femmes qui viennent puiser cette eau sacrée pour des bénédictions bien précises, comme un rituel transmis depuis des générations.",
+      "visuals": [
+        "women fetching",
+        "clay pots",
+        "gentle ripples"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic shot of Mahorais women fetching water from the Combani spring with clay pots, the water creating gentle ripples as they move gracefully.",
+      "fact_used": "Les villageois s'y rendent encore pour des bénédictions"
+    },
+    {
+      "narration": "Les Mahorais, hommes compris, se rendent également à cette source sacrée pour des prières et des rituels traditionnels locaux spécifiques.",
+      "visuals": [
+        "men praying",
+        "traditional attire",
+        "morning light"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic shot of Mahorais men in traditional attire praying near the Combani spring at dawn, the soft morning light casting a peaceful glow on the scene.",
+      "fact_used": "Les villageois s'y rendent encore pour des bénédictions"
+    },
+    {
+      "narration": "Les enfants mahorais connaissent très bien l'histoire de cette source mystérieuse de Combani qui les fascine depuis toujours chaque jour.",
+      "visuals": [
+        "children listening",
+        "elder storytelling",
+        "warm tones"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic shot of children sitting around an elder in a warm, sunlit setting, listening intently as the story of the Combani spring is told.",
+      "fact_used": "Les villageois s'y rendent encore pour des bénédictions"
+    },
+    {
+      "narration": "La légende mahoraise raconte qu'un saint homme a planté son bâton ici selon les Mahorais locaux il y a très longtemps.",
+      "visuals": [
+        "wooden staff",
+        "ancient legend",
+        "dramatic lighting"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic cinematic shot of a wooden staff planted in the ground near the Combani spring, with dramatic lighting emphasizing the ancient legend.",
+      "fact_used": "Elle aurait jailli après qu'un saint homme y ait planté son bâton"
+    },
+    {
+      "narration": "Et puis une source d'eau fraîche aurait jailli de terre selon les Mahorais locaux il y a très longtemps dans l'histoire de l'île.",
+      "visuals": [
+        "water gushing",
+        "surprised faces",
+        "natural beauty"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic shot of water suddenly gushing from the ground near the Combani spring, with villagers looking on in awe and surprise.",
+      "fact_used": "Elle aurait jailli après qu'un saint homme y ait planté son bâton"
+    },
+    {
+      "narration": "Depuis, l'eau coule sans interruption pour les Mahorais, même en saison sèche, tout au long de l'année, sans problème majeur d'approvisionnement pour la population locale.",
+      "visuals": [
+        "dry landscape",
+        "flowing water",
+        "contrast scene"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic shot contrasting the dry, parched landscape of Mayotte with the continuously flowing water of the Combani spring.",
+      "fact_used": "L'eau y est restée fraîche même durant les périodes sèches"
+    },
+    {
+      "narration": "Les anciens racontent que cette eau ne tarit jamais pour les habitants mahorais de Mayotte tout au long de l'année entière toujours.",
+      "visuals": [
+        "elders speaking",
+        "close-up water",
+        "authentic setting"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic close-up of elders speaking about the Combani spring, with a focus on the clear, fresh water flowing steadily in the background.",
+      "fact_used": "L'eau y est restée fraîche même durant les périodes sèches"
+    },
+    {
+      "narration": "Pour les Mahorais, cette source naturelle est un véritable symbole de vie et de résilience quotidienne face aux défis environnementaux locaux.",
+      "visuals": [
+        "community gathering",
+        "symbolic water",
+        "hopeful faces"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic shot of a Mahorais community gathered around the Combani spring, the water symbolizing life and resilience, with hopeful and determined faces.",
+      "fact_used": "L'eau y est restée fraîche même durant les périodes sèches"
+    },
+    {
+      "narration": "Un habitant de Combani partage son expérience personnelle avec cette source sacrée que les Mahorais fréquentent encore pour des bénédictions.",
+      "visuals": [
+        "local testimony",
+        "emotional moment",
+        "natural light"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic shot of a local Mahorais sharing an emotional testimony about their experience with the Combani spring, bathed in natural light.",
+      "fact_used": "Les villageois s'y rendent encore pour des bénédictions"
+    },
+    {
+      "narration": "Il témoigne de l'influence de cette eau sur sa vie, comme de nombreux Mahorais qui lui attribuent de nombreuses vertus précieuses.",
+      "visuals": [
+        "personal story",
+        "hopeful expression",
+        "close-up water"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic close-up of a Mahorais person with a hopeful expression, telling how the water from Combani spring has positively impacted their life.",
+      "fact_used": "Selon la légende, ses eaux auraient des vertus de fertilité et de guérison"
+    },
+    {
+      "narration": "Les Mahorais invitent chaleureusement les visiteurs à respecter ce lieu sacré mahorais avec attention et considération pour les habitudes locales et les traditions présentes.",
+      "visuals": [
+        "respectful visitors",
+        "traditional customs",
+        "peaceful scene"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic shot of visitors respectfully approaching the Combani spring, observing traditional customs, in a peaceful and serene setting.",
+      "fact_used": "La source de Combani, au centre de l'île, est considérée comme sacrée"
+    },
+    {
+      "narration": "Et ici, Aïcha, 20 ans, nous montre comment elle perpétue ces gestes ancestraux en puisant l’eau bénite sous le regard bienveillant des anciens du village.",
+      "visuals": [
+        "young woman",
+        "ritual participation",
+        "cultural attire"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic shot of a young Mahorais woman in cultural attire participating in a ritual at the Combani spring, demonstrating her connection to the tradition.",
+      "fact_used": "Les villageois s'y rendent encore pour des bénédictions"
+    },
+    {
+      "narration": "Les Mahorais considèrent cette source comme sacrée, un véritable trésor naturel à découvrir au cœur de l'île mahoraise avec respect.",
+      "visuals": [
+        "hidden gem",
+        "serene landscape",
+        "inviting water"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic cinematic shot of the Combani spring as a hidden gem in Mayotte, with a serene landscape and inviting, clear water, beckoning discovery.",
+      "fact_used": "La source de Combani, au centre de l'île, est considérée comme sacrée"
+    }
+  ],
+  "duration": 117.072,
+  "word_count": 354,
+  "num_clips": 48,
+  "sources_used": {
+    "Pexels vidéo": 47,
+    "Wikimedia (Mayotte)": 1
+  },
+  "voice": "fr-FR-HenriNeural",
+  "created_at": "2026-05-02T16:37:05.372192",
+  "video_file": "20260502_163042_cette-source-sacrée-de-mayotte-cache-un-mystère.mp4"
+}

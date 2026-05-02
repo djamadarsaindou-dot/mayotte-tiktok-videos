@@ -13,9 +13,11 @@ on:
         type: choice
         options:
           - ""
-          - "actu_mayotte"
+          - "decouverte_mayotte"
+          - "tradition_mahoraise"
           - "legende_mahoraise"
           - "fait_insolite"
+          - "actu_mayotte"
 
 permissions:
   contents: write
@@ -43,7 +45,10 @@ jobs:
 
       - name: Générer la vidéo
         env:
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          LLM_PROVIDER: ${{ secrets.LLM_PROVIDER }}
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
           PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
         run: |

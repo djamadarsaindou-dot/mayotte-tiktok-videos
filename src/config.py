@@ -31,6 +31,19 @@ NUM_SCENES = 16
 
 GROQ_MODEL = "llama-3.3-70b-versatile"
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip()
+
+# Gemini (gratuit avec quota, indisponible à Mayotte côté local)
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash").strip()
+
+# Mistral (français, dispo partout — recommandé)
+MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY", "").strip()
+MISTRAL_MODEL = os.getenv("MISTRAL_MODEL", "mistral-large-latest").strip()
+
+# Choix du provider : "auto" → Mistral > Gemini > Groq selon les clés
+# Forcer un provider précis : "mistral", "gemini", "groq"
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "auto").strip().lower()
+
 PEXELS_API_KEY = os.getenv("PEXELS_API_KEY", "").strip()
 PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY", "").strip()
 

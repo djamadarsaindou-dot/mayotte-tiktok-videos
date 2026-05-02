@@ -35,11 +35,24 @@ def slugify(text: str) -> str:
     return text[:50] or "video"
 
 
+MAYOTTE_KEYWORDS_RE = re.compile(
+    r"\b(mayotte|choungui|mahor[aé]is?|mamoudzou|petite[\s-]terre|grande[\s-]terre|"
+    r"ylang|dziani|ngouja|combani|sazile|pamandzi|maki|debaa|chigoma|m[\W_]?biwi|"
+    r"manzaraka|salouva|msindzano|djarifa|banga|kashkasi|kusi|dugong|trimba|saziley)\b",
+    re.IGNORECASE,
+)
+
+
+def _is_mayotte_specific(query: str) -> bool:
+    return bool(MAYOTTE_KEYWORDS_RE.search(query))
+
+
 def fetch_visual(args) -> tuple[int, int, Path, str, str]:
     """Pour la scène scene_idx, visuel visual_idx, télécharge l'asset."""
     scene_idx, visual_idx, query, fallback_prompt, work_dir = args
     name = f"asset_s{scene_idx:02d}_v{visual_idx}"
-    asset, source = find_asset(query, fallback_prompt, work_dir, name)
+    mayotte = _is_mayotte_specific(query) or _is_mayotte_specific(fallback_prompt)
+    asset, source = find_asset(query, fallback_prompt, work_dir, name, mayotte_specific=mayotte)
     return scene_idx, visual_idx, asset, query, source
 
 
