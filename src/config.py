@@ -15,11 +15,18 @@ VIDEO_WIDTH = 1080
 VIDEO_HEIGHT = 1920
 VIDEO_FPS = 30
 
-VOICE = "fr-FR-DeniseNeural"
-VOICE_RATE = "-5%"
+# Voix masculine française (Edge-TTS)
+# Alternatives : fr-FR-RemyMultilingualNeural (moderne), fr-CA-ThierryNeural (canadien)
+VOICE = "fr-FR-HenriNeural"
+VOICE_RATE = "-3%"
+
+# Cible : ~70 secondes de narration
+TARGET_WORDS_MIN = 145
+TARGET_WORDS_MAX = 190
 
 GROQ_MODEL = "llama-3.3-70b-versatile"
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip()
+PEXELS_API_KEY = os.getenv("PEXELS_API_KEY", "").strip()
 
 
 def find_ffmpeg() -> str:

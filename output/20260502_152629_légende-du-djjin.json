@@ -1,0 +1,54 @@
+{
+  "title": "Légende du Djjin",
+  "topic": "legende_mahoraise",
+  "topic_label": "Légende mahoraise",
+  "hook": "Découvrez les secrets des esprits de Mayotte",
+  "scenes": [
+    {
+      "narration": "Les îles de l'océan Indien regorgent de mystères et de légendes fascinantes à découvrir absolument sans attendre maintenant",
+      "search_query": "tropical island aerial",
+      "image_prompt": "Paysage aérien d'une île tropicale avec des plages de sable blanc et des palmiers"
+    },
+    {
+      "narration": "Découvrez avec nous la légende du Djjin une histoire mahoraise mystérieuse et fascinante à Mayotte dans l'océan Indien maintenant",
+      "search_query": "mystical forest",
+      "image_prompt": "Forêt mystérieuse avec des arbres immenses et des lianes épaisse, atmosphère brumeuse"
+    },
+    {
+      "narration": "Les Djjinns sont des créatures mythiques liées à l'eau dans la légende mahoraise très ancrée dans la culture locale ici.",
+      "search_query": "water spirit fantasy",
+      "image_prompt": "Représentation artistique d'un esprit de l'eau, avec des vaguelettes et des reflets lumineux"
+    },
+    {
+      "narration": "Les habitants de l'île de Mayotte croient encore très fortement à ces esprits mystérieux très présents dans leur quotidien insulaire.",
+      "search_query": "island village life",
+      "image_prompt": "Vie quotidienne dans un village insulaire, avec des maisons traditionnelles et des gens au marché"
+    },
+    {
+      "narration": "Ils pratiquent des rituels pour apaiser ces Djjinns puissants et mystérieux qui façonnent leur vie quotidienne insulaire intense.",
+      "search_query": "traditional ritual dance",
+      "image_prompt": "Danse rituelle traditionnelle autour d'un feu de camp, avec des costumes colorés et des tambours"
+    },
+    {
+      "narration": "Mais qui se vengent cruellement si on ne leur rend pas un culte assidu et un respect absolu traditionnellement.",
+      "search_query": "stormy sea",
+      "image_prompt": "Mer tempétueuse avec des vagues hautes et des éclairs, atmosphère sombre et menaçante"
+    },
+    {
+      "narration": "Et c'est ainsi que l'on apprend à coexister avec ces esprits dans un équilibre fragile et ancestral sur l'île.",
+      "search_query": "harmony with nature",
+      "image_prompt": "Personnes vivant en harmonie avec la nature, avec des scènes de pêche durable et de respect de l'environnement"
+    },
+    {
+      "narration": "Il est maintenant temps de préserver ce précieux patrimoine culturel pour les générations futures de Mahorais à Mayotte ensemble.",
+      "search_query": "island sunset",
+      "image_prompt": "Coucher de soleil sur une île, avec des couleurs vives et une atmosphère paisible, invitant à la réflexion"
+    }
+  ],
+  "duration": 48.096,
+  "word_count": 152,
+  "voice": "fr-FR-HenriNeural",
+  "uses_pexels": true,
+  "created_at": "2026-05-02T15:27:34.378775",
+  "video_file": "20260502_152629_légende-du-djjin.mp4"
+}

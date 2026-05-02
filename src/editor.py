@@ -1,8 +1,10 @@
-"""Montage vidéo : assemble images + voix + sous-titres avec FFmpeg."""
+"""Montage vidéo : assemble assets (images OU vidéos) + voix + sous-titres."""
 import subprocess
 from pathlib import Path
 
-from src.config import FFMPEG, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
+from src.config import ASSETS_DIR, FFMPEG, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
+
+FONTS_DIR = ASSETS_DIR / "fonts"
 
 
 def _ffprobe_path() -> str:
@@ -13,92 +15,145 @@ def _ffprobe_path() -> str:
     return "ffprobe"
 
 
-def _ffprobe_duration(audio_path: Path) -> float:
+def _ffprobe_duration(path: Path) -> float:
     out = subprocess.check_output(
         [_ffprobe_path(), "-v", "error", "-show_entries", "format=duration",
-         "-of", "default=noprint_wrappers=1:nokey=1", str(audio_path)],
+         "-of", "default=noprint_wrappers=1:nokey=1", str(path)],
         text=True,
     )
     return float(out.strip())
 
 
-def _ken_burns_filter(image_path: Path, duration: float, scene_index: int) -> str:
-    """Effet zoom progressif (Ken Burns) sur une image fixe."""
-    frames = max(1, int(duration * VIDEO_FPS))
-    if scene_index % 2 == 0:
-        zoom_expr = f"min(zoom+0.0015,1.4)"
-        x_expr = "iw/2-(iw/zoom/2)"
-        y_expr = "ih/2-(ih/zoom/2)"
+def get_audio_duration(audio_path: Path) -> float:
+    return _ffprobe_duration(audio_path)
+
+
+def _is_video(path: Path) -> bool:
+    return path.suffix.lower() in {".mp4", ".mov", ".webm", ".mkv"}
+
+
+def _normalize_asset(asset_path: Path, target_path: Path, duration: float, scene_index: int) -> Path:
+    """Convertit un asset (image OU vidéo) en clip vertical 1080x1920 de durée exacte.
+
+    - Pour une image : Ken Burns (zoom progressif).
+    - Pour une vidéo : crop+scale center, boucle si trop courte, troncature sinon.
+    """
+    target_path.parent.mkdir(parents=True, exist_ok=True)
+
+    if _is_video(asset_path):
+        src_dur = _ffprobe_duration(asset_path)
+        loops = 0
+        if src_dur < duration:
+            loops = int(duration // src_dur) + 1
+        scale_filter = (
+            f"scale={VIDEO_WIDTH}:{VIDEO_HEIGHT}:force_original_aspect_ratio=increase,"
+            f"crop={VIDEO_WIDTH}:{VIDEO_HEIGHT},"
+            f"setsar=1,fps={VIDEO_FPS}"
+        )
+        cmd = [FFMPEG, "-y"]
+        if loops > 0:
+            cmd += ["-stream_loop", str(loops)]
+        cmd += [
+            "-i", str(asset_path),
+            "-an",
+            "-t", f"{duration:.3f}",
+            "-vf", scale_filter,
+            "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+            "-pix_fmt", "yuv420p",
+            "-r", str(VIDEO_FPS),
+            str(target_path),
+        ]
     else:
-        zoom_expr = f"if(lte(zoom,1.0),1.4,max(zoom-0.0015,1.05))"
-        x_expr = "iw/2-(iw/zoom/2)"
-        y_expr = "ih/2-(ih/zoom/2)"
-    return (
-        f"scale={VIDEO_WIDTH*2}:{VIDEO_HEIGHT*2}:force_original_aspect_ratio=increase,"
-        f"crop={VIDEO_WIDTH*2}:{VIDEO_HEIGHT*2},"
-        f"zoompan=z='{zoom_expr}':x='{x_expr}':y='{y_expr}':d={frames}:"
-        f"s={VIDEO_WIDTH}x{VIDEO_HEIGHT}:fps={VIDEO_FPS}"
-    )
+        frames = max(1, int(duration * VIDEO_FPS))
+        if scene_index % 2 == 0:
+            zoom_expr = "min(zoom+0.0012,1.35)"
+        else:
+            zoom_expr = "if(lte(zoom,1.0),1.35,max(zoom-0.0012,1.05))"
+        kb = (
+            f"scale={VIDEO_WIDTH*2}:{VIDEO_HEIGHT*2}:force_original_aspect_ratio=increase,"
+            f"crop={VIDEO_WIDTH*2}:{VIDEO_HEIGHT*2},"
+            f"zoompan=z='{zoom_expr}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':"
+            f"d={frames}:s={VIDEO_WIDTH}x{VIDEO_HEIGHT}:fps={VIDEO_FPS},setsar=1"
+        )
+        cmd = [
+            FFMPEG, "-y",
+            "-loop", "1", "-t", f"{duration:.3f}",
+            "-i", str(asset_path),
+            "-vf", kb,
+            "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+            "-pix_fmt", "yuv420p",
+            "-r", str(VIDEO_FPS),
+            str(target_path),
+        ]
+
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        print(result.stderr[-1500:])
+        raise RuntimeError(f"FFmpeg normalize a échoué (asset={asset_path.name})")
+    return target_path
 
 
 def assemble_video(
-    image_paths: list[Path],
+    asset_paths: list[Path],
     scene_durations: list[float],
     audio_path: Path,
     ass_path: Path,
     output_path: Path,
+    work_dir: Path,
 ) -> Path:
-    if len(image_paths) != len(scene_durations):
-        raise ValueError("image_paths et scene_durations doivent avoir la même longueur")
+    if len(asset_paths) != len(scene_durations):
+        raise ValueError("asset_paths et scene_durations doivent avoir la même longueur")
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
+    clips_dir = work_dir / "clips"
+    clips_dir.mkdir(parents=True, exist_ok=True)
 
-    inputs: list[str] = []
-    for img in image_paths:
-        inputs += ["-loop", "1", "-i", str(img)]
-    inputs += ["-i", str(audio_path)]
+    print(f"  ▶ Normalisation des {len(asset_paths)} clips...")
+    normalized: list[Path] = []
+    for i, (asset, dur) in enumerate(zip(asset_paths, scene_durations)):
+        clip = clips_dir / f"clip_{i:02d}.mp4"
+        _normalize_asset(asset, clip, dur, i)
+        normalized.append(clip)
 
-    filter_parts = []
-    for i, dur in enumerate(scene_durations):
-        kb = _ken_burns_filter(image_paths[i], dur, i)
-        filter_parts.append(f"[{i}:v]{kb},trim=duration={dur:.3f},setpts=PTS-STARTPTS[v{i}]")
-
-    concat_inputs = "".join(f"[v{i}]" for i in range(len(image_paths)))
-    filter_parts.append(
-        f"{concat_inputs}concat=n={len(image_paths)}:v=1:a=0,format=yuv420p[vraw]"
+    concat_list = clips_dir / "concat.txt"
+    concat_list.write_text(
+        "\n".join(f"file '{p.resolve().as_posix()}'" for p in normalized),
+        encoding="utf-8",
     )
-    ass_escaped = str(ass_path.resolve()).replace("\\", "/").replace(":", "\\:")
-    filter_parts.append(f"[vraw]ass='{ass_escaped}'[vout]")
 
-    filter_complex = ";".join(filter_parts)
-    audio_index = len(image_paths)
-
+    silent_concat = clips_dir / "concat.mp4"
     cmd = [
         FFMPEG, "-y",
-        *inputs,
-        "-filter_complex", filter_complex,
-        "-map", "[vout]",
-        "-map", f"{audio_index}:a",
-        "-c:v", "libx264",
-        "-preset", "medium",
-        "-crf", "20",
+        "-f", "concat", "-safe", "0", "-i", str(concat_list),
+        "-c", "copy",
+        str(silent_concat),
+    ]
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        print(result.stderr[-1500:])
+        raise RuntimeError("FFmpeg concat a échoué")
+
+    ass_escaped = str(ass_path.resolve()).replace("\\", "/").replace(":", "\\:")
+    fonts_escaped = str(FONTS_DIR.resolve()).replace("\\", "/").replace(":", "\\:")
+    cmd = [
+        FFMPEG, "-y",
+        "-i", str(silent_concat),
+        "-i", str(audio_path),
+        "-vf", f"ass='{ass_escaped}':fontsdir='{fonts_escaped}'",
+        "-map", "0:v", "-map", "1:a",
+        "-c:v", "libx264", "-preset", "medium", "-crf", "20",
         "-pix_fmt", "yuv420p",
-        "-c:a", "aac",
-        "-b:a", "192k",
+        "-c:a", "aac", "-b:a", "192k",
         "-r", str(VIDEO_FPS),
         "-shortest",
         "-movflags", "+faststart",
         str(output_path),
     ]
 
-    print(f"  ▶️  FFmpeg encodage en cours...")
+    print(f"  ▶ Encodage final + sous-titres...")
     result = subprocess.run(cmd, capture_output=True, text=True)
     if result.returncode != 0:
         print(result.stderr[-2000:])
-        raise RuntimeError(f"FFmpeg a échoué (code {result.returncode})")
+        raise RuntimeError(f"FFmpeg final a échoué (code {result.returncode})")
 
     return output_path
-
-
-def get_audio_duration(audio_path: Path) -> float:
-    return _ffprobe_duration(audio_path)

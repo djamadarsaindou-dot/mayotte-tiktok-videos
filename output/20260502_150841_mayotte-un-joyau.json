@@ -1,0 +1,54 @@
+{
+  "title": "Mayotte, un joyau",
+  "topic": "fait_insolite",
+  "topic_label": "Fait insolite Mayotte",
+  "hook": "Découvrez les secrets de Mayotte",
+  "scenes": [
+    {
+      "narration": "Située dans l'océan Indien, Mayotte est un archipel volcanique",
+      "search_query": "volcanic island landscape",
+      "image_prompt": "Une plage de sable blanc avec des palmiers et des montagnes volcaniques à l'arrière-plan"
+    },
+    {
+      "narration": "Les eaux turquoise abritent une faune marine exceptionnelle",
+      "search_query": "tropical fish coral reef",
+      "image_prompt": "Un récif corallien coloré avec des poissons et des tortues de mer"
+    },
+    {
+      "narration": "Les lagon sont peuplés de dauphins et de baleines",
+      "search_query": "dolphins swimming in ocean",
+      "image_prompt": "Des dauphins sautant hors de l'eau dans un lagon calme"
+    },
+    {
+      "narration": "Les plages de Mayotte sont réputées pour leur beauté",
+      "search_query": "tropical beach with palm trees",
+      "image_prompt": "Une plage déserte avec des palmiers qui s'inclinent vers l'océan"
+    },
+    {
+      "narration": "Les habitants de Mayotte ont une culture riche et diverse",
+      "search_query": "traditional african dancers",
+      "image_prompt": "Des danseurs traditionnels en costumes colorés, dansant sur une place publique"
+    },
+    {
+      "narration": "La cuisine mahoraise est un mélange de saveurs",
+      "search_query": "exotic food market",
+      "image_prompt": "Un marché de fruits et de légumes colorés, avec des épices et des plats locaux"
+    },
+    {
+      "narration": "Les marchés de Mayotte offrent des produits frais",
+      "search_query": "fish market in tropical island",
+      "image_prompt": "Un marché de poissons avec des vendeurs qui préparent des poissons frais"
+    },
+    {
+      "narration": "Mayotte est un endroit idéal pour les amoureux de la nature",
+      "search_query": "sunset over tropical island",
+      "image_prompt": "Un coucher de soleil sur une plage de Mayotte, avec des montagnes et des palmiers à l'arrière-plan"
+    }
+  ],
+  "duration": 20.136,
+  "word_count": 72,
+  "voice": "fr-FR-HenriNeural",
+  "uses_pexels": false,
+  "created_at": "2026-05-02T15:22:36.221877",
+  "video_file": "20260502_150841_mayotte-un-joyau.mp4"
+}

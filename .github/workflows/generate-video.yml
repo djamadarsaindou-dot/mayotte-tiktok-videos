@@ -44,6 +44,7 @@ jobs:
       - name: Générer la vidéo
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
         run: |
           if [ -n "${{ github.event.inputs.topic }}" ]; then
             python generate_video.py --topic "${{ github.event.inputs.topic }}"
