@@ -1,0 +1,35 @@
+{
+  "title": "L'Île aux Esprits",
+  "topic": "legende_mahoraise",
+  "topic_label": "Légende mahoraise",
+  "hook": "Découvrez les mystères de Mayotte",
+  "scenes": [
+    {
+      "narration": "Les esprits ancestraux veillent sur l'île de Mayotte avec sagesse et puissance",
+      "image_prompt": "Aerial view of Mayotte island at sunset with lush green forests and turquoise ocean"
+    },
+    {
+      "narration": "Les djinns sont censés habiter les forêts et les montagnes de l'île avec précaution",
+      "image_prompt": "Misty forest with twisted tree trunks and glowing eyes in the darkness"
+    },
+    {
+      "narration": "Les trésors du lagon sont cachés sous les eaux cristallines avec soin et secret",
+      "image_prompt": "Underwater scene with coral reef and treasures chest overflowing with gold coins"
+    },
+    {
+      "narration": "Les créatures marines mythiques comme les sirènes et les hippocampes sont vénérées",
+      "image_prompt": "Mermaid swimming with seahorses and fish in a vibrant ocean environment"
+    },
+    {
+      "narration": "Les sites sacrés comme les mosquées et les cimetières sont respectés et protégés",
+      "image_prompt": "Ancient mosque with intricate stone carvings and colorful tiles at dawn"
+    },
+    {
+      "narration": "La culture mahoraise est riche de légendes et de traditions qui sont transmises avec fierté",
+      "image_prompt": "Traditional mahorais dancers performing in colorful costumes with drums and music"
+    }
+  ],
+  "duration": 25.152,
+  "created_at": "2026-05-02T11:54:31.800275",
+  "video_file": "20260502_114607_lîle-aux-esprits.mp4"
+}
