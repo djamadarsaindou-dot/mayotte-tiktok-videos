@@ -5,3 +5,8 @@ requests>=2.32.0
 Pillow>=10.4.0
 python-dotenv>=1.0.1
 
+# Coqui XTTS v2 (voix humaine, optionnel — TTS_PROVIDER=coqui)
+# Note : torch est installé séparément via index PyTorch dans le workflow
+coqui-tts[codec]>=0.27.0
+transformers>=4.57
+

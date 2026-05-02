@@ -15,10 +15,17 @@ VIDEO_WIDTH = 1080
 VIDEO_HEIGHT = 1920
 VIDEO_FPS = 30
 
-# Voix masculine française (Edge-TTS)
-# Alternatives : fr-FR-RemyMultilingualNeural (moderne), fr-CA-ThierryNeural (canadien)
-VOICE = "fr-FR-HenriNeural"
-VOICE_RATE = "-3%"
+# --- Voix ---
+# TTS_PROVIDER : "edge" (rapide, synthétique) ou "coqui" (lent CPU, voix humaine)
+TTS_PROVIDER = os.getenv("TTS_PROVIDER", "edge").strip().lower()
+
+# Edge-TTS (Microsoft, gratuit, rapide)
+VOICE = os.getenv("EDGE_VOICE", "fr-FR-HenriNeural").strip()
+VOICE_RATE = os.getenv("EDGE_RATE", "-3%").strip()
+
+# Coqui XTTS v2 (téléchargement modèle ~1.8 GB la 1ère fois, voix beaucoup plus humaine)
+COQUI_SPEAKER = os.getenv("COQUI_SPEAKER", "Damien Black").strip()
+COQUI_LANGUAGE = os.getenv("COQUI_LANGUAGE", "fr").strip()
 
 # Cible : ~130 secondes de narration (2min+)
 TARGET_WORDS_MIN = 380

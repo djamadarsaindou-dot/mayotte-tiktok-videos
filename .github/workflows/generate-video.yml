@@ -25,7 +25,7 @@ permissions:
 jobs:
   generate:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 60  # Coqui XTTS prend ~3-5 min en plus
 
     steps:
       - name: Checkout
@@ -40,8 +40,20 @@ jobs:
           python-version: "3.12"
           cache: "pip"
 
+      - name: Installer PyTorch CPU (Coqui XTTS)
+        run: pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+
       - name: Installer les dépendances
         run: pip install -r requirements.txt
+
+      - name: Cache du modèle XTTS v2 (1.8 GB)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/AppData/Local/tts
+            ~/.local/share/tts
+            ~/Library/Application Support/tts
+          key: xtts-v2-model-v1
 
       - name: Générer la vidéo
         env:
@@ -51,6 +63,9 @@ jobs:
           LLM_PROVIDER: ${{ secrets.LLM_PROVIDER }}
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
           PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+          TTS_PROVIDER: ${{ secrets.TTS_PROVIDER || 'coqui' }}
+          COQUI_SPEAKER: ${{ secrets.COQUI_SPEAKER || 'Damien Black' }}
+          COQUI_TOS_AGREED: "1"
         run: |
           if [ -n "${{ github.event.inputs.topic }}" ]; then
             python generate_video.py --topic "${{ github.event.inputs.topic }}"
