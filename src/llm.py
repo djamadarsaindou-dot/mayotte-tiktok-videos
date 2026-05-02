@@ -73,7 +73,7 @@ def get_model_label() -> str:
 # --- Mistral (via REST direct, OpenAI-compatible) ---
 
 MISTRAL_ENDPOINT = "https://api.mistral.ai/v1/chat/completions"
-MISTRAL_MIN_INTERVAL = 1.4  # secondes entre 2 requêtes (free tier ~1 req/sec)
+MISTRAL_MIN_INTERVAL = 2.0  # secondes entre 2 requêtes (free tier ~1 req/sec, marge)
 _last_mistral_call: float = 0.0
 
 
@@ -196,17 +196,18 @@ def chat(system: str, user: str, json_mode: bool = False, temperature: float = 0
         last_err = e
         print(f"  ⚠️  LLM {primary} a échoué : {str(e)[:120]}")
 
-    # Fallback automatique en mode auto : essaye les autres providers configurés
-    if LLM_PROVIDER == "auto":
-        for name, (has_key, fn) in _BACKENDS.items():
-            if name == primary or not has_key():
-                continue
-            try:
-                print(f"  ↪  Fallback sur {name}")
-                return fn(system, user, json_mode, temperature)
-            except Exception as e2:
-                last_err = e2
-                print(f"  ⚠️  Fallback {name} a aussi échoué : {str(e2)[:120]}")
+    # Fallback : essaye toujours les autres providers configurés en cas d'échec.
+    # On ne respecte le forçage que pour le PREMIER essai, ensuite on accepte
+    # tout backend dispo plutôt que de faire planter le pipeline entier.
+    for name, (has_key, fn) in _BACKENDS.items():
+        if name == primary or not has_key():
+            continue
+        try:
+            print(f"  ↪  Fallback sur {name}")
+            return fn(system, user, json_mode, temperature)
+        except Exception as e2:
+            last_err = e2
+            print(f"  ⚠️  Fallback {name} a aussi échoué : {str(e2)[:120]}")
 
     raise RuntimeError(f"Tous les providers LLM ont échoué : {last_err}")
 

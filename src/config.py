@@ -49,7 +49,8 @@ MISTRAL_MODEL = os.getenv("MISTRAL_MODEL", "mistral-large-latest").strip()
 
 # Choix du provider : "auto" → Mistral > Gemini > Groq selon les clés
 # Forcer un provider précis : "mistral", "gemini", "groq"
-LLM_PROVIDER = os.getenv("LLM_PROVIDER", "auto").strip().lower()
+# Note : valeur vide = auto (cas GitHub Actions où secret non défini = "")
+LLM_PROVIDER = (os.getenv("LLM_PROVIDER", "auto").strip().lower() or "auto")
 
 PEXELS_API_KEY = os.getenv("PEXELS_API_KEY", "").strip()
 PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY", "").strip()
