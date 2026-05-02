@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vidéos IA Mayotte — Galerie</title>
+<style>
+  :root {
+    --bg: #0f1419;
+    --card: #1a2027;
+    --accent: #00c2c7;
+    --text: #e6e9ed;
+    --muted: #8b9099;
+    --border: #2a323d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+  header {
+    padding: 32px 24px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), #ff5e94);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .subtitle { color: var(--muted); font-size: 14px; margin-top: 6px; }
+  main { max-width: 1400px; margin: 0 auto; padding: 24px; }
+  .controls {
+    display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px;
+    align-items: center; justify-content: space-between;
+  }
+  .btn {
+    background: var(--accent); color: #001216; border: 0;
+    padding: 10px 18px; border-radius: 8px; cursor: pointer;
+    font-weight: 600; font-size: 14px;
+  }
+  .btn:hover { opacity: 0.9; }
+  .btn.secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+  .filter {
+    background: transparent; color: var(--text); border: 1px solid var(--border);
+    padding: 8px 12px; border-radius: 8px; font-size: 14px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .card {
+    background: var(--card); border-radius: 12px; overflow: hidden;
+    border: 1px solid var(--border);
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .card:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .video-wrap { position: relative; aspect-ratio: 9/16; background: #000; }
+  .video-wrap video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .badge {
+    position: absolute; top: 10px; left: 10px;
+    background: rgba(0,0,0,0.7); color: var(--accent);
+    padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600;
+  }
+  .info { padding: 14px; }
+  .title { font-size: 15px; font-weight: 600; margin-bottom: 6px; line-height: 1.3; }
+  .meta { color: var(--muted); font-size: 12px; display: flex; justify-content: space-between; }
+  .actions { display: flex; gap: 8px; margin-top: 12px; }
+  .actions a, .actions button {
+    flex: 1; text-align: center; padding: 8px; border-radius: 6px;
+    font-size: 12px; font-weight: 600; text-decoration: none; cursor: pointer;
+    background: var(--bg); color: var(--text); border: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .actions a:hover, .actions button:hover { background: var(--border); }
+  .actions .primary { background: var(--accent); color: #001216; border-color: var(--accent); }
+  .empty {
+    text-align: center; padding: 80px 20px; color: var(--muted);
+  }
+  .empty pre {
+    display: inline-block; text-align: left; background: var(--card);
+    padding: 16px 24px; border-radius: 8px; margin-top: 16px;
+    font-family: "Cascadia Code", Consolas, monospace; font-size: 13px;
+    border: 1px solid var(--border); color: var(--text);
+  }
+  .stats {
+    display: flex; gap: 24px; flex-wrap: wrap;
+    color: var(--muted); font-size: 13px;
+  }
+  .stat strong { color: var(--text); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎬 Vidéos IA Mayotte</h1>
+  <p class="subtitle">Galerie locale des vidéos générées automatiquement</p>
+</header>
+
+<main>
+  <div class="controls">
+    <div class="stats">
+      <div class="stat"><strong id="count">0</strong> vidéos</div>
+      <div class="stat">durée totale : <strong id="total-duration">0</strong>s</div>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <select class="filter" id="filter-topic">
+        <option value="">Tous les thèmes</option>
+        <option value="actu_mayotte">Actu Mayotte</option>
+        <option value="legende_mahoraise">Légendes</option>
+        <option value="fait_insolite">Faits insolites</option>
+      </select>
+      <button class="btn secondary" onclick="location.reload()">↻ Actualiser</button>
+    </div>
+  </div>
+
+  <div id="grid" class="grid"></div>
+  <div id="empty" class="empty" style="display:none;">
+    <p>Aucune vidéo générée pour l'instant.</p>
+    <p style="margin-top:12px; font-size: 13px;">Lance une génération avec :</p>
+    <pre>python generate_video.py</pre>
+  </div>
+</main>
+
+<script>
+  const TOPIC_LABELS = {
+    actu_mayotte: "Actu Mayotte",
+    legende_mahoraise: "Légende",
+    fait_insolite: "Insolite",
+    test: "Test",
+  };
+
+  async function listVideos() {
+    try {
+      const res = await fetch("/api/videos");
+      if (res.ok) return await res.json();
+    } catch {}
+    return await loadFromManifest();
+  }
+
+  async function loadFromManifest() {
+    try {
+      const res = await fetch("manifest.json");
+      if (res.ok) return await res.json();
+    } catch {}
+    return [];
+  }
+
+  function fmtDate(iso) {
+    if (!iso) return "";
+    const d = new Date(iso);
+    return d.toLocaleDateString("fr-FR", {day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit"});
+  }
+
+  function render(videos, filter = "") {
+    const grid = document.getElementById("grid");
+    const empty = document.getElementById("empty");
+    grid.innerHTML = "";
+    const filtered = filter ? videos.filter(v => v.topic === filter) : videos;
+    document.getElementById("count").textContent = filtered.length;
+    const totalDur = filtered.reduce((s, v) => s + (v.duration || 0), 0);
+    document.getElementById("total-duration").textContent = totalDur.toFixed(0);
+
+    if (filtered.length === 0) {
+      empty.style.display = "block";
+      return;
+    }
+    empty.style.display = "none";
+
+    for (const v of filtered) {
+      const topicLabel = TOPIC_LABELS[v.topic] || v.topic_label || "Vidéo";
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="video-wrap">
+          <span class="badge">${topicLabel}</span>
+          <video src="../output/${v.video_file}" controls preload="metadata"></video>
+        </div>
+        <div class="info">
+          <div class="title">${escapeHtml(v.title || "Sans titre")}</div>
+          <div class="meta">
+            <span>${fmtDate(v.created_at)}</span>
+            <span>${(v.duration || 0).toFixed(0)}s</span>
+          </div>
+          <div class="actions">
+            <a class="primary" href="../output/${v.video_file}" download>⬇ Télécharger</a>
+            <button onclick="copyHook(this, ${JSON.stringify(v.hook || "").replace(/"/g, '&quot;')})">📋 Hook</button>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+    }
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  }
+
+  window.copyHook = (btn, hook) => {
+    if (!hook) return;
+    navigator.clipboard.writeText(hook).then(() => {
+      const old = btn.textContent;
+      btn.textContent = "✓ Copié";
+      setTimeout(() => btn.textContent = old, 1500);
+    });
+  };
+
+  document.getElementById("filter-topic").addEventListener("change", e => {
+    render(window._videos || [], e.target.value);
+  });
+
+  listVideos().then(videos => {
+    videos.sort((a, b) => (b.created_at || "").localeCompare(a.created_at || ""));
+    window._videos = videos;
+    render(videos);
+  });
+</script>
+
+</body>
+</html>

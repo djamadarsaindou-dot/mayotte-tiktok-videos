@@ -1,0 +1,31 @@
+{
+  "title": "Le double lagon de Mayotte",
+  "topic": "test",
+  "topic_label": "Test pipeline",
+  "hook": "Saviez-vous que Mayotte cache un trésor géologique unique au monde ?",
+  "scenes": [
+    {
+      "narration": "Saviez-vous que Mayotte cache un trésor géologique unique au monde ?",
+      "image_prompt": "aerial drone view of Mayotte tropical lagoon, turquoise water, coral reef, sunny day, cinematic"
+    },
+    {
+      "narration": "Son lagon est l'un des rares doubles lagons fermés de la planète.",
+      "image_prompt": "aerial view of double coral lagoon with two reef barriers, blue ocean, tropical island"
+    },
+    {
+      "narration": "Une barrière de corail entoure une seconde barrière intérieure.",
+      "image_prompt": "underwater coral reef barrier in clear blue water, tropical fish, sunlight rays"
+    },
+    {
+      "narration": "Cette merveille abrite des centaines d'espèces marines protégées.",
+      "image_prompt": "colorful tropical fish swimming around coral reef, sea turtle, vibrant underwater scene"
+    },
+    {
+      "narration": "Mayotte est ainsi un véritable joyau de l'océan Indien.",
+      "image_prompt": "sunset over Mayotte lagoon, palm trees silhouette, golden hour, peaceful tropical landscape"
+    }
+  ],
+  "duration": 19.032,
+  "created_at": "2026-05-02T13:16:38.802384",
+  "video_file": "20260502_131025_le-double-lagon-de-mayotte.mp4"
+}

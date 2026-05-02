@@ -1,0 +1,16 @@
+.env
+__pycache__/
+*.pyc
+output/*.mp4
+output/*.mp3
+output/*.wav
+output/*.png
+output/*.jpg
+output/*.ass
+output/*.srt
+output/temp/
+.venv/
+venv/
+.idea/
+.vscode/
+*.log

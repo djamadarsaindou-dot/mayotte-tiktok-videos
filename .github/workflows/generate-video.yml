@@ -1,0 +1,73 @@
+name: Génération vidéo TikTok automatique
+
+on:
+  schedule:
+    # Toutes les 12h : 06:00 et 18:00 UTC (08:00 et 20:00 heure de Paris en été)
+    - cron: '0 6,18 * * *'
+  workflow_dispatch:  # bouton "Run workflow" manuel sur GitHub
+    inputs:
+      topic:
+        description: "Thème (vide = aléatoire)"
+        required: false
+        default: ""
+        type: choice
+        options:
+          - ""
+          - "actu_mayotte"
+          - "legende_mahoraise"
+          - "fait_insolite"
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Installer FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-liberation
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Installer les dépendances
+        run: pip install -r requirements.txt
+
+      - name: Générer la vidéo
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          if [ -n "${{ github.event.inputs.topic }}" ]; then
+            python generate_video.py --topic "${{ github.event.inputs.topic }}"
+          else
+            python generate_video.py
+          fi
+
+      - name: Committer les métadonnées (json uniquement, pas la vidéo)
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add output/*.json
+          if git diff --cached --quiet; then
+            echo "Aucune nouvelle metadata à committer"
+          else
+            git commit -m "🎬 nouvelle vidéo $(date -u '+%Y-%m-%d %H:%M UTC')"
+            git push
+          fi
+
+      - name: Upload de la vidéo (téléchargeable depuis l'onglet Actions)
+        uses: actions/upload-artifact@v4
+        with:
+          name: video-${{ github.run_id }}
+          path: |
+            output/*.mp4
+            output/*.json
+          retention-days: 30
