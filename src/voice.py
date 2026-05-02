@@ -44,6 +44,20 @@ def _distribute_word_timings(
     return items
 
 
+def assemble_narration(scenes_narrations: list[str]) -> str:
+    """Joint les phrases avec ponctuation forte + saut de ligne pour pauses TTS."""
+    cleaned: list[str] = []
+    for n in scenes_narrations:
+        n = n.strip()
+        if not n:
+            continue
+        if n[-1] not in ".!?":
+            n += "."
+        cleaned.append(n)
+    # Double newline = pause naturelle plus longue dans Edge-TTS
+    return "\n\n".join(cleaned)
+
+
 async def _synthesize(text: str, audio_path: Path) -> list[dict]:
     communicate = edge_tts.Communicate(text=text, voice=VOICE, rate=VOICE_RATE)
     word_items: list[dict] = []

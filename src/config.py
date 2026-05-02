@@ -20,13 +20,19 @@ VIDEO_FPS = 30
 VOICE = "fr-FR-HenriNeural"
 VOICE_RATE = "-3%"
 
-# Cible : ~70 secondes de narration
-TARGET_WORDS_MIN = 145
-TARGET_WORDS_MAX = 190
+# Cible : ~130 secondes de narration (2min+)
+TARGET_WORDS_MIN = 380
+TARGET_WORDS_MAX = 460
+
+# Découpage visuel : on veut une coupe toutes les ~2.5s max
+VISUAL_MAX_DURATION = 3.0
+VISUALS_PER_SCENE = 3
+NUM_SCENES = 16
 
 GROQ_MODEL = "llama-3.3-70b-versatile"
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip()
 PEXELS_API_KEY = os.getenv("PEXELS_API_KEY", "").strip()
+PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY", "").strip()
 
 
 def find_ffmpeg() -> str:

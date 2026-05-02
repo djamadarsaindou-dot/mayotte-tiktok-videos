@@ -1,0 +1,161 @@
+{
+  "title": "Mayotte, un joyau tropical",
+  "topic": "actu_mayotte",
+  "topic_label": "Actualité Mayotte",
+  "hook": "Découvrez les secrets de l'île la plus jeune de France",
+  "scenes": [
+    {
+      "narration": "Nous survolons Mayotte en vue aérienne pour vous montrer toute sa beauté tropicale exceptionnelle et unique en mer d'océan Indien.",
+      "visuals": [
+        "aerial tropical lagoon",
+        "island beach coconut trees",
+        "ocean waves crashing shore"
+      ],
+      "image_prompt": "Paysage vertical de Mayotte avec une plage de sable blanc et des palmiers"
+    },
+    {
+      "narration": "L'agriculture mayotte se développe rapidement autour de cultures variées et diversifiées avec une production locale importante et en constante évolution sur l'île de Mayotte chaque année.",
+      "visuals": [
+        "farmer working in field",
+        "tropical fruit market",
+        "vanille plantation"
+      ],
+      "image_prompt": "Un agriculteur mayotte tenant un bouquet de vanille fraîche"
+    },
+    {
+      "narration": "La pêche reste un métier traditionnel très important et essentiel à Mayotte économiquement et culturellement depuis des générations encore aujourd'hui.",
+      "visuals": [
+        "fisherman boat sunset",
+        "fishing net being pulled",
+        "seafood market display"
+      ],
+      "image_prompt": "Un pêcheur mayotte souriant avec son filet débordant de poissons"
+    },
+    {
+      "narration": "Mayotte cache également une riche culture locale très attachante et authentique, façonnée par son histoire et ses traditions uniques et fascinantes historiquement.",
+      "visuals": [
+        "traditional dance performance",
+        "local craft market",
+        "colorful textiles"
+      ],
+      "image_prompt": "Une danseuse mayotte vêtue de couleurs vives, dansant sur une place animée"
+    },
+    {
+      "narration": "Les jeunes Mayottes sont les acteurs principaux et dynamiques du futur de cette île magnifique et exceptionnelle au large de l'Afrique.",
+      "visuals": [
+        "young people playing sports",
+        "students in classroom",
+        "entrepreneur working on laptop"
+      ],
+      "image_prompt": "Un groupe de jeunes mayottes souriants, tenant des tablettes et des livres"
+    },
+    {
+      "narration": "Le tourisme est une économie en développement rapide et croissant à Mayotte chaque année avec de nouveaux projets hôteliers en construction constante.",
+      "visuals": [
+        "tourists on beach",
+        "hotel resort pool",
+        "sailing boat in lagoon"
+      ],
+      "image_prompt": "Un hôtel de luxe mayotte avec une piscine à débordement et une vue sur l'océan"
+    },
+    {
+      "narration": "La conservation de l'environnement est également une priorité majeure pour préserver ce magnifique joyau tropical fragile et unique sur notre planète entière aujourd'hui.",
+      "visuals": [
+        "sea turtle nesting site",
+        "coral reef diving",
+        "recycling center"
+      ],
+      "image_prompt": "Une tortue de mer mayotte sortant de l'océan pour pondre ses œufs"
+    },
+    {
+      "narration": "Les cyclones représentent un défi majeur et complexe pour la préservation de l'environnement et des habitants de l'île de Mayotte chaque année.",
+      "visuals": [
+        "stormy weather",
+        "cyclone damage",
+        "emergency response team"
+      ],
+      "image_prompt": "Un équipe de secours mayotte en train de nettoyer les débris après un cyclone"
+    },
+    {
+      "narration": "Les Mayottes font preuve d'une résilience remarquable et impressionnante face aux nombreux défis environnementaux actuels et complexes qui les touchent directement chaque jour.",
+      "visuals": [
+        "community coming together",
+        "neighborhood clean-up",
+        "resilience mural"
+      ],
+      "image_prompt": "Un mur mayotte peint avec des messages d'espoir et de solidarité"
+    },
+    {
+      "narration": "Le kwassa-kwassa offre un moyen de transport unique et pittoresque à travers les eaux cristallines des îles tropicales exotiques et paradisiaques chaque jour.",
+      "visuals": [
+        "kwassa-kwassa boat",
+        "people boarding kwassa-kwassa",
+        "kwassa-kwassa sailing"
+      ],
+      "image_prompt": "Un kwassa-kwassa mayotte naviguant dans les eaux calmes de l'océan"
+    },
+    {
+      "narration": "Mayotte propose une gastronomie riche et variée, avec des plats exotiques et des saveurs uniques qui reflètent son patrimoine culturel multiforme et enchanteur.",
+      "visuals": [
+        "traditional mayotte dishes",
+        "local market food",
+        "cooking class"
+      ],
+      "image_prompt": "Un plat mayotte traditionnel avec du riz, des légumes et du poisson"
+    },
+    {
+      "narration": "Mayotte accueille régulièrement des festivals et célébrations qui mettent en valeur sa riche et diverse culture locale traditionnelle annuellement avec succès.",
+      "visuals": [
+        "festival crowd",
+        "traditional music performance",
+        "fireworks display"
+      ],
+      "image_prompt": "Un festival mayotte avec des feux d'artifice et des musiciens traditionnels"
+    },
+    {
+      "narration": "Mayotte abrite également un riche et fascinant patrimoine historique et culturel qui reflète son passé complexe et son héritage africain et français unique.",
+      "visuals": [
+        "historical landmark",
+        "museum exhibit",
+        "old town architecture"
+      ],
+      "image_prompt": "Un monument historique mayotte avec une architecture unique et des détails anciens"
+    },
+    {
+      "narration": "Mayotte fait face aux défis de la départementalisation tout en préservant son identité culturelle et historique unique avec succès progressif chaque jour.",
+      "visuals": [
+        "government building",
+        "community meeting",
+        "infrastructure development"
+      ],
+      "image_prompt": "Un bâtiment gouvernemental mayotte avec des personnes discutant et travaillant ensemble"
+    },
+    {
+      "narration": "Mayotte se dirige vers un avenir radieux tout en conservant son essence culturelle et son identité unique et précieuse toujours préservée avec soin.",
+      "visuals": [
+        "sunset over mayotte",
+        "children playing",
+        "sustainable development"
+      ],
+      "image_prompt": "Un coucher de soleil mayotte avec des enfants jouant sur la plage et des énergies renouvelables"
+    },
+    {
+      "narration": "Découvrez Mayotte et sa beauté unique pour préserver ce magnifique joyau tropical exceptionnel et fragile qui nécessite notre attention et protection immédiate.",
+      "visuals": [
+        "call to action graphic",
+        "mayotte flag waving",
+        "people united"
+      ],
+      "image_prompt": "Un drapeau mayotte flottant avec des personnes main dans la main, regardant vers l'avenir"
+    }
+  ],
+  "duration": 127.488,
+  "word_count": 356,
+  "num_clips": 48,
+  "sources_used": {
+    "Pexels vidéo": 48
+  },
+  "voice": "fr-FR-HenriNeural",
+  "created_at": "2026-05-02T15:52:00.494084",
+  "video_file": "20260502_154231_mayotte-un-joyau-tropical.mp4"
+}
