@@ -13,13 +13,16 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8")
 
 from src.config import (
+    COQUI_SPEAKER,
     OUTPUT_DIR,
     PEXELS_API_KEY,
     PIXABAY_API_KEY,
     TEMP_DIR,
+    TTS_PROVIDER,
     VIDEO_HEIGHT,
     VIDEO_WIDTH,
     VISUALS_PER_SCENE,
+    VOICE,
 )
 from src.editor import assemble_video, get_audio_duration
 from src.script_writer import generate_script
@@ -138,7 +141,7 @@ def build_video(topic_key: str | None = None) -> Path:
             "word_count": total_words,
             "num_clips": len(asset_paths),
             "sources_used": sources_used,
-            "voice": "fr-FR-HenriNeural",
+            "voice": f"Coqui XTTS v2 / {COQUI_SPEAKER}" if TTS_PROVIDER == "coqui" else f"Edge-TTS / {VOICE}",
             "created_at": datetime.now().isoformat(),
             "video_file": output_path.name,
         }, ensure_ascii=False, indent=2),
