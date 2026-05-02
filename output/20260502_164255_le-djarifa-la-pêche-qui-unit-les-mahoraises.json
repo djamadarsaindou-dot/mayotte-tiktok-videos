@@ -1,0 +1,177 @@
+{
+  "title": "Le djarifa : la pêche qui unit les Mahoraises 🌊💪",
+  "topic": "fait_insolite",
+  "topic_label": "Fait insolite Mayotte",
+  "hook": "Imaginez 50 femmes tirant un filet géant à la main sur un lagon turquoise... Bienvenue à Mayotte !",
+  "scenes": [
+    {
+      "narration": "Et c’est ici, dans les eaux peu profondes du lagon, que les Mahoraises perpétuent le djarifa, une pêche collective ancestrale aussi spectaculaire qu’efficace.",
+      "visuals": [
+        "LOW TIDE LAGOON",
+        "CORAL REEF FLAT",
+        "WOMEN WADING"
+      ],
+      "image_prompt": "A 9:16 vertical photorealistic cinematic shot of a turquoise Mayotte lagoon at low tide, revealing a vast coral reef flat. Dozens of Mahorese women in colorful traditional dresses and headscarves stand in shallow water, their feet touching the coral. The sky is clear, and the sunlight creates sparkling reflections on the water surface. Ultra-detailed, vibrant colors, shallow depth of field focusing on the women's faces and the texture of the coral.",
+      "fact_used": "Le djarifa est une pêche collective à pied pratiquée à marée basse"
+    },
+    {
+      "narration": "Regardez cette ligne de force : des dizaines de Mahoraises, main dans la main, tracent un rempart vivant sur le platier pour piéger les poissons au rythme des vagues.",
+      "visuals": [
+        "HUMAN CHAIN",
+        "CORAL PLATFORM",
+        "TRADITIONAL CLOTHING"
+      ],
+      "image_prompt": "Close-up 9:16 vertical shot of a long human chain formed by Mahorese women on a coral platform at low tide. Their hands are linked, and they stand shoulder to shoulder, wearing vibrant traditional dresses and headscarves. The coral under their feet is visible, with small pools of water reflecting the sky. The women's expressions show determination and camaraderie. Warm, golden-hour lighting.",
+      "fact_used": "Des dizaines de femmes forment une chaîne sur le platier corallien"
+    },
+    {
+      "narration": "Et là, dans un même élan, elles soulèvent la grande senne tissée de patience pour la déployer comme un filet d’espoir sous le soleil de Mayotte.",
+      "visuals": [
+        "FISHING NET",
+        "TEAMWORK PREP",
+        "SHALLOW WATER"
+      ],
+      "image_prompt": "A wide 9:16 vertical shot of Mahorese women in shallow water, unrolling and preparing a large fishing net (senne) together. The net is spread out on the coral reef, and the women work in unison, their movements synchronized. The water is crystal clear, revealing the coral and small fish underneath. The scene is dynamic, with droplets of water flying as they handle the net.",
+      "fact_used": "Elles tirent ensemble une grande senne à la main"
+    },
+    {
+      "narration": "Regardez cette force tranquille, quand les Mahoraises unissent leurs bras pour haler ce djarifa géant, plus lourd que la mer elle-même.",
+      "visuals": [
+        "LARGE FISHING NET",
+        "COLLECTIVE PULL",
+        "WATER SPLASH"
+      ],
+      "image_prompt": "Dramatic 9:16 vertical shot of the same group of women pulling a massive fishing net through the shallow water. The net is heavy, and their muscles strain as they work together. Water splashes around them, catching the sunlight. The coral reef beneath them is visible, adding texture to the scene. The women's faces show focus and effort, with droplets of water on their skin.",
+      "fact_used": "Elles tirent ensemble une grande senne à la hand"
+    },
+    {
+      "narration": "Et cette technique de pêche, elle se transmet depuis des siècles – bien avant que Mayotte ne devienne française, les Mahorais la maîtrisaient déjà comme personne.",
+      "visuals": [
+        "ANCIENT TRADITION",
+        "CULTURAL HERITAGE",
+        "ELDERLY WOMAN"
+      ],
+      "image_prompt": "A close-up 9:16 vertical shot of an elderly Mahorese woman with a weathered but kind face, explaining the djarifa tradition to younger women. They sit on the beach under the shade of a tree, with the lagoon in the background. The scene is intimate and respectful, highlighting the passing of knowledge. The colors are warm, with soft shadows and a sense of history.",
+      "fact_used": "Cette pratique date d'avant la colonisation française"
+    },
+    {
+      "narration": "Et quand le filet se relève, c’est la surprise : poissons multicolores, crabes dodus ou poulpes malins – tout est partagé équitablement entre les Mahorais, comme un trésor qui unit.",
+      "visuals": [
+        "FRESH CATCH",
+        "SEA CREATURES",
+        "BASKETS FULL"
+      ],
+      "image_prompt": "A 9:16 vertical shot of several baskets filled with the day's catch: colorful fish, crabs, and octopuses. The baskets are placed on the coral reef, and the women sort through them, their hands handling the sea creatures with care. The water around them is shallow, and the sunlight highlights the vibrant colors of the fish and coral.",
+      "fact_used": "Les prises (poissons, crabes, poulpes) sont partagées équitablement"
+    },
+    {
+      "narration": "Chaque prise est partagée, c’est la règle d’or ici. Peu importe qui a lancé le filet, toutes rentrent avec leur part.",
+      "visuals": [
+        "FAIR SHARING",
+        "COMMUNITY SPIRIT",
+        "HAPPY FACES"
+      ],
+      "image_prompt": "A heartwarming 9:16 vertical shot of the women gathered in a circle, sharing the day's catch equally among themselves. Each woman receives a portion of fish, crabs, or octopus, and they smile and laugh together. The scene is set on the beach, with the lagoon in the background. The lighting is soft and warm, emphasizing the sense of community.",
+      "fact_used": "Les prises (poissons, crabes, poulpes) sont partagées équitablement"
+    },
+    {
+      "narration": "Et ce qui rend le djarifa magique, c’est que ces femmes ne pêchent pas juste du poisson – elles tissent des liens, village après village, entre générations de Mahoraises.",
+      "visuals": [
+        "SISTERHOOD",
+        "LAUGHTER TOGETHER",
+        "BEACH GATHERING"
+      ],
+      "image_prompt": "A wide 9:16 vertical shot of the women sitting together on the beach after the djarifa, laughing and talking. Some of them hold hands, while others share stories. The lagoon stretches out behind them, and the sky is painted with the colors of sunset. The scene is joyful and full of life, capturing the essence of their bond.",
+      "fact_used": "Le djarifa renforce le lien communautaire entre femmes du village"
+    },
+    {
+      "narration": "Et ici, les enfants grandissent les pieds dans l’eau, les yeux brillants devant ces mamans qui leur offrent bien plus qu’une technique : une histoire à continuer ensemble.",
+      "visuals": [
+        "CHILDREN LEARNING",
+        "TRADITION PASSING",
+        "CURIOUS FACES"
+      ],
+      "image_prompt": "A 9:16 vertical shot of young girls watching the women prepare for the djarifa. They stand at the edge of the water, their eyes wide with curiosity, mimicking the women's movements. The women smile and encourage them, creating a sense of continuity. The scene is bright and playful, with the children's colorful clothing standing out against the blue of the lagoon.",
+      "fact_used": "Le djarifa renforce le lien communautaire entre femmes du village"
+    },
+    {
+      "narration": "Quand la mer remonte son drap bleu, les Mahoraises rentrent, panier plein et cœur léger, avec déjà l’idée du prochain djarifa.",
+      "visuals": [
+        "RISING TIDE",
+        "END OF DAY",
+        "WOMEN LEAVING"
+      ],
+      "image_prompt": "A 9:16 vertical shot of the tide slowly rising, covering the coral reef where the women were standing. The women begin to gather their baskets and nets, preparing to leave. The water reflects the golden light of the setting sun, and the scene is peaceful. The women's silhouettes are framed against the lagoon, creating a sense of closure.",
+      "fact_used": "Le djarifa est une pêche collective à pied pratiquée à marée basse"
+    },
+    {
+      "narration": "Elles avancent en riant, ces femmes soudées par le sel et le djarifa, fières de ce qu’elles rapportent et de ce qui les unit pour demain.",
+      "visuals": [
+        "VILLAGE PATH",
+        "PROUD WALK",
+        "SUNSET LIGHT"
+      ],
+      "image_prompt": "A 9:16 vertical shot of the women walking back to their village along a sandy path, baskets balanced on their heads. The sunset casts a warm glow over the scene, and the women chat and laugh as they walk. The path is lined with tropical vegetation, and the lagoon is visible in the distance. The mood is uplifting and serene.",
+      "fact_used": "Le djarifa renforce le lien communautaire entre femmes du village"
+    },
+    {
+      "narration": "Et c’est ici, sur ce platier où l’océan murmure leurs histoires, que des dizaines de Mahoraises forment une chaîne humaine pour perpétuer leur tradition.",
+      "visuals": [
+        "FOOTPRINTS CORAL",
+        "EMPTY BEACH",
+        "MEMORY SCENE"
+      ],
+      "image_prompt": "A 9:16 vertical shot of the empty coral reef at low tide, with footprints and net marks visible in the sand. The tide is starting to come in, slowly erasing the traces of the djarifa. The lagoon is calm, and the sky is a soft pink from the setting sun. The scene is quiet and reflective, evoking a sense of time passing.",
+      "fact_used": "Des dizaines de femmes forment une chaîne sur le platier corallien"
+    },
+    {
+      "narration": "Pour Aïcha, ce filet de pêche c’est bien plus qu’un outil, c’est le fil invisible qui tisse leur solidarité et leur fierté depuis des générations.",
+      "visuals": [
+        "PERSONAL STORY",
+        "CLOSE-UP INTERVIEW",
+        "EMOTIONAL FACE"
+      ],
+      "image_prompt": "A close-up 9:16 vertical interview shot of a Mahorese woman, speaking directly to the camera about what the djarifa means to her. She is seated on the beach, with the lagoon in the background. Her expressions are warm and heartfelt, and her words convey the importance of community and tradition. The lighting is soft, focusing on her face.",
+      "fact_used": "Le djarifa renforce le lien communautaire entre femmes du village"
+    },
+    {
+      "narration": "Et c’est en tirant ensemble ce filet sous le soleil brûlant qu’Aïcha a compris que la vraie force des Mahoraises, c’est cette chaîne humaine qui ne rompt jamais.",
+      "visuals": [
+        "STORYTELLING",
+        "COMMUNITY VALUES",
+        "HAND GESTURES"
+      ],
+      "image_prompt": "A medium 9:16 vertical shot of the same woman gesturing with her hands as she explains the values of solidarity and collective strength learned through the djarifa. The scene is intimate, with the camera focusing on her hands and face. The lagoon glows in the background, adding a sense of depth to the shot.",
+      "fact_used": "Le djarifa renforce le lien communautaire entre femmes du village"
+    },
+    {
+      "narration": "Ce djarifa, bien avant la France, unit les Mahorais autour du poisson, créant un lien indestructible, malgré le temps et les vagues.",
+      "visuals": [
+        "SUNSET GROUP",
+        "GENERATIONS TOGETHER",
+        "LAGOON VIEW"
+      ],
+      "image_prompt": "A wide 9:16 vertical shot of the women and children gathered on the beach at sunset, looking out at the lagoon. The sky is painted with vibrant colors, and the scene is peaceful. The women stand close together, symbolizing their unity and the passing of traditions. The lagoon reflects the sunset, creating a magical atmosphere.",
+      "fact_used": "Cette pratique date d'avant la colonisation française"
+    },
+    {
+      "narration": "Alors si vous voulez vivre cette solidarité en direct, venez tremper vos pieds dans le lagon et pêcher le djarifa aux côtés des Mahorais, une aventure qui marque à jamais.",
+      "visuals": [
+        "INVITATION TRAVEL",
+        "LAGOON BEAUTY",
+        "SMILING FACES"
+      ],
+      "image_prompt": "A final 9:16 vertical shot of the lagoon at sunset, with the women and children waving at the camera. The scene is inviting and warm, with the message 'Venez découvrir Mayotte !' superimposed on the image. The colors are vibrant, and the mood is uplifting, encouraging viewers to explore this beautiful island and its traditions.",
+      "fact_used": "Le djarifa est une pêche collective à pied pratiquée à marée basse"
+    }
+  ],
+  "duration": 131.544,
+  "word_count": 409,
+  "num_clips": 48,
+  "sources_used": {
+    "Pexels vidéo": 48
+  },
+  "voice": "fr-FR-HenriNeural",
+  "created_at": "2026-05-02T16:47:54.799859",
+  "video_file": "20260502_164255_le-djarifa-la-pêche-qui-unit-les-mahoraises.mp4"
+}
