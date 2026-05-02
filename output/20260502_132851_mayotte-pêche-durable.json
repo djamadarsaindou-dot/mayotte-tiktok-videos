@@ -1,0 +1,39 @@
+{
+  "title": "Mayotte: Pêche durable",
+  "topic": "actu_mayotte",
+  "topic_label": "Actualité Mayotte",
+  "hook": "Découvrez comment les pêcheurs mayotteaux sauvent le lagon!",
+  "scenes": [
+    {
+      "narration": "Mayotte, un archipel aux eaux turquoise",
+      "image_prompt": "Aerial view of Mayotte's coastline with turquoise waters and coral reefs"
+    },
+    {
+      "narration": "La pêche, une tradition et un moyen de vie",
+      "image_prompt": "Fishermen sailing a traditional pirogue on the lagoon at sunrise"
+    },
+    {
+      "narration": "Mais les méthodes traditionnelles menacent le lagon",
+      "image_prompt": "Close-up of a damaged coral reef with fish swimming away"
+    },
+    {
+      "narration": "Les pêcheurs locaux adoptent des méthodes durables",
+      "image_prompt": "Fishermen using eco-friendly fishing gear and releasing a caught fish back into the water"
+    },
+    {
+      "narration": "Grâce à l'aide de scientifiques et d'ONG",
+      "image_prompt": "Scientists and fishermen working together on a research boat"
+    },
+    {
+      "narration": "Le lagon de Mayotte est en voie de rétablissement",
+      "image_prompt": "Healthy coral reef with diverse marine life and a school of fish swimming"
+    },
+    {
+      "narration": "Un exemple pour la protection de notre environnement",
+      "image_prompt": "Local children snorkeling in the lagoon, observing the marine life and coral reefs"
+    }
+  ],
+  "duration": 15.792,
+  "created_at": "2026-05-02T13:38:01.668238",
+  "video_file": "20260502_132851_mayotte-pêche-durable.mp4"
+}

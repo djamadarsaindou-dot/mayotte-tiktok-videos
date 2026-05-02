@@ -1,0 +1,35 @@
+{
+  "title": "Les Djinns de Mayotte",
+  "topic": "legende_mahoraise",
+  "topic_label": "Légende mahoraise",
+  "hook": "Imaginez des créatures mystérieuses dans les eaux du lagon",
+  "scenes": [
+    {
+      "narration": "Les habitants de Mayotte croient en des esprits aquatiques puissants",
+      "image_prompt": "A dark blue underwater scene with fish swimming around a coral reef at sunset"
+    },
+    {
+      "narration": "Ces djinns sont censés habiter les récifs coralliens vibrants",
+      "image_prompt": "A school of angelfish swimming near a colorful coral formation in the Indian Ocean"
+    },
+    {
+      "narration": "Les légendes racontent que les djinns possèdent des trésors précieux",
+      "image_prompt": "A chest overflowing with glittering pearls and precious gems on the ocean floor"
+    },
+    {
+      "narration": "Ces trésors sont gardés par les djinns dans des grottes sous-marines",
+      "image_prompt": "An underwater cave with a hidden entrance surrounded by sea anemones and schools of small fish"
+    },
+    {
+      "narration": "Les habitants de Mayotte font des offrandes aux djinns pour leur protection",
+      "image_prompt": "A local fisherman throwing flowers and fruits into the sea as an offering to the djinns at sunrise"
+    },
+    {
+      "narration": "Les djinns sont considérés comme des protecteurs du lagon et de ses habitants",
+      "image_prompt": "A serene scene of a Mayotte village at dusk with the lagoon in the background, under a starry sky"
+    }
+  ],
+  "duration": 20.832,
+  "created_at": "2026-05-02T13:56:02.757418",
+  "video_file": "20260502_134734_les-djinns-de-mayotte.mp4"
+}

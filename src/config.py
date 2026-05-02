@@ -16,7 +16,7 @@ VIDEO_HEIGHT = 1920
 VIDEO_FPS = 30
 
 VOICE = "fr-FR-DeniseNeural"
-VOICE_RATE = "+5%"
+VOICE_RATE = "-5%"
 
 GROQ_MODEL = "llama-3.3-70b-versatile"
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip()

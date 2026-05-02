@@ -13,17 +13,20 @@ Réponds STRICTEMENT en JSON valide avec cette structure :
   "hook": "première phrase qui accroche en 1-2 secondes",
   "scenes": [
     {{
-      "narration": "phrase de narration en français, claire, parlée à l'oral (12-25 mots)",
-      "image_prompt": "description en ANGLAIS d'une image illustrant cette scène, style cinématique, vertical 9:16, sans texte, photoréaliste"
+      "narration": "phrase complète et développée en français, parlée à l'oral, EXACTEMENT entre 22 et 30 mots",
+      "image_prompt": "description en ANGLAIS d'une image illustrant cette scène, style cinématique, vertical 9:16, sans texte, photoréaliste, très détaillé"
     }}
   ]
 }}
 
-Contraintes :
-- Entre 5 et 7 scènes
-- La somme des narrations doit faire environ 120-150 mots (≈ 50 secondes parlées)
-- Chaque image_prompt doit être visuellement spécifique et concret
-- N'inclus AUCUN texte hors du JSON, pas de markdown, pas d'explications
+CONTRAINTES IMPORTANTES (à respecter STRICTEMENT) :
+- EXACTEMENT 6 scènes
+- Chaque narration : ENTRE 22 ET 30 MOTS, pas moins (ce sont des phrases développées, pas des slogans)
+- Total des narrations : entre 140 et 170 mots (≈ 55 secondes une fois parlés)
+- Compte les mots de chaque narration avant de répondre
+- Chaque image_prompt doit être visuellement spécifique, concret, immersif
+- Le ton est dynamique, narratif, comme un mini-reportage TikTok
+- Aucun texte hors du JSON, pas de markdown, pas d'explications
 """
 
 

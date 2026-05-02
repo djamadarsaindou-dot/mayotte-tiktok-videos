@@ -57,15 +57,20 @@ def build_video(topic_key: str | None = None) -> Path:
     from src.config import VIDEO_HEIGHT, VIDEO_WIDTH
     srt_to_ass(srt_path, ass_path, VIDEO_WIDTH, VIDEO_HEIGHT)
 
-    print(f"🎨 Génération de {len(script['scenes'])} images via Pollinations...")
-    image_paths: list[Path] = []
+    print(f"🎨 Génération de {len(script['scenes'])} images via Pollinations (parallèle)...")
     seed_base = random.randint(1, 1_000_000)
-    for i, scene in enumerate(script["scenes"]):
+
+    def _gen(i: int, scene: dict) -> tuple[int, Path]:
         img_path = work_dir / f"scene_{i:02d}.jpg"
         prompt = scene["image_prompt"] + ", cinematic, vertical 9:16, no text"
-        print(f"   [{i+1}/{len(script['scenes'])}] {scene['image_prompt'][:60]}...")
         generate_image(prompt, img_path, seed=seed_base + i)
-        image_paths.append(img_path)
+        print(f"   ✓ [{i+1}/{len(script['scenes'])}] {scene['image_prompt'][:55]}...")
+        return i, img_path
+
+    image_paths: list[Path] = []
+    for i, scene in enumerate(script["scenes"]):
+        _, p = _gen(i, scene)
+        image_paths.append(p)
 
     word_counts = [len(s["narration"].split()) for s in script["scenes"]]
     total_words = sum(word_counts) or 1
