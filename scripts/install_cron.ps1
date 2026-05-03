@@ -1,39 +1,41 @@
-# Installe une tâche planifiée Windows qui génère une vidéo TikTok toutes les 2h.
+# Install a Windows scheduled task that generates a TikTok video every 2 hours.
 #
-# Lancer une fois en PowerShell :
+# Run once in PowerShell:
 #   powershell -ExecutionPolicy Bypass -File scripts\install_cron.ps1
 #
-# Pour désinstaller :
+# To uninstall:
 #   Unregister-ScheduledTask -TaskName "MayotteTikTokGen" -Confirm:$false
 
 $ErrorActionPreference = "Stop"
 
-$ProjectPath = "C:\Users\djama\Documents\Claude\Projects\Site internet - Montage vidéo"
+# Construit le chemin du projet a partir du dossier courant (le user doit lancer
+# le script depuis la racine du projet)
+$ProjectPath = (Get-Location).Path
 $BatPath = Join-Path $ProjectPath "scripts\run_cron.bat"
 $TaskName = "MayotteTikTokGen"
 
 if (-not (Test-Path $BatPath)) {
-    Write-Error "Fichier introuvable : $BatPath"
+    Write-Error "Script not found: $BatPath`nLance ce script depuis la racine du projet (cd `"...Site internet - Montage video`")."
     exit 1
 }
 
-# Désinstalle la tâche existante si présente
+# Remove existing task if present
 $existing = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
 if ($existing) {
-    Write-Host "Suppression de l'ancienne tâche..." -ForegroundColor Yellow
+    Write-Host "Removing existing task..." -ForegroundColor Yellow
     Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
 }
 
-# Action : exécuter le .bat
+# Action: run the .bat
 $action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c `"$BatPath`""
 
-# Trigger : toutes les 2h, à partir de dans 5 minutes
+# Trigger: every 2h, starting in 5 minutes
 $startTime = (Get-Date).AddMinutes(5)
 $trigger = New-ScheduledTaskTrigger -Once -At $startTime `
     -RepetitionInterval (New-TimeSpan -Hours 2) `
-    -RepetitionDuration ([TimeSpan]::FromDays(3650))  # ~10 ans
+    -RepetitionDuration ([TimeSpan]::FromDays(3650))
 
-# Settings : démarre dès que possible si manqué, ne pas arrêter sur idle, timeout 50min
+# Settings
 $settings = New-ScheduledTaskSettingsSet `
     -StartWhenAvailable `
     -DontStopOnIdleEnd `
@@ -42,7 +44,7 @@ $settings = New-ScheduledTaskSettingsSet `
     -AllowStartIfOnBatteries `
     -DontStopIfGoingOnBatteries
 
-# Principal : exécution sous le user courant, sans demander de mdp à chaque fois
+# Principal: run as current user, interactive
 $principal = New-ScheduledTaskPrincipal -UserId "$env:USERDOMAIN\$env:USERNAME" -LogonType Interactive
 
 Register-ScheduledTask `
@@ -51,16 +53,16 @@ Register-ScheduledTask `
     -Trigger $trigger `
     -Settings $settings `
     -Principal $principal `
-    -Description "Génère une vidéo TikTok Mayotte toutes les 2h (Coqui XTTS + Mistral + Pollinations IA)"
+    -Description "Mayotte TikTok video generation every 2 hours"
 
 Write-Host ""
-Write-Host "✅ Tâche planifiée installée : $TaskName" -ForegroundColor Green
-Write-Host "   Démarrage : $startTime"
-Write-Host "   Répétition : toutes les 2 heures"
+Write-Host "Task installed: $TaskName" -ForegroundColor Green
+Write-Host "  Start: $startTime"
+Write-Host "  Interval: every 2 hours"
 Write-Host ""
-Write-Host "Commandes utiles :"
+Write-Host "Useful commands:"
 Write-Host "  Get-ScheduledTask -TaskName MayotteTikTokGen"
-Write-Host "  Start-ScheduledTask -TaskName MayotteTikTokGen   # lancer maintenant"
-Write-Host "  Unregister-ScheduledTask -TaskName MayotteTikTokGen -Confirm:`$false   # désinstaller"
+Write-Host "  Start-ScheduledTask -TaskName MayotteTikTokGen     # run now"
+Write-Host "  Unregister-ScheduledTask -TaskName MayotteTikTokGen -Confirm:`$false   # uninstall"
 Write-Host ""
-Write-Host "Logs : $ProjectPath\logs\"
+Write-Host "Logs: $ProjectPath\logs\"
