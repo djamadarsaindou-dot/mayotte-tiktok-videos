@@ -39,7 +39,7 @@ $trigger = New-ScheduledTaskTrigger -Once -At $startTime `
 $settings = New-ScheduledTaskSettingsSet `
     -StartWhenAvailable `
     -DontStopOnIdleEnd `
-    -ExecutionTimeLimit (New-TimeSpan -Minutes 50) `
+    -ExecutionTimeLimit (New-TimeSpan -Minutes 90) `
     -MultipleInstances IgnoreNew `
     -AllowStartIfOnBatteries `
     -DontStopIfGoingOnBatteries

@@ -10,6 +10,7 @@ set "PROJECT=%SCRIPT_DIR:~0,-8%"
 cd /d "%PROJECT%"
 
 set "PYTHONIOENCODING=utf-8"
+set "PYTHONUNBUFFERED=1"
 set "LOG_DIR=%PROJECT%logs"
 if not exist "%LOG_DIR%" mkdir "%LOG_DIR%"
 
