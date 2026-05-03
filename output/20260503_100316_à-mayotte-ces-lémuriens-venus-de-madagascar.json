@@ -1,0 +1,177 @@
+{
+  "title": "À Mayotte, ces lémuriens venus de Madagascar",
+  "topic": "decouverte_mayotte",
+  "topic_label": "Découverte Mayotte",
+  "hook": "Ils ne sont pas nés ici, mais les Mahorais les adorent. Rencontre avec les makis !",
+  "scenes": [
+    {
+      "narration": "Direction la forêt humide du nord, où gambade le seul primate sauvage de Mayotte : le maki, ce petit lémurien malgache adopté par les Mahorais.",
+      "visuals": [
+        "wide shot dense tropical rainforest canopy Mayotte",
+        "close-up brown lemur face looking curious",
+        "drone aerial lush green forest hills Mayotte"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a brown lemur sitting on a moss-covered tree branch in a dense tropical rainforest in Mayotte, Indian Ocean island, lush green vegetation, misty atmosphere, soft natural lighting, cinematic depth of field, ultra-detailed textures, 4K resolution",
+      "fact_used": "Il s'agit du seul primate sauvage présent sur l'île"
+    },
+    {
+      "narration": "Originaire des forêts malgaches, ce lémurien à face brune a traversé le canal pour élire domicile ici, où les Mahorais l’ont accueilli comme l’un des leurs.",
+      "visuals": [
+        "brown lemur climbing tree trunk tropical forest",
+        "close-up lemur face brown fur white patches",
+        "lemur jumping between branches dense foliage"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 close-up of a brown lemur's face, focusing on its expressive eyes and brown fur with white patches, set in a tropical rainforest in Mayotte, soft bokeh background of green leaves, natural sunlight filtering through canopy, ultra-detailed, cinematic",
+      "fact_used": "Le maki est un lémurien à face brune endémique de Madagascar, introduit à Mayotte"
+    },
+    {
+      "narration": "Et ici, sur les sentiers de Grande-Terre ou entre les mangroves de Pamandzi, c’est lui le seul primate sauvage que vous croiserez, adopté par les Mahorais comme un vrai local.",
+      "visuals": [
+        "lemur walking on forest ground leaves",
+        "lemur sitting on rock tropical setting",
+        "lemur grooming another lemur forest"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a brown lemur walking on a forest floor covered in dry leaves and twigs in Mayotte, dense tropical vegetation in the background, natural lighting creating soft shadows, ultra-detailed textures, cinematic composition",
+      "fact_used": "Il s'agit du seul primate sauvage présent sur l'île"
+    },
+    {
+      "narration": "Et ces petits malins vivent en bande de 5 à 15, comme une vraie famille, entre les arbres où les Mahorais les observent avec tendresse depuis des générations.",
+      "visuals": [
+        "group of lemurs sitting tree branches",
+        "lemurs playing together forest clearing",
+        "lemurs grooming each other dense foliage"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 wide shot of a group of 5-15 brown lemurs sitting and interacting on tree branches in a dense tropical rainforest in Mayotte, lush green background, natural sunlight creating dappled light effects, cinematic depth, ultra-detailed",
+      "fact_used": "Les groupes comptent généralement 5 à 15 individus"
+    },
+    {
+      "narration": "C’est dans la forêt humide du nord de l’île, entre les lianes et les feuilles géantes, que ces makis ont élu domicile sous le regard émerveillé des Mahorais.",
+      "visuals": [
+        "aerial shot northern Mayotte forest mist",
+        "dense green canopy tropical rainforest",
+        "river flowing through lush forest Mayotte"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 aerial drone shot of the dense tropical rainforest in northern Mayotte, mist rising above the lush green canopy, winding river visible through the trees, soft morning light, ultra-detailed, cinematic",
+      "fact_used": "Il vit principalement dans la forêt humide du nord"
+    },
+    {
+      "narration": "À Mayotte, les makis, ces petits lémuriens espiègles, se régalent de fruits, de feuilles et de fleurs, un spectacle qui émerveille toujours les habitants.",
+      "visuals": [
+        "lemur eating ripe fruit tree branch",
+        "close-up lemur holding fruit in paws",
+        "lemur chewing leaves tropical forest"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 close-up of a brown lemur holding a ripe tropical fruit in its paws, eating it on a tree branch in Mayotte's rainforest, lush green leaves and fruits in the background, natural lighting, ultra-detailed textures, cinematic",
+      "fact_used": "Son régime est frugivore, complété de feuilles et de fleurs"
+    },
+    {
+      "narration": "Et quand les fruits se font rares, ces acrobates des arbres se tournent vers les feuilles tendres et les fleurs parfumées, un festin qui ravit aussi les Mahorais !",
+      "visuals": [
+        "lemur picking leaves from tree",
+        "lemur smelling tropical flower forest",
+        "lemur eating flower petals branch"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a brown lemur delicately picking and smelling a tropical flower in a dense forest in Mayotte, soft sunlight filtering through the canopy, ultra-detailed textures of leaves and petals, cinematic composition",
+      "fact_used": "Son régime est frugivore, complété de feuilles et de fleurs"
+    },
+    {
+      "narration": "Et ici, pas question de les voir comme des intrus : pour les Mahorais, ces petits lémuriens font partie du décor depuis toujours, aussi familiers qu’un manguier dans la cour.",
+      "visuals": [
+        "local Mahorais smiling watching lemurs",
+        "children pointing at lemurs forest",
+        "elderly woman telling story about lemurs"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a group of Mahorais children and adults smiling and pointing at brown lemurs in a forest clearing in Mayotte, lush green background, warm natural lighting, candid and joyful expressions, ultra-detailed, cinematic",
+      "fact_used": "Les Mahorais le considèrent comme une figure familière de leur patrimoine naturel"
+    },
+    {
+      "narration": "Ils ont traversé le canal du Mozambique il y a des siècles, et aujourd’hui, les Mahorais les adoptent comme un symbole vivant de leur île.",
+      "visuals": [
+        "lemur in tree near traditional Mahorais house",
+        "lemur crossing path in village outskirts",
+        "lemur interacting with birds forest"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a brown lemur sitting on a low tree branch near a traditional Mahorais house with a thatched roof, surrounded by tropical vegetation, soft natural lighting, ultra-detailed textures, cinematic composition",
+      "fact_used": "Les Mahorais le considèrent comme une figure familière de leur patrimoine naturel"
+    },
+    {
+      "narration": "Et aujourd’hui, ces petits acrobates à fourrure font partie du décor : les Mahorais les chouchoutent comme un trésor de leur biodiversité locale.",
+      "visuals": [
+        "lemur silhouette against sunset forest",
+        "lemur climbing tall tree tropical setting",
+        "lemur jumping between branches golden hour"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a brown lemur climbing a tall tree in a tropical forest in Mayotte during golden hour, warm sunlight casting long shadows, lush green background, ultra-detailed textures, cinematic depth of field",
+      "fact_used": "Les Mahorais le considèrent comme une figure familière de leur patrimoine naturel"
+    },
+    {
+      "narration": "Entre les manguiers et les cases, impossible de rater ces boules de poils malicieuses que les Mahorais croisent au quotidien comme un voisin de toujours.",
+      "visuals": [
+        "tourists taking photos of lemurs forest",
+        "local guide explaining lemur behavior",
+        "family watching lemurs from distance"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a local Mahorais guide explaining the behavior of brown lemurs to a group of tourists in a tropical forest in Mayotte, lush green background, natural lighting, candid and educational moment, ultra-detailed, cinematic",
+      "fact_used": "Les Mahorais le considèrent comme une figure familière de leur patrimoine naturel"
+    },
+    {
+      "narration": "Et ces petits gourmands jouent un rôle clé dans la forêt : en grignotant fruits et fleurs, ils sèment la vie sur leur passage sans même s’en rendre compte.",
+      "visuals": [
+        "lemur dropping seeds while eating fruit",
+        "young plant growing forest floor",
+        "lemur moving through dense vegetation"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 close-up of a brown lemur eating a tropical fruit and accidentally dropping seeds on the forest floor in Mayotte, lush green background, soft natural lighting, ultra-detailed textures of seeds and leaves, cinematic",
+      "fact_used": "Son régime est frugivore, complété de feuilles et de fleurs"
+    },
+    {
+      "narration": "À Mayotte, les makis vivent en groupes de 5 à 15, une vraie famille où chacun a son rôle dans la forêt.",
+      "visuals": [
+        "lemurs communicating with vocalizations",
+        "lemurs grooming each other forest",
+        "lemurs playing chase tree branches"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of two brown lemurs grooming each other on a tree branch in a dense tropical forest in Mayotte, soft sunlight filtering through the canopy, ultra-detailed textures of fur and leaves, cinematic composition",
+      "fact_used": "Les groupes comptent généralement 5 à 15 individus"
+    },
+    {
+      "narration": "Et ici, les Mahorais les ont adoptés comme un vrai symbole de leur île, une petite mascotte sauvage qui fait partie du décor au quotidien.",
+      "visuals": [
+        "lemur sitting on branch tropical forest",
+        "aerial shot Mayotte forest coastline",
+        "lemur looking at camera curious expression"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 close-up of a brown lemur sitting on a tree branch in a tropical forest in Mayotte, looking directly at the camera with a curious expression, lush green background, soft natural lighting, ultra-detailed, cinematic",
+      "fact_used": "Les Mahorais le considèrent comme une figure familière de leur patrimoine naturel"
+    },
+    {
+      "narration": "Mais pour que ce petit acrobate continue de bondir dans les arbres du nord de l’île, les Mahorais savent qu’il faut préserver sa forêt, son refuge naturel.",
+      "visuals": [
+        "dense forest canopy northern Mayotte",
+        "river flowing through protected forest",
+        "conservation sign in tropical forest"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 aerial drone shot of a dense tropical rainforest in northern Mayotte, with a winding river flowing through the lush green canopy, mist rising in the morning light, ultra-detailed, cinematic, conservation-focused",
+      "fact_used": "Il vit principalement dans la forêt humide du nord"
+    },
+    {
+      "narration": "Originaire de Madagascar, ce lémurien à face brune a trouvé à Mayotte une nouvelle terre d’accueil, où les Mahorais l’observent désormais avec tendresse dans leur quotidien.",
+      "visuals": [
+        "lemur silhouette against Mayotte sunset",
+        "lemur in tree near Mahorais village",
+        "lemur walking forest path golden hour"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a brown lemur walking along a forest path in Mayotte during golden hour, warm sunlight casting long shadows, traditional Mahorais village visible in the distance, ultra-detailed textures, cinematic composition",
+      "fact_used": "Le maki est un lémurien à face brune endémique de Madagascar, introduit à Mayotte"
+    }
+  ],
+  "duration": 144.624,
+  "word_count": 422,
+  "num_clips": 48,
+  "sources_used": {
+    "Pexels vidéo": 48
+  },
+  "voice": "Coqui XTTS v2 / Damien Black",
+  "created_at": "2026-05-03T10:25:18.542038",
+  "video_file": "20260503_100316_à-mayotte-ces-lémuriens-venus-de-madagascar.mp4"
+}
