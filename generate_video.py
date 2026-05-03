@@ -52,13 +52,38 @@ def _is_mayotte_specific(query: str) -> bool:
     return bool(MAYOTTE_KEYWORDS_RE.search(query))
 
 
+GENERIC_FALLBACK_PROMPT = (
+    "tropical island Indian Ocean turquoise lagoon palm trees aerial view, "
+    "cinematic, vertical 9:16, photorealistic"
+)
+
+
 def fetch_visual(args) -> tuple[int, int, Path, str, str]:
-    """Pour la scène scene_idx, visuel visual_idx, télécharge l'asset."""
+    """Pour la scène scene_idx, visuel visual_idx, télécharge l'asset.
+
+    En cas d'échec total, retombe sur une requête Mayotte générique pour ne pas
+    faire planter le pipeline entier sur une scène difficile à illustrer.
+    """
     scene_idx, visual_idx, query, fallback_prompt, work_dir = args
     name = f"asset_s{scene_idx:02d}_v{visual_idx}"
     mayotte = _is_mayotte_specific(query) or _is_mayotte_specific(fallback_prompt)
-    asset, source = find_asset(query, fallback_prompt, work_dir, name, mayotte_specific=mayotte)
-    return scene_idx, visual_idx, asset, query, source
+    try:
+        asset, source = find_asset(query, fallback_prompt, work_dir, name, mayotte_specific=mayotte)
+        return scene_idx, visual_idx, asset, query, source
+    except Exception as e:
+        print(f"   ⚠️  Visuel s{scene_idx+1:02d}.v{visual_idx+1} a échoué ({str(e)[:60]}), fallback générique")
+        try:
+            asset, source = find_asset(
+                "tropical island lagoon Mayotte aerial",
+                GENERIC_FALLBACK_PROMPT,
+                work_dir,
+                f"{name}_fallback",
+                mayotte_specific=True,
+            )
+            return scene_idx, visual_idx, asset, query, f"{source} (fallback générique)"
+        except Exception as e2:
+            print(f"   ❌ Fallback aussi échoué : {str(e2)[:80]}")
+            raise
 
 
 def build_video(topic_key: str | None = None) -> Path:
