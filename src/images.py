@@ -8,13 +8,13 @@ import requests
 from src.config import POLLINATIONS_MODEL, VIDEO_HEIGHT, VIDEO_WIDTH
 
 POLLINATIONS_BASE = "https://image.pollinations.ai/prompt/"
-TIMEOUT = 180
-MAX_RETRIES = 5
+TIMEOUT = 120
+MAX_RETRIES = 2  # En cas de rate-limit, on bascule vite sur le fallback stock
 
 
 def _models_chain() -> list[str]:
     primary = POLLINATIONS_MODEL or "flux"
-    return [primary, "turbo", primary, primary, "turbo"]
+    return [primary, "turbo"]
 
 
 def _build_url(prompt: str, model: str, seed: int | None) -> str:
@@ -39,7 +39,7 @@ def generate_image(prompt: str, output_path: Path, seed: int | None = None) -> P
         try:
             r = requests.get(url, timeout=TIMEOUT)
             if r.status_code == 429:
-                wait = 10 + 5 * attempt
+                wait = 5  # court : on bascule vite en fallback si ça persiste
                 print(f"  ⏳ Rate limit ({model}), attente {wait}s (essai {attempt}/{MAX_RETRIES})")
                 time.sleep(wait)
                 continue
@@ -50,7 +50,7 @@ def generate_image(prompt: str, output_path: Path, seed: int | None = None) -> P
             return output_path
         except Exception as e:
             last_error = e
-            wait = 5 + 3 * attempt
+            wait = 3
             print(f"  ⚠️  Essai {attempt}/{MAX_RETRIES} ({model}) échoué : {str(e)[:80]}")
             time.sleep(wait)
 
