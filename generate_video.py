@@ -17,10 +17,12 @@ from src.config import (
     OUTPUT_DIR,
     PEXELS_API_KEY,
     PIXABAY_API_KEY,
+    POLLINATIONS_PARALLEL,
     TEMP_DIR,
     TTS_PROVIDER,
     VIDEO_HEIGHT,
     VIDEO_WIDTH,
+    VISUAL_PROVIDER,
     VISUALS_PER_SCENE,
     VOICE,
 )
@@ -86,13 +88,13 @@ def build_video(topic_key: str | None = None) -> Path:
     ass_path = work_dir / "subs.ass"
     build_karaoke_ass(words, ass_path, VIDEO_WIDTH, VIDEO_HEIGHT)
 
-    sources = []
-    if PEXELS_API_KEY: sources.append("Pexels")
-    if PIXABAY_API_KEY: sources.append("Pixabay")
-    sources.append("Pollinations IA")
-    print(f"🎨 Récup assets ({' → '.join(sources)})...")
+    if VISUAL_PROVIDER == "ai_first":
+        sources_label = "Pollinations IA → Pexels → Pixabay → Wikimedia (fallback)"
+    else:
+        sources_label = "Pexels → Pixabay → Wikimedia → Pollinations IA"
+    print(f"🎨 Récup assets ({sources_label})...")
     print(f"   {len(script['scenes'])} scènes × {VISUALS_PER_SCENE} visuels = "
-          f"{len(script['scenes']) * VISUALS_PER_SCENE} clips")
+          f"{len(script['scenes']) * VISUALS_PER_SCENE} clips, parallélisme {POLLINATIONS_PARALLEL}")
 
     # Construit la liste de tâches : (scene_idx, visual_idx, query, fallback, work_dir)
     tasks = []
@@ -103,14 +105,15 @@ def build_video(topic_key: str | None = None) -> Path:
         for v_idx, query in enumerate(visuals[:VISUALS_PER_SCENE]):
             tasks.append((s_idx, v_idx, query, scene.get("image_prompt", ""), work_dir))
 
-    # Recherche parallèle (4 workers, sources externes acceptent ce parallélisme)
+    # Recherche parallèle. Pollinations rate-limit serré → 2 workers max en ai_first.
+    workers = max(1, POLLINATIONS_PARALLEL)
     visual_results: dict[tuple[int, int], Path] = {}
     sources_used: dict[str, int] = {}
-    with ThreadPoolExecutor(max_workers=4) as ex:
+    with ThreadPoolExecutor(max_workers=workers) as ex:
         for s_idx, v_idx, asset, query, source in ex.map(fetch_visual, tasks):
             visual_results[(s_idx, v_idx)] = asset
             sources_used[source] = sources_used.get(source, 0) + 1
-            print(f"   ✓ s{s_idx+1:02d}.v{v_idx+1} [{source[:18]:18s}] {query[:45]}")
+            print(f"   ✓ s{s_idx+1:02d}.v{v_idx+1} [{source[:22]:22s}] {query[:42]}")
 
     # Calcul des durées : chaque scène consomme une fraction de l'audio
     # proportionnelle à son nombre de mots, puis on divise entre ses 3 visuels

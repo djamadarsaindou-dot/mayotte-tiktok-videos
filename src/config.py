@@ -55,6 +55,16 @@ LLM_PROVIDER = (os.getenv("LLM_PROVIDER", "auto").strip().lower() or "auto")
 PEXELS_API_KEY = os.getenv("PEXELS_API_KEY", "").strip()
 PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY", "").strip()
 
+# --- Visuels ---
+# VISUAL_PROVIDER : "ai_first" (Pollinations IA prioritaire, corrélation forte avec
+# le texte) ou "stock_first" (Pexels d'abord, plus rapide mais générique)
+VISUAL_PROVIDER = os.getenv("VISUAL_PROVIDER", "ai_first").strip().lower()
+POLLINATIONS_MODEL = os.getenv("POLLINATIONS_MODEL", "flux").strip()
+POLLINATIONS_PARALLEL = int(os.getenv("POLLINATIONS_PARALLEL", "2"))
+
+# Nettoyage auto : garde les N vidéos les plus récentes
+KEEP_LAST_N_VIDEOS = int(os.getenv("KEEP_LAST_N_VIDEOS", "50"))
+
 
 def find_ffmpeg() -> str:
     explicit = os.getenv("FFMPEG_PATH", "").strip()

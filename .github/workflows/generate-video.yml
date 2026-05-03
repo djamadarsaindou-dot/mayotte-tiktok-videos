@@ -1,9 +1,11 @@
 name: Génération vidéo TikTok automatique
 
 on:
-  schedule:
-    # Toutes les 12h : 06:00 et 18:00 UTC (08:00 et 20:00 heure de Paris en été)
-    - cron: '0 6,18 * * *'
+  # Cron désactivé : la génération se fait maintenant en local toutes les 2h
+  # via Windows Task Scheduler (cf. scripts/install_cron.ps1).
+  # Décommenter ci-dessous pour réactiver une exécution cloud.
+  # schedule:
+  #   - cron: '0 6,18 * * *'
   workflow_dispatch:  # bouton "Run workflow" manuel sur GitHub
     inputs:
       topic:
