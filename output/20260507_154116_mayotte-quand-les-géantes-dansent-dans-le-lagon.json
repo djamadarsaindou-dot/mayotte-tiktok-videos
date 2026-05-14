@@ -1,0 +1,178 @@
+{
+  "title": "Mayotte : quand les géantes dansent dans le lagon",
+  "topic": "decouverte_mayotte",
+  "topic_label": "Découverte Mayotte",
+  "hook": "Chaque été, des visiteuses de 30 tonnes offrent un spectacle magique à Mayotte.",
+  "scenes": [
+    {
+      "narration": "Et c’est ici, dans les eaux turquoise du lagon, que les Mahorais attendent chaque année ces géantes venues danser jusqu’en octobre.",
+      "visuals": [
+        "aerial drone shot turquoise lagoon Mayotte coastline",
+        "calm ocean waves tropical island background",
+        "local fishermen pointing towards horizon on boat"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 cinematic shot of a tropical Indian Ocean lagoon in Mayotte, aerial drone view showing turquoise waters, lush green coastline, small fishing boats in the distance, crystal clear visibility, golden hour lighting, serene and inviting atmosphere",
+      "fact_used": "Les baleines à bosse migrent à Mayotte de juillet à octobre"
+    },
+    {
+      "narration": "Elles parcourent plus de 5000 km depuis l’Antarctique pour offrir à leurs petits un berceau d’eaux chaudes, et les Mahorais ont la chance d’assister à ce spectacle unique.",
+      "visuals": [
+        "map animation showing migration route from Antarctica",
+        "close-up mother whale swimming with calf underwater",
+        "warm tropical waters Mayotte shallow reef"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 underwater shot of a humpback whale mother and calf swimming gracefully in the warm, shallow tropical waters of Mayotte's lagoon, sunlight filtering through the turquoise ocean, coral reef visible in the background, serene and peaceful scene",
+      "fact_used": "Elles viennent de l'Antarctique pour mettre bas et allaiter dans les eaux chaudes"
+    },
+    {
+      "narration": "Imaginez un animal aussi long qu’un bus scolaire et aussi lourd que six éléphants : voilà la baleine à bosse qui danse sous les yeux émerveillés des Mahorais.",
+      "visuals": [
+        "side-by-side comparison whale next to bus on beach",
+        "whale tail emerging from water near boat",
+        "group of people watching whale from shore"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a massive humpback whale tail emerging from the turquoise waters of Mayotte's lagoon, small boat with amazed tourists nearby, lush green hills in the background, dramatic scale comparison, bright daylight",
+      "fact_used": "Une baleine adulte peut peser 30 tonnes et mesurer 15 mètres"
+    },
+    {
+      "narration": "Et quand elles bondissent à quelques mètres du rivage, c’est tout Mayotte qui retient son souffle devant ce spectacle aussi rare que magique.",
+      "visuals": [
+        "humpback whale breaching ocean surface dramatic spray",
+        "tourists gasping on boat watching whale jump",
+        "slow-motion water droplets falling after breach"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 cinematic shot of a humpback whale breaching the ocean surface in Mayotte's lagoon, massive body emerging vertically, dramatic water spray, small boat with excited tourists in the foreground, tropical island greenery in the background, golden hour lighting",
+      "fact_used": "Les sauts hors de l'eau sont fréquents, parfois à quelques centaines de mètres du rivage"
+    },
+    {
+      "narration": "Et quand les mâles lancent leurs chants envoûtants dans le lagon, c’est pour charmer les femelles, sous le regard à la fois fier et émerveillé des Mahorais.",
+      "visuals": [
+        "underwater hydrophone recording whale sounds",
+        "scientist listening to whale song on boat",
+        "close-up male whale singing underwater"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 underwater shot of a male humpback whale singing in the deep blue waters of Mayotte's lagoon, bubbles rising from its blowhole, sunlight creating shimmering patterns on the ocean floor, serene and mysterious atmosphere",
+      "fact_used": "Les mâles chantent des mélodies complexes pour attirer les femelles"
+    },
+    {
+      "narration": "Sur place, les Mahorais vous emmènent en bateau observer ces géantes, à distance réglementaire pour ne pas les déranger, le cœur battant d’émotion.",
+      "visuals": [
+        "tourists on boat keeping safe distance from whale",
+        "guide explaining rules to visitors on deck",
+        "whale surfacing near boat without disturbance"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a small eco-tourism boat in Mayotte's lagoon, tourists wearing life jackets observing a humpback whale surfacing at a respectful distance, guide pointing and explaining, turquoise waters and tropical vegetation in the background",
+      "fact_used": "L'observation se fait depuis bateau, dans le respect d'une distance réglementaire"
+    },
+    {
+      "narration": "Et là, sous vos yeux ébahis, les baleines bondissent à quelques centaines de mètres seulement des côtes, offrant un spectacle magique que les Mahorais connaissent par cœur.",
+      "visuals": [
+        "whale breaching near white sandy beach",
+        "children pointing at whale from shore",
+        "aerial shot whale jumping close to coastline"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 aerial drone shot of a humpback whale breaching just a few hundred meters from Mayotte's white sandy beach, children and families watching in awe from the shore, turquoise waters contrasting with lush green hills, bright sunny day",
+      "fact_used": "Les sauts hors de l'eau sont fréquents, parfois à quelques centaines de mètres du rivage"
+    },
+    {
+      "narration": "Chaque année entre juillet et octobre, les Mahorais se rassemblent en silence pour admirer ces géantes bleues qui transforment leur lagon en scène à ciel ouvert.",
+      "visuals": [
+        "local family watching whale from beach",
+        "elderly man smiling pointing at ocean",
+        "group of friends taking photos of whale"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a Mahorais family standing on a rocky shore in Mayotte, watching a humpback whale breaching in the distance, elderly man smiling and pointing, children excited, tropical vegetation and turquoise waters in the background",
+      "fact_used": "Les baleines à bosse migrent à Mayotte de juillet à octobre"
+    },
+    {
+      "narration": "Imaginez un peu : ces danseuses des mers pèsent autant que six éléphants et s’étirent plus long qu’un bus mahorais, sous les yeux émerveillés des Mahorais.",
+      "visuals": [
+        "whale next to traditional Mahorais house for scale",
+        "infographic comparing whale to large truck",
+        "whale fin size compared to person standing"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a humpback whale fin breaking the surface of Mayotte's lagoon, local fisherman standing on a small boat next to it for scale, turquoise waters, bright daylight, clear comparison of sizes",
+      "fact_used": "Une baleine adulte peut peser 30 tonnes et mesurer 15 mètres"
+    },
+    {
+      "narration": "Sous le soleil mahorais, un spectacle magique : des baleineaux, nés récemment, nagent avec leurs mères dans le lagon turquoise.",
+      "visuals": [
+        "mother whale and calf swimming together underwater",
+        "baby whale surfacing next to mother",
+        "close-up whale calf nursing underwater"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 underwater shot of a humpback whale mother and her calf swimming side by side in Mayotte's lagoon, sunlight creating a magical glow through the turquoise waters, coral reef visible in the distance, peaceful and heartwarming scene",
+      "fact_used": "Elles viennent de l'Antarctique pour mettre bas et allaiter dans les eaux chaudes"
+    },
+    {
+      "narration": "Et là, sur le bateau, les yeux brillent quand les géantes émergent—les Mahorais veillent, sourire aux lèvres, à distance respectueuse pour ces reines du lagon.",
+      "visuals": [
+        "tourist with binoculars watching whale excitedly",
+        "group of people cheering as whale breaches",
+        "close-up emotional reaction of visitor"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 close-up shot of a tourist's emotional face, tears of joy as they watch a humpback whale breaching from a boat in Mayotte's lagoon, other excited tourists in the background, turquoise waters and tropical sky",
+      "fact_used": "L'observation se fait depuis bateau, dans le respect d'une distance réglementaire"
+    },
+    {
+      "narration": "Chaque année entre juillet et octobre le lagon se transforme en scène où ces géantes viennent danser sous les yeux émerveillés des Mahorais.",
+      "visuals": [
+        "aerial shot double lagoon Mayotte turquoise waters",
+        "whale swimming in shallow crystal clear waters",
+        "coral reef visible from above with whale nearby"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 aerial drone shot of Mayotte's double lagoon, turquoise and deep blue waters creating a stunning contrast, a humpback whale swimming gracefully in the shallow crystal clear waters, coral reefs visible below, tropical island greenery surrounding the lagoon",
+      "fact_used": "Les baleines à bosse migrent à Mayotte de juillet à octobre"
+    },
+    {
+      "narration": "Et ce qui rend le spectacle encore plus magique, c’est que les mâles entonnent des chants envoûtants, une vraie symphonie sous-marine qui fait vibrer le lagon et émerveiller les Mahorais.",
+      "visuals": [
+        "soundwave visualization of whale song",
+        "scientist analyzing whale sounds on laptop",
+        "underwater shot of whale singing with bubbles"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 underwater shot of a male humpback whale singing in Mayotte's lagoon, bubbles rising from its blowhole creating a mesmerizing pattern, soundwaves visually represented in the water, deep blue ocean background, serene and mystical atmosphere",
+      "fact_used": "Les mâles chantent des mélodies complexes pour attirer les femelles"
+    },
+    {
+      "narration": "Alors pour que ces géantes continuent de danser sous nos yeux, les Mahorais veillent à les observer depuis leur bateau en gardant toujours une distance respectueuse.",
+      "visuals": [
+        "sign explaining whale watching rules on boat",
+        "tourists listening attentively to guide's instructions",
+        "whale swimming peacefully in protected area"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a sign on a boat in Mayotte's lagoon explaining the rules for respectful whale watching, tourists reading attentively, a humpback whale swimming peacefully in the background, turquoise waters and tropical island in the distance",
+      "fact_used": "L'observation se fait depuis bateau, dans le respect d'une distance réglementaire"
+    },
+    {
+      "narration": "Et là, sous le ciel en feu, une baleine s’élance à quelques mètres du bateau – les Mahorais retiennent leur souffle, le lagon s’embrase de magie.",
+      "visuals": [
+        "whale breaching during golden hour",
+        "silhouette of whale against sunset sky",
+        "tourists in awe watching from boat"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 cinematic shot of a humpback whale breaching the ocean surface during golden hour in Mayotte's lagoon, silhouette of the whale against a stunning sunset sky, tourists on a boat watching in awe, warm light reflecting on the turquoise waters",
+      "fact_used": "Les sauts hors de l'eau sont fréquents, parfois à quelques centaines de mètres du rivage"
+    },
+    {
+      "narration": "Et quand la géante replonge dans l’immensité bleue, les Mahorais savent qu’elle emporte avec elle un peu de la magie du lagon jusqu’à l’année prochaine.",
+      "visuals": [
+        "whale tail disappearing into the horizon",
+        "aerial shot whale swimming away from island",
+        "tranquil ocean at dusk with whale in distance"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 aerial drone shot of a humpback whale swimming away from Mayotte's island into the vast Indian Ocean, its tail breaking the surface one last time, turquoise waters blending into the horizon, tranquil and poetic scene at dusk",
+      "fact_used": "Les baleines à bosse migrent à Mayotte de juillet à octobre"
+    }
+  ],
+  "duration": 146.496,
+  "word_count": 404,
+  "num_clips": 48,
+  "sources_used": {
+    "Pexels vidéo (fallback)": 39,
+    "Pollinations IA": 9
+  },
+  "voice": "Coqui XTTS v2 / Damien Black",
+  "created_at": "2026-05-07T16:01:57.093994",
+  "video_file": "20260507_154116_mayotte-quand-les-géantes-dansent-dans-le-lagon.mp4"
+}

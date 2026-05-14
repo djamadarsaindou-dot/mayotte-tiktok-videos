@@ -1,0 +1,178 @@
+{
+  "title": "L'ylang-ylang, l'or parfumé de Mayotte 🌼✨",
+  "topic": "decouverte_mayotte",
+  "topic_label": "Découverte Mayotte",
+  "hook": "Cette fleur jaune cache un trésor qui voyage jusqu’à votre parfum préféré…",
+  "scenes": [
+    {
+      "narration": "Et saviez-vous que les Mahorais cultivent cette petite fleur depuis plus d’un siècle pour en faire 80% de l’ylang-ylang utilisé dans les parfums du monde entier ?",
+      "visuals": [
+        "aerial shot lush green island tropical plantation",
+        "close-up yellow ylang-ylang flowers blooming",
+        "farmer walking through ylang-ylang field morning light"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a vibrant tropical plantation on Mayotte island, rows of yellow ylang-ylang flowers in full bloom under soft morning sunlight, lush greenery, Indian Ocean visible in the background, warm golden tones, cinematic depth of field",
+      "fact_used": "Mayotte produit historiquement environ 80% de l'ylang-ylang mondial"
+    },
+    {
+      "narration": "Et chaque matin avant que le soleil ne se lève, les Mahorais montent dans les champs pour cueillir à la main ces pétales fragiles qui gardent tout leur parfum.",
+      "visuals": [
+        "farmers picking yellow flowers early morning",
+        "hands gently harvesting ylang-ylang blossoms",
+        "baskets filled with fresh yellow flowers"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of Mahorais farmers in a ylang-ylang plantation at dawn, gently picking yellow flowers by hand, soft golden light filtering through the trees, tropical greenery, workers wearing traditional clothing, baskets full of fresh blossoms",
+      "fact_used": "La récolte se fait à la main, à l'aube, avant que le soleil n'altère le parfum"
+    },
+    {
+      "narration": "Pourquoi si tôt ? Parce qu’une fois le jour levé, la chaleur fait s’envoler les précieuses huiles essentielles que les Mahorais captent dans ces pétales encore humides de rosée.",
+      "visuals": [
+        "sunrise over tropical plantation fields",
+        "close-up dew on ylang-ylang petals",
+        "farmer checking freshness of flowers"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a sunrise over a tropical ylang-ylang plantation in Mayotte, dew glistening on yellow petals, farmer inspecting flowers for freshness, warm soft light, vibrant green foliage, Indian Ocean horizon in background",
+      "fact_used": "La récolte se fait à la main, à l'aube, avant que le soleil n'altère le parfum"
+    },
+    {
+      "narration": "Direction les alambics en cuivre où les Mahorais déposent ces fleurs fragiles pour en extraire ce parfum envoûtant, trésor de l’île aux parfums.",
+      "visuals": [
+        "farmers carrying baskets of flowers",
+        "wooden cart loaded with ylang-ylang blossoms",
+        "village path leading to distillation site"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of Mahorais farmers carrying large baskets of freshly picked ylang-ylang flowers along a dirt path, tropical greenery, wooden carts loaded with blossoms, traditional village huts in the background, warm morning light",
+      "fact_used": "La distillation traditionnelle se fait dans des alambics en cuivre"
+    },
+    {
+      "narration": "Et c’est parti pour des heures de distillation où les Mahorais surveillent le feu sous ces alambics qui transforment les pétales en essence pure, l’âme de Mayotte en bouteille.",
+      "visuals": [
+        "copper alambic steaming in tropical setting",
+        "worker tending to distillation process",
+        "close-up of essential oil dripping"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a traditional copper alambic steaming in a tropical setting, Mahorais worker tending to the distillation process, close-up of golden essential oil dripping into a glass container, lush green background, warm lighting",
+      "fact_used": "La distillation traditionnelle se fait dans des alambics en cuivre"
+    },
+    {
+      "narration": "Saviez-vous qu’il faut près de 100 kilos de ces petites fleurs jaunes pour obtenir un seul kilo d’huile précieuse, le trésor que les Mahorais extraient avec patience et savoir-faire ?",
+      "visuals": [
+        "large pile of yellow flowers next to small oil bottle",
+        "worker weighing baskets of flowers",
+        "close-up of tiny bottle of essential oil"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a large pile of yellow ylang-ylang flowers next to a small glass bottle of essential oil, worker weighing baskets of flowers on a scale, tropical plantation background, warm natural lighting",
+      "fact_used": "Un kilogramme d'huile nécessite environ 100 kg de fleurs"
+    },
+    {
+      "narration": "Cette huile dorée, c’est l’or liquide de Mayotte : les Mahorais transforment leurs fleurs en trésor pour les plus grands parfums.",
+      "visuals": [
+        "close-up golden liquid in glass bottle",
+        "dropper releasing oil into container",
+        "hands holding small bottle of essential oil"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 close-up of golden ylang-ylang essential oil in a small glass bottle, dropper releasing a drop of oil, hands carefully holding the bottle, soft bokeh background, warm lighting, tropical ambiance",
+      "fact_used": "Cette fleur jaune sert à l'extraction d'huile essentielle pour la parfumerie"
+    },
+    {
+      "narration": "Et devine quoi ? Sans cette petite fleur mahoraise, des flacons mythiques comme le Chanel n°5 n’auraient tout simplement pas la même magie.",
+      "visuals": [
+        "luxury perfume bottle on marble surface",
+        "close-up Chanel n°5 label",
+        "hands spraying perfume in elegant setting"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a luxury perfume bottle (Chanel n°5 style) on a marble surface, close-up of the label, elegant hands spraying perfume, soft golden lighting, sophisticated ambiance, tropical Mayotte elements subtly in background",
+      "fact_used": "Elle est l'ingrédient star du Chanel n°5 et de nombreux grands parfums"
+    },
+    {
+      "narration": "Et aujourd’hui, les Mahorais envoient cette essence précieuse aux plus grands parfumeurs de la planète, faisant voyager l’âme de Mayotte à travers le monde.",
+      "visuals": [
+        "boxes labeled for international shipping",
+        "worker packing bottles of essential oil",
+        "airplane cargo hold with crates"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of wooden crates labeled for international shipping, Mahorais worker carefully packing bottles of ylang-ylang essential oil, boxes stacked in a warehouse, tropical Mayotte setting, warm lighting",
+      "fact_used": "Mayotte produit historiquement environ 80% de l'ylang-ylang mondial"
+    },
+    {
+      "narration": "Sur le terrain dès l’aube, les Mahorais cueillent à la main chaque pétale d’ylang-ylang, fiers de préserver ce trésor qui embaume la planète.",
+      "visuals": [
+        "farmer smiling while holding flowers",
+        "group of workers posing in plantation",
+        "close-up of hands with freshly picked flowers"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a Mahorais farmer smiling while holding freshly picked ylang-ylang flowers, group of workers posing proudly in a tropical plantation, close-up of hands with yellow blossoms, warm golden light, lush greenery",
+      "fact_used": "La récolte se fait à la main, à l'aube, avant que le soleil n'altère le parfum"
+    },
+    {
+      "narration": "Et derrière chaque goutte d’huile essentielle, c’est toute une économie qui fait vivre les Mahorais depuis des générations, bien au-delà des collines parfumées.",
+      "visuals": [
+        "local market bustling with activity",
+        "vendor selling handmade products",
+        "children playing near plantation"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a bustling local market in Mayotte, vendors selling handmade products and fresh produce, children playing nearby, ylang-ylang flowers subtly visible, vibrant tropical colors, warm lighting",
+      "fact_used": "Mayotte produit historiquement environ 80% de l'ylang-ylang mondial"
+    },
+    {
+      "narration": "Imaginez une île où les collines dansent sous le vent, couvertes de milliers de fleurs dorées qui font de Mayotte le trésor parfumé de la planète.",
+      "visuals": [
+        "aerial shot of tropical island and lagoon",
+        "ylang-ylang flowers with ocean background",
+        "sunset over plantation fields"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 aerial shot of Mayotte’s tropical island and turquoise lagoon, ylang-ylang flowers in the foreground with the ocean in the background, golden sunset lighting, lush greenery, cinematic depth of field",
+      "fact_used": "Mayotte produit historiquement environ 80% de l'ylang-ylang mondial"
+    },
+    {
+      "narration": "Et ici, les Mahorais transforment cette fleur en or liquide : une huile essentielle qui parfume les plus grands flacons du monde.",
+      "visuals": [
+        "artisan mixing oil in small workshop",
+        "close-up of hands crafting perfume",
+        "bottles of handmade scented products"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a Mahorais artisan in a small workshop, carefully mixing ylang-ylang essential oil, close-up of hands crafting a perfume, bottles of handmade scented products on a wooden table, warm natural lighting",
+      "fact_used": "Cette fleur jaune sert à l'extraction d'huile essentielle pour la parfumerie"
+    },
+    {
+      "narration": "Saviez-vous que cette petite fleur jaune des champs mahorais se cache dans le flacon mythique du Chanel n°5 et fait rêver les nez les plus prestigieux de la planète ?",
+      "visuals": [
+        "world map with perfume bottles pinned",
+        "close-up of famous perfume ads",
+        "hands holding bottle of Chanel n°5"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a world map with small perfume bottles pinned on different countries, close-up of famous perfume advertisements, hands holding a bottle of Chanel n°5, soft focus on Mayotte in the background, warm lighting",
+      "fact_used": "Elle est l'ingrédient star du Chanel n°5 et de nombreux grands parfums"
+    },
+    {
+      "narration": "Derrière ce parfum célèbre se cache un savoir-faire mahorais unique, faisant de l'île la reine mondiale de l'ylang-ylang depuis un siècle.",
+      "visuals": [
+        "farmer holding ylang-ylang flowers to camera",
+        "plantation fields stretching to horizon",
+        "close-up of flower with sunset glow"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 shot of a Mahorais farmer holding ylang-ylang flowers up to the camera, vast plantation fields stretching to the horizon, close-up of a single flower glowing in the sunset light, warm golden tones, tropical ambiance",
+      "fact_used": "Mayotte produit historiquement environ 80% de l'ylang-ylang mondial"
+    },
+    {
+      "narration": "Alors si vous voulez toucher du doigt ce trésor qui fait vibrer les parfumeries du monde entier, venez respirer l’or liquide des Mahorais ici même à Mayotte.",
+      "visuals": [
+        "aerial shot of Mayotte’s lagoon and island",
+        "smiling locals waving at camera",
+        "ylang-ylang flowers in foreground"
+      ],
+      "image_prompt": "photorealistic vertical 9:16 aerial shot of Mayotte’s stunning lagoon and tropical island, smiling locals waving at the camera, ylang-ylang flowers in the foreground, vibrant colors, warm inviting lighting, cinematic depth of field",
+      "fact_used": "Mayotte produit historiquement environ 80% de l'ylang-ylang mondial"
+    }
+  ],
+  "duration": 143.222667,
+  "word_count": 407,
+  "num_clips": 48,
+  "sources_used": {
+    "Pexels vidéo (fallback)": 38,
+    "Pollinations IA": 10
+  },
+  "voice": "Coqui XTTS v2 / Damien Black",
+  "created_at": "2026-05-05T06:00:33.582729",
+  "video_file": "20260505_054218_lylang-ylang-lor-parfumé-de-mayotte.mp4"
+}

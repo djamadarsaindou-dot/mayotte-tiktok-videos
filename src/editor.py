@@ -64,6 +64,11 @@ def _normalize_asset(asset_path: Path, target_path: Path, duration: float, scene
             str(target_path),
         ]
     else:
+        # IMAGE : Ken Burns via zoompan.
+        # Le bug classique de zoompan : il produit `d` frames PAR FRAME D'INPUT.
+        # Solution : forcer 1 frame d'input (-frames:v 1 sur input, puis re-loop sur output).
+        # Plus simple : `-loop 1 -i image -vf "...,zoompan=d=N:fps=FPS:s=WxH" -t DURATION`
+        # avec -t en SORTIE pour limiter la durée finale.
         frames = max(1, int(duration * VIDEO_FPS))
         if scene_index % 2 == 0:
             zoom_expr = "min(zoom+0.0012,1.35)"
@@ -73,13 +78,16 @@ def _normalize_asset(asset_path: Path, target_path: Path, duration: float, scene
             f"scale={VIDEO_WIDTH*2}:{VIDEO_HEIGHT*2}:force_original_aspect_ratio=increase,"
             f"crop={VIDEO_WIDTH*2}:{VIDEO_HEIGHT*2},"
             f"zoompan=z='{zoom_expr}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':"
-            f"d={frames}:s={VIDEO_WIDTH}x{VIDEO_HEIGHT}:fps={VIDEO_FPS},setsar=1"
+            f"d={frames}:s={VIDEO_WIDTH}x{VIDEO_HEIGHT}:fps={VIDEO_FPS},setsar=1,"
+            f"trim=duration={duration:.3f}"
         )
         cmd = [
             FFMPEG, "-y",
-            "-loop", "1", "-t", f"{duration:.3f}",
+            "-loop", "1",
+            "-framerate", "1",       # 1 input frame/sec → zoompan ne multiplie pas
             "-i", str(asset_path),
             "-vf", kb,
+            "-t", f"{duration:.3f}",  # filet de sécurité côté sortie
             "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
             "-pix_fmt", "yuv420p",
             "-r", str(VIDEO_FPS),
