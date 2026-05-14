@@ -14,6 +14,7 @@ if hasattr(sys.stdout, "reconfigure"):
 
 from src.config import (
     COQUI_SPEAKER,
+    FINAL_VIDEOS_DIR,
     OUTPUT_DIR,
     PEXELS_API_KEY,
     PIXABAY_API_KEY,
@@ -28,7 +29,7 @@ from src.config import (
 )
 from src.editor import assemble_video, get_audio_duration
 from src.script_writer import generate_script
-from src.stock_finder import find_asset
+from src.stock_finder import find_ai_asset, find_asset, find_stock_asset
 from src.subtitles import build_karaoke_ass
 from src.topics import TOPICS, random_topic
 from src.voice import assemble_narration, synthesize
@@ -61,14 +62,18 @@ GENERIC_FALLBACK_PROMPT = (
 def fetch_visual(args) -> tuple[int, int, Path, str, str]:
     """Pour la scène scene_idx, visuel visual_idx, télécharge l'asset.
 
-    En cas d'échec total, retombe sur une requête Mayotte générique pour ne pas
-    faire planter le pipeline entier sur une scène difficile à illustrer.
+    Mode HYBRIDE :
+    - visual_idx == 0 : IA Pollinations (ancre du sens, corrélation forte texte/image)
+    - visual_idx > 0  : stock (Pexels/Pixabay/Wikimedia) — rapide
+
+    En cas d'échec total, retombe sur une requête Mayotte générique.
     """
     scene_idx, visual_idx, query, fallback_prompt, work_dir = args
     name = f"asset_s{scene_idx:02d}_v{visual_idx}"
     mayotte = _is_mayotte_specific(query) or _is_mayotte_specific(fallback_prompt)
+    finder = find_ai_asset if visual_idx == 0 else find_stock_asset
     try:
-        asset, source = find_asset(query, fallback_prompt, work_dir, name, mayotte_specific=mayotte)
+        asset, source = finder(query, fallback_prompt, work_dir, name, mayotte_specific=mayotte)
         return scene_idx, visual_idx, asset, query, source
     except Exception as e:
         print(f"   ⚠️  Visuel s{scene_idx+1:02d}.v{visual_idx+1} a échoué ({str(e)[:60]}), fallback générique")
@@ -113,32 +118,42 @@ def build_video(topic_key: str | None = None) -> Path:
     ass_path = work_dir / "subs.ass"
     build_karaoke_ass(words, ass_path, VIDEO_WIDTH, VIDEO_HEIGHT)
 
-    if VISUAL_PROVIDER == "ai_first":
-        sources_label = "Pollinations IA → Pexels → Pixabay → Wikimedia (fallback)"
-    else:
-        sources_label = "Pexels → Pixabay → Wikimedia → Pollinations IA"
-    print(f"🎨 Récup assets ({sources_label})...")
+    print(f"🎨 Récup assets — MODE HYBRIDE (1 IA + {VISUALS_PER_SCENE-1} stock par scène)")
     print(f"   {len(script['scenes'])} scènes × {VISUALS_PER_SCENE} visuels = "
-          f"{len(script['scenes']) * VISUALS_PER_SCENE} clips, parallélisme {POLLINATIONS_PARALLEL}")
+          f"{len(script['scenes']) * VISUALS_PER_SCENE} clips")
 
     # Construit la liste de tâches : (scene_idx, visual_idx, query, fallback, work_dir)
-    tasks = []
+    all_tasks = []
     for s_idx, scene in enumerate(script["scenes"]):
         visuals = scene.get("visuals", [])
         while len(visuals) < VISUALS_PER_SCENE:
             visuals.append(scene.get("image_prompt", ""))
         for v_idx, query in enumerate(visuals[:VISUALS_PER_SCENE]):
-            tasks.append((s_idx, v_idx, query, scene.get("image_prompt", ""), work_dir))
+            all_tasks.append((s_idx, v_idx, query, scene.get("image_prompt", ""), work_dir))
 
-    # Recherche parallèle. Pollinations rate-limit serré → 2 workers max en ai_first.
-    workers = max(1, POLLINATIONS_PARALLEL)
+    # On sépare en 2 phases pour éviter que plusieurs IA se déclenchent en
+    # parallèle (Pollinations rate-limit).
+    ai_tasks = [t for t in all_tasks if t[1] == 0]       # visual_idx == 0 → IA
+    stock_tasks = [t for t in all_tasks if t[1] != 0]    # autres → stock rapide
+
     visual_results: dict[tuple[int, int], Path] = {}
     sources_used: dict[str, int] = {}
-    with ThreadPoolExecutor(max_workers=workers) as ex:
-        for s_idx, v_idx, asset, query, source in ex.map(fetch_visual, tasks):
+
+    # Phase 1 : stock en parallèle (rapide) — les Pexels acceptent le parallélisme
+    print(f"   🏃 Phase stock ({len(stock_tasks)} visuels, parallélisme {POLLINATIONS_PARALLEL})...")
+    with ThreadPoolExecutor(max_workers=max(1, POLLINATIONS_PARALLEL)) as ex:
+        for s_idx, v_idx, asset, query, source in ex.map(fetch_visual, stock_tasks):
             visual_results[(s_idx, v_idx)] = asset
             sources_used[source] = sources_used.get(source, 0) + 1
             print(f"   ✓ s{s_idx+1:02d}.v{v_idx+1} [{source[:22]:22s}] {query[:42]}")
+
+    # Phase 2 : IA en séquentiel (Pollinations rate-limit sévèrement)
+    print(f"   🎨 Phase IA ({len(ai_tasks)} visuels, séquentiel)...")
+    for task in ai_tasks:
+        s_idx, v_idx, asset, query, source = fetch_visual(task)
+        visual_results[(s_idx, v_idx)] = asset
+        sources_used[source] = sources_used.get(source, 0) + 1
+        print(f"   ✓ s{s_idx+1:02d}.v{v_idx+1} [{source[:22]:22s}] {query[:42]}")
 
     # Calcul des durées : chaque scène consomme une fraction de l'audio
     # proportionnelle à son nombre de mots, puis on divise entre ses 3 visuels
@@ -180,6 +195,19 @@ def build_video(topic_key: str | None = None) -> Path:
     print(f"\n✅ Vidéo prête : {output_path}")
     print(f"   Durée : {audio_duration:.0f}s | {total_words} mots | {len(asset_paths)} clips")
     print(f"   Sources : {src_summary}")
+
+    # Copie la vidéo finale dans le dossier dédié de l'utilisateur (hors projet)
+    try:
+        import shutil
+        FINAL_VIDEOS_DIR.mkdir(parents=True, exist_ok=True)
+        final_video = FINAL_VIDEOS_DIR / output_path.name
+        shutil.copy2(output_path, final_video)
+        # Copie aussi le JSON pour avoir le contexte (titre, sujet, etc.)
+        shutil.copy2(meta_path, FINAL_VIDEOS_DIR / meta_path.name)
+        print(f"📂 Copie dans : {final_video}")
+    except Exception as e:
+        print(f"⚠️  Copie vers dossier final a échoué : {e}")
+
     return output_path
 
 

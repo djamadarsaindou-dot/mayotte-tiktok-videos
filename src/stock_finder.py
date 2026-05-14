@@ -1,11 +1,14 @@
 """Trouve un asset visuel en essayant plusieurs sources.
 
-Mode `ai_first` (défaut) : Pollinations IA → Pexels vidéo → Pixabay vidéo → Wikimedia
-  → idéal pour des images en CORRÉLATION FORTE avec le texte (chaque scène a un
-  prompt riche dérivé de la narration), au prix d'une génération plus lente.
+Mode `ai_first` (défaut) : Pollinations IA → Pexels → Pixabay → Wikimedia
+  → idéal pour des images en CORRÉLATION FORTE avec le texte.
 
 Mode `stock_first` : Pexels vidéo → Pixabay vidéo → Wikimedia → Pollinations IA
-  → plus rapide, mais le contenu visuel est plus générique.
+  → plus rapide, contenu visuel plus générique.
+
+Mode hybride utilisé par generate_video.py : 1er visuel de chaque scène en IA
+  (ancre du sens), les autres en stock pour la rapidité. Deux fonctions sont
+  exposées : `find_ai_asset` et `find_stock_asset`.
 """
 import random
 from pathlib import Path
@@ -46,12 +49,16 @@ def find_asset(
     p_jpg = output_dir / f"{name}.jpg"
 
     if VISUAL_PROVIDER == "ai_first":
-        # 1) Pollinations IA en priorité (image en corrélation avec le texte)
-        try:
-            _ai_generate(query, image_prompt_fallback, p_jpg, mayotte_specific)
-            return p_jpg, "Pollinations IA"
-        except Exception as e:
-            print(f"  ⚠️  Pollinations IA a échoué : {str(e)[:80]} — fallback stock")
+        # 1) Pollinations IA en PRIORITÉ ABSOLUE (qualité IA = exigence utilisateur).
+        # 2 tentatives avec des seeds différents avant de céder au fallback stock.
+        for ai_attempt in range(2):
+            try:
+                _ai_generate(query, image_prompt_fallback, p_jpg, mayotte_specific)
+                return p_jpg, "Pollinations IA"
+            except Exception as e:
+                print(f"  ⚠️  Pollinations IA tentative {ai_attempt+1}/2 a échoué : "
+                      f"{str(e)[:80]}")
+        print(f"  ↪  Bascule fallback stock pour : {query[:60]}")
 
         # 2) Fallback : Pexels vidéo
         if pexels_video(query, p_mp4):
@@ -85,3 +92,68 @@ def find_asset(
         return p_jpg, "Pixabay photo"
     _ai_generate(query, image_prompt_fallback, p_jpg, mayotte_specific)
     return p_jpg, "Pollinations IA"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Mode hybride (mix IA + stock par scène)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def find_ai_asset(
+    query: str,
+    image_prompt_fallback: str,
+    output_dir: Path,
+    name: str,
+    mayotte_specific: bool = False,
+) -> tuple[Path, str]:
+    """Force la génération IA. Si tout échoue, fallback Pexels uniquement."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    p_jpg = output_dir / f"{name}.jpg"
+    p_mp4 = output_dir / f"{name}.mp4"
+
+    for ai_attempt in range(2):
+        try:
+            _ai_generate(query, image_prompt_fallback, p_jpg, mayotte_specific)
+            return p_jpg, "Pollinations IA"
+        except Exception as e:
+            print(f"  ⚠️  IA tentative {ai_attempt+1}/2 a échoué : {str(e)[:70]}")
+
+    # Fallback minimal (rapide) si IA refuse vraiment
+    print(f"  ↪  IA indisponible, fallback Pexels pour : {query[:50]}")
+    if pexels_video(query, p_mp4):
+        return p_mp4, "Pexels vidéo (IA-fallback)"
+    if pexels_photo(query, p_jpg):
+        return p_jpg, "Pexels photo (IA-fallback)"
+    raise RuntimeError(f"Aucune source pour : {query}")
+
+
+def find_stock_asset(
+    query: str,
+    image_prompt_fallback: str,
+    output_dir: Path,
+    name: str,
+    mayotte_specific: bool = False,
+) -> tuple[Path, str]:
+    """Stock d'abord (rapide), IA en dernier recours uniquement."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    p_jpg = output_dir / f"{name}.jpg"
+    p_mp4 = output_dir / f"{name}.mp4"
+
+    if pexels_video(query, p_mp4):
+        return p_mp4, "Pexels vidéo"
+    if pixabay_video(query, p_mp4):
+        return p_mp4, "Pixabay vidéo"
+    if mayotte_specific and wikimedia_image(query, p_jpg, force_mayotte=True):
+        return p_jpg, "Wikimedia (Mayotte)"
+    if pexels_photo(query, p_jpg):
+        return p_jpg, "Pexels photo"
+    if pixabay_photo(query, p_jpg):
+        return p_jpg, "Pixabay photo"
+    if not mayotte_specific and wikimedia_image(query, p_jpg):
+        return p_jpg, "Wikimedia"
+
+    # Dernier recours : IA même en stock_first
+    try:
+        _ai_generate(query, image_prompt_fallback, p_jpg, mayotte_specific)
+        return p_jpg, "Pollinations IA (stock-fallback)"
+    except Exception:
+        raise RuntimeError(f"Aucune source pour : {query}")

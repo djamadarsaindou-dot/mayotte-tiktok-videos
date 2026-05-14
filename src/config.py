@@ -11,6 +11,11 @@ OUTPUT_DIR = ROOT / "output"
 TEMP_DIR = OUTPUT_DIR / "temp"
 ASSETS_DIR = ROOT / "assets"
 
+# Dossier final où l'utilisateur retrouve ses vidéos finies (hors du projet).
+# Configurable via FINAL_VIDEOS_DIR dans .env. Si absent : ~/Videos/Mayotte TikTok
+_default_final = Path.home() / "Videos" / "Mayotte TikTok"
+FINAL_VIDEOS_DIR = Path(os.getenv("FINAL_VIDEOS_DIR", str(_default_final)))
+
 VIDEO_WIDTH = 1080
 VIDEO_HEIGHT = 1920
 VIDEO_FPS = 30
@@ -27,13 +32,14 @@ VOICE_RATE = os.getenv("EDGE_RATE", "-3%").strip()
 COQUI_SPEAKER = os.getenv("COQUI_SPEAKER", "Damien Black").strip()
 COQUI_LANGUAGE = os.getenv("COQUI_LANGUAGE", "fr").strip()
 
-# Cible : ~130 secondes de narration (2min+)
+# Cible : ~150 secondes de narration (2min30 ≈ 380-440 mots à 2.7 mot/s)
 TARGET_WORDS_MIN = 380
 TARGET_WORDS_MAX = 460
 
-# Découpage visuel : on veut une coupe toutes les ~2.5s max
-VISUAL_MAX_DURATION = 3.0
-VISUALS_PER_SCENE = 3
+# Découpage visuel : 16 scènes × 4 visuels = 64 clips
+# Pour ~160s d'audio → 2.5s par clip exactement (objectif "coupe toutes les 2.5s")
+VISUAL_MAX_DURATION = 2.5
+VISUALS_PER_SCENE = 4
 NUM_SCENES = 16
 
 GROQ_MODEL = "llama-3.3-70b-versatile"
@@ -60,7 +66,11 @@ PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY", "").strip()
 # le texte) ou "stock_first" (Pexels d'abord, plus rapide mais générique)
 VISUAL_PROVIDER = os.getenv("VISUAL_PROVIDER", "ai_first").strip().lower()
 POLLINATIONS_MODEL = os.getenv("POLLINATIONS_MODEL", "flux").strip()
-POLLINATIONS_PARALLEL = int(os.getenv("POLLINATIONS_PARALLEL", "2"))
+# Parallélisme 1 = séquentiel. Pollinations rate-limit dès qu'on passe à 2+ workers.
+# En séquentiel, on a une image toutes les ~10-20s, soit ~15 min pour 64 images.
+POLLINATIONS_PARALLEL = int(os.getenv("POLLINATIONS_PARALLEL", "4"))
+# Nombre d'essais avant fallback stock (plus haut = qualité IA garantie mais plus long)
+POLLINATIONS_MAX_RETRIES = int(os.getenv("POLLINATIONS_MAX_RETRIES", "6"))
 
 # Nettoyage auto : garde les N vidéos les plus récentes
 KEEP_LAST_N_VIDEOS = int(os.getenv("KEEP_LAST_N_VIDEOS", "50"))

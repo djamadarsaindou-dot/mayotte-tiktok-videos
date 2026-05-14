@@ -43,25 +43,23 @@ Renvoie UNIQUEMENT du JSON valide :
     {{
       "idea": "1 phrase d'idée (12-18 mots) — utilise UN des faits ci-dessus",
       "fact_used": "le fait précis utilisé (copie-colle depuis la liste)",
-      "visuals": [
-        "PHRASE EN ANGLAIS décrivant une SCÈNE PHYSIQUE CONCRÈTE visible à l'écran (objet+action+lieu) — ex: 'aerial drone shot turquoise tropical lagoon coral reef'",
-        "PHRASE EN ANGLAIS d'une autre scène concrète, angle différent — ex: 'fishermen pulling traditional net on shallow water'",
-        "PHRASE EN ANGLAIS troisième scène concrète — ex: 'close-up colorful tropical fish swimming coral'"
-      ],
-      "image_prompt": "description en ANGLAIS riche et détaillée d'une scène cinématique vertical 9:16 photoréaliste de Mayotte (utilise les indices visuels ci-dessus). Inclus toujours : tropical Indian Ocean island, lush green, photorealistic"
+      "visuals": [<EXACTEMENT {n_visuals} PHRASES EN ANGLAIS, chacune décrivant une SCÈNE PHYSIQUE CONCRÈTE visible à l'écran, angles différents (large/moyen/gros-plan/détail)>],
+      "image_prompt": "description en ANGLAIS riche et détaillée d'une scène cinématique vertical 9:16 photoréaliste de Mayotte"
     }}
   ]
 }}
 
-CONTRAINTES STRICTES POUR LES VISUELS (essentiel pour la qualité) :
-- INTERDIT : abstractions ("ancient tradition", "sisterhood", "cultural heritage", "hopeful expression", "emotional moment"). Pexels ne sait pas chercher ça.
-- OBLIGATOIRE : phrases visuelles décrivant CE QUI EST À L'ÉCRAN. Format : « action + sujet + lieu/objet », ex :
-    ✅ "elderly woman teaching young girl to weave palm leaves"
-    ✅ "wooden boat sailing on turquoise tropical lagoon"
-    ✅ "colorful market stall tropical fruits vendor"
-    ❌ "rich heritage" / "deep tradition" / "moment of joy"
-- Chaque visual de 6 à 10 mots, suffisamment précis pour qu'un moteur de stock vidéo trouve des résultats
-- Préfère des éléments universellement filmés : pêcheurs, lagon, marché, danse, cuisine, plantes tropicales, cérémonie en plein air, enfants, vieillards souriants
+EXEMPLES de "visuals" CORRECTS (concrets, angles variés) :
+  ✅ "aerial drone shot turquoise tropical lagoon coral reef sunny day"
+  ✅ "fishermen pulling traditional net on shallow water at dawn"
+  ✅ "close-up colorful tropical fish swimming around coral"
+  ✅ "elderly woman teaching young girl to weave palm leaves"
+
+CONTRAINTES STRICTES POUR LES VISUELS :
+- INTERDIT : abstractions ("ancient tradition", "sisterhood", "cultural heritage", "moment of joy"). Trop vague pour générer une image.
+- OBLIGATOIRE : phrases visuelles décrivant CE QUI EST À L'ÉCRAN. Format « action + sujet + lieu/objet ».
+- EXACTEMENT {n_visuals} visuels par scène, TOUS DIFFÉRENTS, angles variés (aérien, moyen, gros plan, ambiance, geste, objet…)
+- Chaque visual de 6 à 12 mots, suffisamment précis pour générer une image IA cohérente
 
 CONTRAINTES STRICTES NARRATIVES :
 - EXACTEMENT {n_scenes} scènes
@@ -84,7 +82,7 @@ Renvoie UNIQUEMENT du JSON valide :
   "scenes": [
     {{
       "idea": "1 phrase d'idée pour cette scène (12-18 mots)",
-      "visuals": ["3 mots-clés EN ANGLAIS visuel 1", "3 mots-clés visuel 2", "3 mots-clés visuel 3"],
+      "visuals": [<EXACTEMENT {n_visuals} PHRASES EN ANGLAIS, scènes physiques concrètes, angles variés>],
       "image_prompt": "description en ANGLAIS d'une scène cinématique vertical 9:16 photoréaliste"
     }}
   ]
@@ -94,7 +92,7 @@ CONTRAINTES :
 - EXACTEMENT {n_scenes} scènes : intro contextualisant → développement de l'actualité → impact pour les Mahorais → ouverture
 - Reste FACTUEL — ne dramatise pas, ne politise pas, ne prends pas parti
 - Si tu manques d'infos, élargis avec le CONTEXTE GÉNÉRAL Mayotte (géographie, démographie, etc.)
-- Visuels concrets, faciles à trouver en stock vidéo
+- Visuels concrets décrivant CE QUI EST À L'ÉCRAN (action + sujet + lieu), 6-12 mots, tous différents.
 """
 
 
@@ -209,6 +207,7 @@ def _build_plan_for_knowledge(theme: str) -> tuple[dict, str, str]:
         visual_hints=visual_hints_str or "  (aucun, utilise le contexte général Mayotte)",
         avoid=avoid_str,
         n_scenes=NUM_SCENES,
+        n_visuals=VISUALS_PER_SCENE,
     )
     plan = chat_json(GLOBAL_CONTEXT_PROMPT, user_prompt, temperature=0.85)
     plan = _normalize_plan(plan, entry["title"])
@@ -237,6 +236,7 @@ def _build_plan_for_news() -> tuple[dict, str, str] | None:
         news_source=chosen.source,
         news_description=chosen.description or "(pas de description fournie)",
         n_scenes=NUM_SCENES,
+        n_visuals=VISUALS_PER_SCENE,
     )
     plan = chat_json(GLOBAL_CONTEXT_PROMPT, user_prompt, temperature=0.7)
     plan = _normalize_plan(plan, chosen.title)

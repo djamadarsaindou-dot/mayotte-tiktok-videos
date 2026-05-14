@@ -102,7 +102,7 @@ def _chat_mistral(system: str, user: str, json_mode: bool, temperature: float) -
             {"role": "user", "content": user},
         ],
         "temperature": temperature,
-        "max_tokens": 4000,
+        "max_tokens": 8000,
     }
     if json_mode:
         body["response_format"] = {"type": "json_object"}
@@ -141,7 +141,7 @@ def _chat_groq(system: str, user: str, json_mode: bool, temperature: float) -> s
             {"role": "user", "content": user},
         ],
         "temperature": temperature,
-        "max_tokens": 4000,
+        "max_tokens": 8000,
     }
     if json_mode:
         kwargs["response_format"] = {"type": "json_object"}
