@@ -32,8 +32,10 @@ cd /d "$ProjectPath"
 "$PythonExe" "$CronScript"
 "@
 
-# Encoding ASCII to avoid UTF-8 BOM issues with cmd
-[System.IO.File]::WriteAllText($BatTarget, $batContent, [System.Text.Encoding]::Default)
+# cmd.exe sous Windows fr_FR lit les .bat en encodage OEM (CP-850), pas UTF-8.
+# On écrit donc explicitement en CP-850 pour que "vidéo" reste lisible.
+$oem = [System.Text.Encoding]::GetEncoding(850)
+[System.IO.File]::WriteAllText($BatTarget, $batContent, $oem)
 
 Write-Host "Bat installed at: $BatTarget" -ForegroundColor Green
 Write-Host ""
