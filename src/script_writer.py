@@ -39,6 +39,7 @@ Renvoie UNIQUEMENT du JSON valide :
 {{
   "title": "titre TikTok accrocheur (max 55 caractères) — peut être différent du titre source",
   "hook": "phrase d'accroche, 15-22 mots, intrigante",
+  "hook_punch": "accroche ULTRA-courte de 3 à 6 mots pour le texte géant des 3 premières secondes (ex: 'Le secret du lagon', 'Personne ne sait ça', 'Mayotte va te surprendre')",
   "scenes": [
     {{
       "idea": "1 phrase d'idée (12-18 mots) — utilise UN des faits ci-dessus",
@@ -79,6 +80,7 @@ Renvoie UNIQUEMENT du JSON valide :
 {{
   "title": "titre TikTok accrocheur (max 55 caractères)",
   "hook": "phrase d'accroche, 15-22 mots",
+  "hook_punch": "accroche ULTRA-courte de 3 à 6 mots pour le texte géant des 3 premières secondes",
   "scenes": [
     {{
       "idea": "1 phrase d'idée pour cette scène (12-18 mots)",
@@ -244,6 +246,56 @@ def _build_plan_for_news() -> tuple[dict, str, str] | None:
     return plan, context, chosen.title
 
 
+CAPTION_PROMPT = """Tu écris la LÉGENDE TikTok pour cette vidéo sur Mayotte.
+
+Titre de la vidéo : {title}
+Sujet : {anchor}
+Accroche : {hook}
+
+Renvoie UNIQUEMENT du JSON :
+{{
+  "caption": "1 à 2 phrases engageantes pour la description TikTok, avec 2-3 emojis bien placés, qui donne envie de regarder ET de commenter (pose une mini-question à la fin)",
+  "hashtags": ["liste de 10 à 14 hashtags SANS le # — mélange hashtags larges (mayotte, oceanindien, dom976) et hashtags de niche liés au sujet"]
+}}
+
+CONTRAINTES :
+- Le caption fait 150 caractères max
+- Hashtags pertinents : toujours inclure mayotte, 976, oceanindien ; ajoute des hashtags liés au thème précis
+- Pas de hashtags interdits ou trompeurs
+- Français
+"""
+
+
+def generate_caption(title: str, anchor: str, hook: str) -> dict:
+    """Génère la légende + hashtags TikTok. Renvoie {'caption', 'hashtags', 'text'}."""
+    try:
+        data = chat_json(
+            "Tu es expert en croissance TikTok francophone.",
+            CAPTION_PROMPT.format(title=title, anchor=anchor, hook=hook),
+            temperature=0.8,
+        )
+        caption = (data.get("caption") or title).strip()
+        tags = data.get("hashtags") or []
+    except Exception as e:
+        print(f"   ⚠️  Génération légende échouée ({str(e)[:60]}), fallback simple")
+        caption = title
+        tags = ["mayotte", "976", "oceanindien", "dom", "tiktokvoyage"]
+
+    # Nettoie les hashtags : sans #, sans espace, minuscules
+    clean_tags = []
+    for t in tags:
+        t = re.sub(r"[^\w]", "", str(t)).lower()
+        if t and t not in clean_tags:
+            clean_tags.append(t)
+    for must in ("mayotte", "976", "oceanindien"):
+        if must not in clean_tags:
+            clean_tags.insert(0, must)
+
+    hashtag_line = " ".join(f"#{t}" for t in clean_tags[:14])
+    full_text = f"{caption}\n\n{hashtag_line}"
+    return {"caption": caption, "hashtags": clean_tags[:14], "text": full_text}
+
+
 def generate_script(topic_def: dict) -> dict:
     print(f"   ⚙️  LLM provider : {get_provider()}")
 
@@ -282,9 +334,18 @@ def generate_script(topic_def: dict) -> dict:
     total = sum(_wc(s["narration"]) for s in final_scenes)
     print(f"   📊 Total : {total} mots ≈ {total*0.41:.0f}s parlés (cible {TARGET_WORDS_MIN}-{TARGET_WORDS_MAX})")
 
+    title = plan.get("title", anchor)
+    hook = plan.get("hook", "")
+
+    # Légende TikTok (description + hashtags) prête à copier-coller
+    print("   📱 Génération de la légende TikTok...")
+    caption = generate_caption(title, anchor, hook)
+
     return {
-        "title": plan.get("title", anchor),
-        "hook": plan.get("hook", ""),
+        "title": title,
+        "hook": hook,
+        "hook_punch": (plan.get("hook_punch") or "").strip(),
         "anchor": anchor,
         "scenes": final_scenes,
+        "caption": caption,
     }

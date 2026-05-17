@@ -116,7 +116,10 @@ def build_video(topic_key: str | None = None) -> Path:
     print(f"   Durée audio : {audio_duration:.1f}s | {len(words)} mots avec timing")
 
     ass_path = work_dir / "subs.ass"
-    build_karaoke_ass(words, ass_path, VIDEO_WIDTH, VIDEO_HEIGHT)
+    hook_punch = script.get("hook_punch", "")
+    if hook_punch:
+        print(f"   🎯 Hook visuel : « {hook_punch} »")
+    build_karaoke_ass(words, ass_path, VIDEO_WIDTH, VIDEO_HEIGHT, hook_text=hook_punch)
 
     print(f"🎨 Récup assets — MODE HYBRIDE (1 IA + {VISUALS_PER_SCENE-1} stock par scène)")
     print(f"   {len(script['scenes'])} scènes × {VISUALS_PER_SCENE} visuels = "
@@ -172,6 +175,8 @@ def build_video(topic_key: str | None = None) -> Path:
     print(f"🎞️  Montage final ({len(asset_paths)} clips, durée moy {sum(asset_durations)/len(asset_durations):.1f}s)...")
     assemble_video(asset_paths, asset_durations, audio_path, ass_path, output_path, work_dir)
 
+    caption = script.get("caption", {})
+
     meta_path = OUTPUT_DIR / f"{timestamp}_{slug}.json"
     meta_path.write_text(
         json.dumps({
@@ -179,6 +184,8 @@ def build_video(topic_key: str | None = None) -> Path:
             "topic": topic_key,
             "topic_label": topic_def["label"],
             "hook": script.get("hook"),
+            "hook_punch": script.get("hook_punch"),
+            "caption": caption,
             "scenes": script["scenes"],
             "duration": audio_duration,
             "word_count": total_words,
@@ -191,20 +198,32 @@ def build_video(topic_key: str | None = None) -> Path:
         encoding="utf-8",
     )
 
+    # Fichier .txt prêt à copier-coller au moment de publier sur TikTok
+    caption_path = OUTPUT_DIR / f"{timestamp}_{slug}.txt"
+    caption_text = caption.get("text") if isinstance(caption, dict) else None
+    if caption_text:
+        caption_path.write_text(
+            f"{script.get('title', '')}\n\n{caption_text}\n",
+            encoding="utf-8",
+        )
+
     src_summary = ", ".join(f"{n}× {s}" for s, n in sorted(sources_used.items(), key=lambda x: -x[1]))
     print(f"\n✅ Vidéo prête : {output_path}")
     print(f"   Durée : {audio_duration:.0f}s | {total_words} mots | {len(asset_paths)} clips")
     print(f"   Sources : {src_summary}")
 
-    # Copie la vidéo finale dans le dossier dédié de l'utilisateur (hors projet)
+    # Copie la vidéo finale + métadonnées + légende dans le dossier dédié de l'utilisateur
     try:
         import shutil
         FINAL_VIDEOS_DIR.mkdir(parents=True, exist_ok=True)
         final_video = FINAL_VIDEOS_DIR / output_path.name
         shutil.copy2(output_path, final_video)
-        # Copie aussi le JSON pour avoir le contexte (titre, sujet, etc.)
         shutil.copy2(meta_path, FINAL_VIDEOS_DIR / meta_path.name)
+        if caption_text and caption_path.exists():
+            shutil.copy2(caption_path, FINAL_VIDEOS_DIR / caption_path.name)
         print(f"📂 Copie dans : {final_video}")
+        if caption_text:
+            print(f"📱 Légende TikTok : {caption_path.name}")
     except Exception as e:
         print(f"⚠️  Copie vers dossier final a échoué : {e}")
 

@@ -1,0 +1,194 @@
+{
+  "title": "Caribus : la ligne 1 teste le direct à Mayotte !",
+  "topic": "actu_mayotte",
+  "topic_label": "Actu Mayotte",
+  "hook": "Et si prendre le bus devenait plus simple à Mayotte ? On vous montre cette expérimentation qui change tout !",
+  "scenes": [
+    {
+      "narration": "Regardez cette pépite de l’océan Indien, Mayotte, où les Mahorais testent aujourd’hui un bus direct pour relier Passamainty aux Hauts Vallons en un clin d’œil !",
+      "visuals": [
+        "Drone shot of Mayotte's lush green islands from above",
+        "Close-up of turquoise lagoon waters surrounding the land",
+        "Wide shot of Mamoudzou city with colorful buildings",
+        "Time-lapse of a bustling street with people and vehicles"
+      ],
+      "image_prompt": "A cinematic vertical 9:16 shot of Mayotte from a drone, showcasing the vibrant green islands surrounded by a stunning turquoise lagoon. The camera slowly descends to reveal Mamoudzou, with its colorful buildings and lively streets, under a bright tropical sky.",
+      "fact_used": null
+    },
+    {
+      "narration": "Et devine quoi ? Grâce à ce nouveau Caribus, les Mahorais gagnent un temps fou sans changer de bus, un vrai bol d’air pour les trajets du quotidien !",
+      "visuals": [
+        "Bus driving through narrow streets of Mamoudzou",
+        "Passengers boarding a Caribus at a busy stop",
+        "Close-up of a Caribus route map inside the bus",
+        "Wide shot of a Caribus navigating a rural road"
+      ],
+      "image_prompt": "A vertical 9:16 shot of a Caribus driving through the narrow, vibrant streets of Mamoudzou. The bus is full of passengers, and the camera captures the dynamic movement of the vehicle against the backdrop of local shops and markets.",
+      "fact_used": null
+    },
+    {
+      "narration": "Avant, les usagers devaient souvent descendre et attendre sous le soleil pour reprendre un autre bus, une galère qui compliquait chaque trajet.",
+      "visuals": [
+        "Passengers waiting at a bus stop with frustrated expressions",
+        "Close-up of a bus schedule showing multiple transfers",
+        "Wide shot of a crowded bus terminal with many people",
+        "Passenger stepping off one bus and waiting for another"
+      ],
+      "image_prompt": "A vertical 9:16 shot focusing on passengers waiting at a bus stop in Mamoudzou. The expressions on their faces show mild frustration as they check their watches and the bus schedule, highlighting the inconvenience of transfers.",
+      "fact_used": null
+    },
+    {
+      "narration": "Mais bonne nouvelle pour les Mahorais : la CADEMA teste enfin une liaison directe sur la ligne 1, entre Passamainty et les Hauts Vallons !",
+      "visuals": [
+        "Close-up of a CADEMA press release on a smartphone screen",
+        "Wide shot of a CADEMA office with employees working",
+        "Official signing a document related to the experiment",
+        "Banner announcing the new direct line experiment"
+      ],
+      "image_prompt": "A cinematic vertical 9:16 shot of a smartphone screen displaying a CADEMA press release about the new direct bus line experiment. The camera zooms out to show a hand holding the phone, with a CADEMA office in the background.",
+      "fact_used": null
+    },
+    {
+      "narration": "Et ça change tout pour les Mahorais qui prennent ce bus tous les jours : plus d’arrêt entre les deux terminus, un trajet direct en 25 minutes chrono !",
+      "visuals": [
+        "Map of Mayotte highlighting the route from Passamainty to Hauts Vallons",
+        "Close-up of a bus stop sign at Passamainty",
+        "Bus driving through the scenic Hauts Vallons area",
+        "Passenger pointing at a bus route map"
+      ],
+      "image_prompt": "A vertical 9:16 shot of a detailed map of Mayotte, focusing on the route from Passamainty to Hauts Vallons. The camera zooms in on the highlighted direct bus line, with a bus stop sign at Passamainty in the foreground.",
+      "fact_used": null
+    },
+    {
+      "narration": "Ce lundi, une expérimentation de trois mois a commencé pour tester l’attrait du Caribus direct auprès des Mahorais et voir s’il répond à leurs besoins.",
+      "visuals": [
+        "Calendar showing the date Monday, May 18, 2026",
+        "Close-up of a clock showing the start time of the experiment",
+        "Text overlay on screen: 'Expérimentation - 2 semaines'",
+        "Bus driver preparing for the first direct trip"
+      ],
+      "image_prompt": "A vertical 9:16 shot of a calendar highlighting the date Monday, May 18, 2026, with a clock in the background showing the start time of the bus experiment. Text overlay on the screen reads 'Expérimentation - 2 semaines'.",
+      "fact_used": null
+    },
+    {
+      "narration": "Et nouveauté de taille : plus besoin de lever la main, les arrêts restent les mêmes pour monter ou descendre, histoire de simplifier la vie des Mahorais au quotidien.",
+      "visuals": [
+        "Passengers boarding a bus at a familiar stop",
+        "Bus stopping at a rural bus stop with local scenery",
+        "Close-up of a bus door opening for passengers",
+        "Wide shot of a bus stop with a few waiting passengers"
+      ],
+      "image_prompt": "A vertical 9:16 shot of passengers boarding a Caribus at a familiar bus stop in Mayotte. The bus stops smoothly, and the door opens to let passengers on, with a backdrop of local vegetation and houses.",
+      "fact_used": null
+    },
+    {
+      "narration": "À Mayotte, tout le monde en parle : ce test en conditions réelles pourrait bien changer leur quotidien en fluidifiant les embouteillages du matin.",
+      "visuals": [
+        "Passenger smiling while reading the announcement on their phone",
+        "Group of commuters discussing the new direct line",
+        "Close-up of a student checking the bus schedule",
+        "Elderly person nodding in approval at the bus stop"
+      ],
+      "image_prompt": "A vertical 9:16 shot of a passenger smiling as they read the announcement about the new direct bus line on their phone. The background shows a group of commuters discussing the change excitedly at a bus stop.",
+      "fact_used": null
+    },
+    {
+      "narration": "Et si ce bus direct devenait leur nouveau réflexe pour gagner du temps, moins stresser et enfin souffler sur la route ?",
+      "visuals": [
+        "Worker arriving home earlier than usual, greeted by family",
+        "Student arriving on time for school with a smile",
+        "Close-up of a watch showing saved travel time",
+        "Bus driving smoothly on a less crowded road"
+      ],
+      "image_prompt": "A vertical 9:16 shot of a worker arriving home earlier than usual, greeted warmly by their family. The scene captures the positive impact of reduced travel time, with a close-up of a watch showing the saved minutes.",
+      "fact_used": null
+    },
+    {
+      "narration": "Entre les collines de Passamainty et les Hauts Vallons, ce trajet en bus direct pourrait bien changer le quotidien des Mahorais.",
+      "visuals": [
+        "Aerial shot of Passamainty with its residential areas",
+        "Wide shot of Hauts Vallons' hilly landscape",
+        "Local market scene in Passamainty with fresh produce",
+        "Children playing near a bus stop in Hauts Vallons"
+      ],
+      "image_prompt": "A cinematic vertical 9:16 aerial shot of Passamainty, showcasing its residential areas and bustling local market. The camera then transitions to a wide shot of the hilly landscape of Hauts Vallons, with children playing near a bus stop.",
+      "fact_used": null
+    },
+    {
+      "narration": "Et si ce nouveau bus direct devenait enfin la solution pour des milliers de Mahorais qui rêvent de se déplacer plus vite et sans galère au quotidien ?",
+      "visuals": [
+        "Busy street with multiple Caribus on the road",
+        "Passengers of all ages boarding a bus",
+        "Close-up of a bus driver greeting passengers",
+        "Wide shot of a rural area with a bus providing access"
+      ],
+      "image_prompt": "A vertical 9:16 shot of a busy street in Mayotte with multiple Caribus navigating the road. Passengers of all ages are seen boarding the buses, highlighting the essential role of public transport in daily life.",
+      "fact_used": null
+    },
+    {
+      "narration": "Imaginez : 45 minutes au lieu d’1h30 pour relier Passamainty aux Hauts Vallons, un gain de temps fou qui pourrait changer le quotidien des Mahorais.",
+      "visuals": [
+        "Bus navigating a narrow, winding road",
+        "Close-up of a bus driver concentrating on the road",
+        "Traffic jam in Mamoudzou during rush hour",
+        "Bus stop in a remote area with few passengers"
+      ],
+      "image_prompt": "A vertical 9:16 shot of a Caribus navigating a narrow, winding road in Mayotte. The bus driver is focused on the road ahead, illustrating the logistical challenges of providing transport services across the island.",
+      "fact_used": null
+    },
+    {
+      "narration": "Et derrière cette révolution du quotidien, ce sont des chauffeurs, des élus et des bénévoles mahorais qui testent ensemble ce Caribus pour dessiner l’avenir des transports sur l’île.",
+      "visuals": [
+        "CADEMA officials discussing plans at a meeting",
+        "Bus drivers receiving instructions for the new route",
+        "Close-up of a local transport worker's badge",
+        "Community leader speaking about the experiment"
+      ],
+      "image_prompt": "A vertical 9:16 shot of CADEMA officials discussing plans at a meeting table. The scene captures their collaborative efforts, with a close-up of documents and a local transport worker's badge in focus.",
+      "fact_used": null
+    },
+    {
+      "narration": "Alors quand ce bus trace sa route entre Passamainty et les Hauts Vallons, c’est tout un peuple qui espère enfin respirer au rythme de son île.",
+      "visuals": [
+        "Passengers boarding the bus with hopeful expressions",
+        "Wide shot of a bus departing for its first direct trip",
+        "Text overlay: 'Un pas vers plus de simplicité ?'",
+        "Local resident waving at the departing bus"
+      ],
+      "image_prompt": "A vertical 9:16 shot of passengers boarding a Caribus with hopeful expressions for the first direct trip. The bus departs smoothly, with a text overlay reading 'Un pas vers plus de simplicité ?' and a local resident waving goodbye.",
+      "fact_used": null
+    },
+    {
+      "narration": "Et vous, les Mahorais, ce Caribus qui change tout, vous l’avez pris ? Dites-nous en commentaire ce que ça change pour vos trajets au quotidien.",
+      "visuals": [
+        "Close-up of a smartphone with a feedback form open",
+        "Passenger recording a video testimonial on their phone",
+        "Text overlay: 'Donnez votre avis !'",
+        "Bus stop with a QR code for feedback"
+      ],
+      "image_prompt": "A vertical 9:16 shot of a smartphone screen displaying a feedback form for the Caribus experiment. A passenger records a video testimonial, with a text overlay encouraging viewers to 'Donnez votre avis !'",
+      "fact_used": null
+    },
+    {
+      "narration": "Alors que le soleil plonge derrière le mont Choungui, ce nouveau Caribus trace déjà l’avenir des Mahorais, entre terre et lagon, comme un trait d’union plus fort que jamais.",
+      "visuals": [
+        "Drone shot of the double lagoon surrounding Mayotte",
+        "Close-up of a blooming ylang-ylang flower",
+        "Wide shot of the iconic Mont Choungui",
+        "Sunset over the lagoon with a silhouette of a bus"
+      ],
+      "image_prompt": "A cinematic vertical 9:16 drone shot of Mayotte's double lagoon at sunset. The camera captures the iconic Mont Choungui in the background, with a silhouette of a Caribus driving along the coast, symbolizing progress and hope.",
+      "fact_used": null
+    }
+  ],
+  "duration": 148.502667,
+  "word_count": 413,
+  "num_clips": 64,
+  "sources_used": {
+    "Pexels vidéo": 48,
+    "Pollinations IA": 16
+  },
+  "voice": "Coqui XTTS v2 / Damien Black",
+  "created_at": "2026-05-16T11:03:35.660144",
+  "video_file": "20260516_095936_caribus-la-ligne-1-teste-le-direct-à-mayotte.mp4"
+}

@@ -1,0 +1,194 @@
+{
+  "title": "Mayotte : l'île où la France a 23 ans",
+  "topic": "fait_insolite",
+  "topic_label": "Fait insolite Mayotte",
+  "hook": "Imaginez une France où la moitié des habitants ont moins de 18 ans... Bienvenue à Mayotte !",
+  "scenes": [
+    {
+      "narration": "Et ici, chaque récréation explose en un arc-en-ciel de rires et d’uniformes colorés, portés par les Mahorais de demain, l’avenir vibrant de cette île où tout reste à construire.",
+      "visuals": [
+        "aerial shot crowded tropical schoolyard children playing soccer bright uniforms",
+        "medium shot group of laughing kids running under mango tree shade",
+        "close-up small hands holding colorful notebooks and pencils",
+        "wide shot teacher surrounded by attentive students under open-air classroom"
+      ],
+      "image_prompt": "A vibrant vertical 9:16 photorealistic scene of a bustling schoolyard in Mayotte at recess time. Children aged 6-12 in bright blue and white uniforms play soccer, chase each other, and laugh under large mango trees. The tropical sunlight filters through the leaves, casting dappled shadows on the red dirt ground. In the background, an open-air classroom with wooden benches shows a teacher surrounded by eager students, books and notebooks scattered on tables. The atmosphere is lively, warm, and full of youthful energy, with the turquoise ocean visible in the distance.",
+      "fact_used": "Près de la moitié de la population a moins de 18 ans"
+    },
+    {
+      "narration": "Chaque jour à la maternité de Mamoudzou, la plus active d’Europe, des dizaines de jeunes Mahoraises deviennent mamans avant 20 ans.",
+      "visuals": [
+        "wide shot busy maternity ward hallway with young mothers walking",
+        "close-up newborn baby wrapped in colorful traditional fabric",
+        "medium shot nurse weighing baby on scale surrounded by family",
+        "overhead shot waiting room filled with pregnant women and relatives"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic image of the bustling maternity ward at Mamoudzou hospital in Mayotte. The scene shows a busy hallway with young mothers, some pregnant, others holding newborns wrapped in vibrant traditional fabrics. A nurse in white uniform carefully weighs a baby on a scale while family members look on with smiles. The waiting room is filled with pregnant women sitting on benches, some accompanied by their partners or relatives, creating a warm and lively atmosphere. The walls are painted in soft pastel colors, and the tropical light streams through large windows.",
+      "fact_used": "La maternité de Mamoudzou est la plus active de France et d'Europe"
+    },
+    {
+      "narration": "Et dans les ruelles de Mtsamboro, une jeunesse grandit au rythme des rires et des jeux, sous le regard fier des familles mahoraises.",
+      "visuals": [
+        "aerial shot small village with multiple generations sitting outside houses",
+        "medium shot mother surrounded by six children of different ages smiling",
+        "close-up baby being carried on sister's back with colorful wrap",
+        "wide shot group of kids playing traditional games in sandy courtyard"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic scene of a traditional Mahorais village at golden hour. A large family sits outside their colorful house, with a mother at the center surrounded by six children aged from baby to teenager. The baby is comfortably carried on an older sister's back with a vibrant, patterned wrap. In the sandy courtyard, a group of kids plays traditional games, laughing and running around. The scene is warm and lively, with the lush green vegetation of Mayotte in the background and the sound of waves from the nearby lagoon.",
+      "fact_used": "Le taux de natalité y est le plus élevé de France, avec environ 6 enfants par femme"
+    },
+    {
+      "narration": "Avec près de 10 000 naissances par an, les crèches mahoraises tournent à plein régime pour accueillir cette jeunesse qui fait de Mayotte l’île la plus jeune de France.",
+      "visuals": [
+        "wide shot busy daycare center with babies and toddlers playing",
+        "close-up caregiver feeding baby with spoon in colorful room",
+        "medium shot line of parents dropping off children at daycare entrance",
+        "overhead shot play area filled with toys and crawling babies"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic image inside a vibrant daycare center in Mayotte. The bright, colorful room is filled with babies and toddlers playing, crawling, and laughing. A caregiver in a soft pink uniform gently feeds a baby with a spoon while others play with educational toys. Outside the entrance, a line of parents, some in traditional attire, drop off their children with warm goodbyes. The play area is a riot of colors with toys, small chairs, and educational materials scattered around, reflecting the youthful energy of the island.",
+      "fact_used": "Près de 10 000 naissances par an pour 320 000 habitants"
+    },
+    {
+      "narration": "À Mayotte, la pyramide des âges est large, les Mahorais ont 23 ans de moins en moyenne que les Français en métropole.",
+      "visuals": [
+        "split screen showing two pyramids of ages side by side on tablet screen",
+        "close-up finger pointing to 23 years mark on Mayotte's pyramid",
+        "medium shot young Mahorais holding phone showing demographic data",
+        "wide shot group of teenagers looking at infographic on school wall"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic split-screen image showing a comparison of age pyramids for Mayotte and metropolitan France. On the left, Mayotte's pyramid is wide at the base, illustrating a young population, with a finger pointing to the 23-year median age mark. On the right, the pyramid for mainland France is more balanced, with the 42-year median age highlighted. In the foreground, a young Mahorais man holds a smartphone displaying the demographic data, while in the background, a group of teenagers in school uniforms examine a large infographic on the wall, discussing the statistics.",
+      "fact_used": "L'âge médian à Mayotte est de 23 ans, contre 42 ans en métropole"
+    },
+    {
+      "narration": "Et pour canaliser toute cette énergie, les terrains de foot et les city-stades poussent comme des champignons aux quatre coins de l’île, façonnés par et pour les Mahorais.",
+      "visuals": [
+        "aerial shot brand new football field with teenagers playing match",
+        "medium shot group of girls practicing traditional dance on concrete court",
+        "close-up young boy tying his soccer cleats on bench",
+        "wide shot crowded stands with cheering spectators during local game"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic aerial shot of a brand-new football field in Mayotte, where a group of teenagers is playing an intense match under the tropical sun. The vibrant green artificial turf contrasts with the surrounding red dirt and lush vegetation. Nearby, a group of girls practices traditional dance moves on a concrete court, their colorful dresses flowing with their movements. In the foreground, a young boy sits on a bench, tying his soccer cleats with concentration. The stands are packed with cheering spectators, mostly young people, creating an electric atmosphere of youth and energy.",
+      "fact_used": "Près de la moitié de la population a moins de 18 ans"
+    },
+    {
+      "narration": "Dans les salles de classe, c’est la même folie : des profs débordés mais passionnés qui transforment chaque cours en une aventure pour ces milliers de jeunes Mahorais avides d’avenir.",
+      "visuals": [
+        "wide shot classroom with students sitting on floor due to lack of chairs",
+        "close-up teacher writing on blackboard while students take notes",
+        "medium shot group of students sharing single textbook in circle",
+        "overhead shot schoolyard with kids playing during break time"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic image of a lively but overcrowded classroom in Mayotte. The room is filled with students, some sitting on the floor due to the lack of chairs, all attentively facing the teacher. The teacher, standing at the blackboard, writes math equations while students take notes in their notebooks. In the corner, a group of students gathers around a single textbook, sharing the knowledge with enthusiasm. Outside, the schoolyard is a hive of activity during break time, with kids playing games, laughing, and enjoying the tropical breeze.",
+      "fact_used": "Près de la moitié de la population a moins de 18 ans"
+    },
+    {
+      "narration": "Et ici, transmettre c’est sacré : danses, chants ou savoir-faire ancestraux, les Mahorais veillent à ce que leur culture traverse le temps avec ces jeunes qui grandissent à toute vitesse.",
+      "visuals": [
+        "medium shot grandmother teaching granddaughter to weave basket",
+        "close-up hands tying traditional fabric with intricate patterns",
+        "wide shot group of children learning traditional dance with elders",
+        "overhead shot young girl trying on traditional jewelry with family"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic scene of a grandmother passing down traditional skills to her granddaughter in a Mahorais home. The grandmother, dressed in a vibrant kanga, teaches the young girl how to weave a basket using palm leaves. Their hands move in harmony, creating intricate patterns. In the background, a group of children learns traditional dance moves from elders, their bodies swaying to the rhythm of drums. On a mat nearby, a young girl tries on traditional silver jewelry, her family smiling proudly as they watch her discover her heritage.",
+      "fact_used": "Près de la moitié de la population a moins de 18 ans"
+    },
+    {
+      "narration": "Et justement, sur les marchés colorés, ce sont souvent ces ados mahorais qui animent les étals avec une énergie folle, entre rires et négociation maligne.",
+      "visuals": [
+        "aerial shot bustling market with colorful stalls and crowds",
+        "medium shot teenage boy selling fresh mangoes from large basket",
+        "close-up young girl arranging spices in small piles on cloth",
+        "wide shot group of kids helping parents set up market stall at dawn"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic aerial shot of a bustling market in Mayotte, filled with colorful stalls and a lively crowd. Young vendors, mostly teenagers, add to the vibrant atmosphere. A teenage boy stands behind a large basket, selling fresh mangoes to customers, while nearby, a young girl carefully arranges piles of colorful spices on a cloth. At dawn, a group of kids helps their parents set up a market stall, carrying crates of fruits and vegetables, their laughter and chatter filling the air as the sun rises over the island.",
+      "fact_used": "Près de la moitié de la population a moins de 18 ans"
+    },
+    {
+      "narration": "Avec près de 10 000 naissances par an, les Mahorais inventent des solutions malines pour loger, éduquer et faire grandir cette jeunesse qui pousse comme des cocotiers.",
+      "visuals": [
+        "wide shot new community center with playground and family areas",
+        "medium shot young parents attending parenting workshop in bright room",
+        "close-up baby in modern stroller being pushed by father",
+        "aerial shot construction site of new school buildings in village"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic image of a newly built community center in Mayotte, designed to support young families. The center features a modern playground, family areas, and bright, welcoming spaces. Inside, a group of young parents attends a parenting workshop, listening attentively to a speaker. Outside, a father pushes a modern stroller with a sleeping baby, enjoying a walk in the tropical surroundings. In the distance, a construction site shows new school buildings being erected, reflecting the island's efforts to adapt to its young and growing population.",
+      "fact_used": "Près de 10 000 naissances par an pour 320 000 habitants"
+    },
+    {
+      "narration": "Sur le sable blanc des villages côtiers, les ados Mahorais transforment chaque vague en terrain de jeu et chaque coucher de soleil en fête improvisée.",
+      "visuals": [
+        "medium shot group of teenagers fishing from rocks at sunset",
+        "close-up young boy holding freshly caught fish in hands",
+        "wide shot kids playing soccer on sandy beach near turquoise water",
+        "aerial shot village with children running along shoreline"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic scene of a coastal village in Mayotte at sunset. A group of teenagers sits on the rocks, fishing with simple rods, their laughter echoing over the turquoise water. One boy proudly holds up a freshly caught fish, its scales glistening in the golden light. On the sandy beach nearby, a group of kids plays soccer, their bare feet kicking up sand as they chase the ball. An aerial shot captures the village, with children running along the shoreline, their joyful energy contrasting with the serene beauty of the lagoon.",
+      "fact_used": "Près de la moitié de la population a moins de 18 ans"
+    },
+    {
+      "narration": "Mais ici, ces mêmes ados relèvent un autre défi : construire l’avenir de leur île en s’engageant dans des projets qui changent tout, dès aujourd’hui.",
+      "visuals": [
+        "wide shot group of teenagers cleaning beach with gloves and bags",
+        "medium shot young girl teaching younger child to read under tree",
+        "close-up hands planting young tree in community garden",
+        "aerial shot youth group painting mural on school wall"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic image of a group of teenagers in Mayotte engaging in a community project. They are cleaning up a beach, wearing gloves and carrying bags filled with trash, their determination evident as they work together. Nearby, a young girl sits under a tree, teaching a younger child to read from a colorful book. In a community garden, hands plant a young tree, symbolizing hope for the future. On the wall of a local school, a youth group paints a vibrant mural, their creativity and teamwork on full display under the tropical sun.",
+      "fact_used": "Près de la moitié de la population a moins de 18 ans"
+    },
+    {
+      "narration": "Et pour vibrer au rythme de cette jeunesse, rien de tel que leurs fêtes où les Mahorais transforment chaque instant en une énergie folle, entre chants, danses et rêves partagés.",
+      "visuals": [
+        "aerial shot crowded village square during festival with music and dance",
+        "medium shot group of teenagers performing traditional dance in costumes",
+        "close-up young girl adjusting traditional headdress before performance",
+        "wide shot fireworks exploding over nighttime celebration"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic aerial shot of a crowded village square in Mayotte during a local festival. The square is alive with music, dance, and laughter, as teenagers take center stage. A group of young performers, dressed in traditional costumes, dances to the rhythm of drums, their movements fluid and energetic. In the background, a young girl adjusts her traditional headdress, preparing for her performance. As night falls, fireworks explode over the celebration, lighting up the sky and reflecting in the eyes of the young crowd below.",
+      "fact_used": "Près de la moitié de la population a moins de 18 ans"
+    },
+    {
+      "narration": "Et si c’est sur les réseaux que cette jeunesse mahoraise s’exprime le plus, entre défis viraux et rêves d’avenir, c’est là aussi qu’elle écrit son histoire au quotidien.",
+      "visuals": [
+        "medium shot group of teenagers filming TikTok dance in schoolyard",
+        "close-up hands scrolling through Instagram on smartphone",
+        "wide shot young influencer recording video in front of lagoon",
+        "overhead shot circle of friends laughing while watching phone screen"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic scene of a group of teenagers in Mayotte using social media to express themselves. In a schoolyard, a group of friends films a TikTok dance, their movements synchronized and full of energy. Nearby, hands scroll through Instagram on a smartphone, liking and commenting on posts. A young influencer stands by the lagoon, recording a video with the turquoise water as a backdrop, sharing the beauty of Mayotte with the world. In the background, a circle of friends laughs and reacts while watching a funny video on a phone, their joy contagious.",
+      "fact_used": "L'âge médian à Mayotte est de 23 ans, contre 42 ans en métropole"
+    },
+    {
+      "narration": "Avec près de 10 000 naissances par an, nourrir, loger et scolariser cette jeunesse mahoraise relève du casse-tête quotidien pour les acteurs locaux.",
+      "visuals": [
+        "wide shot long line of parents waiting outside vaccination center",
+        "medium shot nurse preparing vaccines in busy clinic",
+        "close-up baby receiving vaccination while mother holds hand",
+        "aerial shot new hospital building under construction in distance"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic image of a busy vaccination center in Mayotte, where parents wait in a long line with their babies. Inside the clinic, a nurse prepares vaccines, her focus unwavering as she works efficiently. A close-up captures a baby receiving a vaccination, the mother holding the child's hand tightly, offering comfort. In the distance, an aerial shot reveals a new hospital building under construction, a sign of the island's efforts to meet the growing needs of its young population.",
+      "fact_used": "Près de 10 000 naissances par an pour 320 000 habitants"
+    },
+    {
+      "narration": "Et pourtant, derrière les défis, ces jeunes Mahorais rêvent en grand : médecins, profs, artistes, ils veulent écrire l’avenir de leur île et de la France.",
+      "visuals": [
+        "medium shot teenage girl studying under kerosene lamp at night",
+        "close-up hands writing future goals in notebook with pen",
+        "wide shot group of students in graduation caps throwing hats in air",
+        "aerial shot young people walking toward school on dirt road"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic scene of a teenage girl in Mayotte studying late into the night under the soft glow of a kerosene lamp. Her determination is palpable as she writes in her notebook, dreaming of her future. In the notebook, her goals for the future are written in neat handwriting, each word a step toward her aspirations. Nearby, a group of students in graduation caps and gowns celebrates their achievement, throwing their hats into the air with joy. An aerial shot captures young people walking toward their school on a dirt road, their steps full of purpose and hope for the future.",
+      "fact_used": "Près de la moitié de la population a moins de 18 ans"
+    }
+  ],
+  "duration": 152.64,
+  "word_count": 421,
+  "num_clips": 64,
+  "sources_used": {
+    "Pexels vidéo": 48,
+    "Pollinations IA": 16
+  },
+  "voice": "Coqui XTTS v2 / Damien Black",
+  "created_at": "2026-05-16T23:14:02.198491",
+  "video_file": "20260516_220616_mayotte-lîle-où-la-france-a-23-ans.mp4"
+}
