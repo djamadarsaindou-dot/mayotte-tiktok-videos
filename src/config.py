@@ -39,7 +39,7 @@ COQUI_SPEAKER_WAV = ASSETS_DIR / "voice" / "reference_fr.wav"
 
 # Réglages fins XTTS (qualité + style de la synthèse)
 # Style "vulgarisation dynamique" : débit rapide, intonations marquées
-COQUI_TEMPERATURE = float(os.getenv("COQUI_TEMPERATURE", "0.70"))
+COQUI_TEMPERATURE = float(os.getenv("COQUI_TEMPERATURE", "0.74"))
 COQUI_REPETITION_PENALTY = float(os.getenv("COQUI_REPETITION_PENALTY", "3.0"))
 COQUI_LENGTH_PENALTY = float(os.getenv("COQUI_LENGTH_PENALTY", "1.0"))
 COQUI_TOP_K = int(os.getenv("COQUI_TOP_K", "50"))

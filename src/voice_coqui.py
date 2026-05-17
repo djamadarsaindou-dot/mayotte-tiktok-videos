@@ -41,10 +41,45 @@ def _get_tts():
 
 SENTENCE_SPLIT = re.compile(r"(?<=[\.\!\?])\s+")
 WORD_RE = re.compile(r"\S+")
+HAS_LETTER = re.compile(r"[a-zA-ZÀ-ÿ]")
+
+
+def _sanitize_tts_text(text: str) -> str:
+    """Nettoie le texte pour éviter que XTTS vocalise la ponctuation.
+
+    Corrige : points multiples (« .. », « ... »), caractères parasites,
+    espaces avant ponctuation, sauts de ligne.
+    """
+    # Sauts de ligne → espace simple
+    text = re.sub(r"[\r\n]+", " ", text)
+    # Caractères que XTTS peut lire à voix haute (puces, symboles markdown…)
+    text = re.sub(r"[•*#_~`|<>\[\]{}()\"]", " ", text)
+    # Ellipses / points multiples → un seul point
+    text = re.sub(r"\.{2,}", ".", text)
+    text = re.sub(r"\?{2,}", "?", text)
+    text = re.sub(r"!{2,}", "!", text)
+    # Espace(s) avant une ponctuation → on colle la ponctuation
+    text = re.sub(r"\s+([.,!?;:])", r"\1", text)
+    # Ponctuation orpheline en double (« ., » « ,. »)
+    text = re.sub(r"([.,!?;:])\1+", r"\1", text)
+    # Espaces multiples
+    text = re.sub(r"\s{2,}", " ", text)
+    return text.strip()
 
 
 def _split_sentences(text: str) -> list[str]:
-    parts = [s.strip() for s in SENTENCE_SPLIT.split(text) if s.strip()]
+    """Découpe en phrases. Les fragments sans lettre (ponctuation isolée)
+    sont fusionnés avec la phrase précédente pour éviter les ratés XTTS."""
+    text = _sanitize_tts_text(text)
+    raw = [s.strip() for s in SENTENCE_SPLIT.split(text) if s.strip()]
+    parts: list[str] = []
+    for s in raw:
+        if not HAS_LETTER.search(s):
+            # fragment de ponctuation seule → recolle au précédent
+            if parts:
+                parts[-1] = (parts[-1] + " " + s).strip()
+            continue
+        parts.append(s)
     return parts
 
 
