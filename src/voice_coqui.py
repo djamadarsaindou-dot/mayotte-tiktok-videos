@@ -20,6 +20,7 @@ from src.config import (  # noqa: E402
     COQUI_REPETITION_PENALTY,
     COQUI_SPEAKER,
     COQUI_SPEAKER_WAV,
+    COQUI_SPEED,
     COQUI_TEMPERATURE,
     COQUI_TOP_K,
     COQUI_TOP_P,
@@ -123,6 +124,7 @@ def synthesize(text: str, audio_path: Path) -> list[dict]:
             length_penalty=COQUI_LENGTH_PENALTY,
             top_k=COQUI_TOP_K,
             top_p=COQUI_TOP_P,
+            speed=COQUI_SPEED,
             **speaker_kwargs,
         )
         dur = _ffprobe_duration(wav)

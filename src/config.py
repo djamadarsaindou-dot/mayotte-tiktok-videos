@@ -37,12 +37,14 @@ COQUI_LANGUAGE = os.getenv("COQUI_LANGUAGE", "fr").strip()
 # échantillon de voix française métropolitaine native.
 COQUI_SPEAKER_WAV = ASSETS_DIR / "voice" / "reference_fr.wav"
 
-# Réglages fins XTTS (qualité de la synthèse)
-COQUI_TEMPERATURE = float(os.getenv("COQUI_TEMPERATURE", "0.70"))
+# Réglages fins XTTS (qualité + style de la synthèse)
+# Style "vulgarisation dynamique" : débit rapide, intonations marquées
+COQUI_TEMPERATURE = float(os.getenv("COQUI_TEMPERATURE", "0.78"))
 COQUI_REPETITION_PENALTY = float(os.getenv("COQUI_REPETITION_PENALTY", "3.0"))
 COQUI_LENGTH_PENALTY = float(os.getenv("COQUI_LENGTH_PENALTY", "1.0"))
 COQUI_TOP_K = int(os.getenv("COQUI_TOP_K", "50"))
-COQUI_TOP_P = float(os.getenv("COQUI_TOP_P", "0.85"))
+COQUI_TOP_P = float(os.getenv("COQUI_TOP_P", "0.88"))
+COQUI_SPEED = float(os.getenv("COQUI_SPEED", "1.12"))  # 1.0=normal, >1=plus rapide
 
 # Cible : 100-115s de narration (entre 1min30 et 2min — zone monétisable TikTok)
 # Mesuré : ~2.8 mots/s (Coqui -3%) → 12 scènes × ~26 mots ≈ 310 mots ≈ 110s
