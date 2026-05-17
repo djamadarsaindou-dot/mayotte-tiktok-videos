@@ -114,7 +114,7 @@ Contexte du reportage : {context}
 Phrase précédente (pour cohérence narrative) : {prev}
 
 CONTRAINTES NON-NÉGOCIABLES :
-- EXACTEMENT entre 19 et 24 mots
+- EXACTEMENT entre 24 et 29 mots
 - UNE seule phrase
 - DOIT se terminer par un point « . »
 - Ton dynamique, narratif, oral, comme un reportage TF1/Brut
@@ -158,22 +158,22 @@ def _expand(idea: str, context: str, prev: str, fact: str | None = None) -> str:
         )
         sentence = _clean_sentence(chat(EXPAND_SYSTEM, prompt, temperature=0.7 + attempt * 0.1))
         wc = _wc(sentence)
-        if 17 <= wc <= 26:
+        if 22 <= wc <= 31:
             return sentence
-        if wc < 17:
+        if wc < 22:
             adjust = (
                 f"La phrase fait {wc} mots, c'est trop court. Réécris-la pour qu'elle fasse "
-                f"exactement entre 20 et 23 mots, en gardant le sens et le fait. Termine par un point. "
+                f"exactement entre 25 et 28 mots, en gardant le sens et le fait. Termine par un point. "
                 f"Réponds avec UNIQUEMENT la phrase.\n\nPhrase : {sentence}"
             )
         else:
             adjust = (
                 f"La phrase fait {wc} mots, c'est trop long. Réécris-la pour qu'elle fasse "
-                f"exactement entre 20 et 23 mots, sans perdre le fait. Termine par un point. "
+                f"exactement entre 25 et 28 mots, sans perdre le fait. Termine par un point. "
                 f"Réponds avec UNIQUEMENT la phrase.\n\nPhrase : {sentence}"
             )
         sentence2 = _clean_sentence(chat(EXPAND_SYSTEM, adjust, temperature=0.5))
-        if 17 <= _wc(sentence2) <= 26:
+        if 22 <= _wc(sentence2) <= 31:
             return sentence2
     return sentence
 

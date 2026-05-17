@@ -33,9 +33,9 @@ COQUI_SPEAKER = os.getenv("COQUI_SPEAKER", "Damien Black").strip()
 COQUI_LANGUAGE = os.getenv("COQUI_LANGUAGE", "fr").strip()
 
 # Cible : 100-115s de narration (entre 1min30 et 2min — zone monétisable TikTok)
-# À ~2.5 mots/s (Coqui -3%) : 100s≈250 mots, 115s≈290 mots
-TARGET_WORDS_MIN = 240
-TARGET_WORDS_MAX = 310
+# Mesuré : ~2.8 mots/s (Coqui -3%) → 12 scènes × ~26 mots ≈ 310 mots ≈ 110s
+TARGET_WORDS_MIN = 290
+TARGET_WORDS_MAX = 360
 
 # Découpage visuel : 12 scènes × 4 visuels = 48 clips
 # Pour ~110s d'audio → ~2.3s par clip (objectif "coupe ≤ 2.5s")
