@@ -14,7 +14,17 @@ from src import _coqui_shim  # noqa: F401
 
 os.environ.setdefault("COQUI_TOS_AGREED", "1")
 
-from src.config import COQUI_LANGUAGE, COQUI_SPEAKER, FFMPEG  # noqa: E402
+from src.config import (  # noqa: E402
+    COQUI_LANGUAGE,
+    COQUI_LENGTH_PENALTY,
+    COQUI_REPETITION_PENALTY,
+    COQUI_SPEAKER,
+    COQUI_SPEAKER_WAV,
+    COQUI_TEMPERATURE,
+    COQUI_TOP_K,
+    COQUI_TOP_P,
+    FFMPEG,
+)
 
 _tts = None
 
@@ -91,15 +101,29 @@ def synthesize(text: str, audio_path: Path) -> list[dict]:
 
     chunk_paths: list[Path] = []
     chunk_durations: list[float] = []
-    print(f"   🎤 Synthèse Coqui XTTS v2 ({COQUI_SPEAKER}, {len(sentences)} phrases)...")
+
+    # Voice cloning : si l'échantillon français existe, on clone cette voix.
+    # Sinon, fallback sur le speaker intégré (accent anglo).
+    use_clone = COQUI_SPEAKER_WAV.exists()
+    speaker_kwargs = (
+        {"speaker_wav": str(COQUI_SPEAKER_WAV)} if use_clone
+        else {"speaker": COQUI_SPEAKER}
+    )
+    voix_label = "clone FR (reference_fr.wav)" if use_clone else COQUI_SPEAKER
+    print(f"   🎤 Synthèse Coqui XTTS v2 [{voix_label}, {len(sentences)} phrases]...")
 
     for i, sent in enumerate(sentences):
         wav = work_dir / f"chunk_{i:03d}.wav"
         tts.tts_to_file(
             text=sent,
-            speaker=COQUI_SPEAKER,
             language=COQUI_LANGUAGE,
             file_path=str(wav),
+            temperature=COQUI_TEMPERATURE,
+            repetition_penalty=COQUI_REPETITION_PENALTY,
+            length_penalty=COQUI_LENGTH_PENALTY,
+            top_k=COQUI_TOP_K,
+            top_p=COQUI_TOP_P,
+            **speaker_kwargs,
         )
         dur = _ffprobe_duration(wav)
         chunk_paths.append(wav)

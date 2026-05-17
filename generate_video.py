@@ -27,6 +27,7 @@ from src.config import (
     VISUALS_PER_SCENE,
     VOICE,
 )
+from src.audio_master import master_voice
 from src.editor import assemble_video, get_audio_duration
 from src.script_writer import generate_script
 from src.stock_finder import find_ai_asset, find_asset, find_stock_asset
@@ -110,8 +111,16 @@ def build_video(topic_key: str | None = None) -> Path:
     full_text = assemble_narration([s["narration"] for s in script["scenes"]])
     audio_path = work_dir / "voice.mp3"
 
-    print("🔊 Synthèse vocale (Edge-TTS, voix Henri)...")
+    print("🔊 Synthèse vocale...")
     words = synthesize(full_text, audio_path)
+
+    # Mastering : voix « radio » (highpass + EQ + compression + normalisation)
+    print("   🎚️  Mastering audio de la voix...")
+    try:
+        master_voice(audio_path)
+    except Exception as e:
+        print(f"   ⚠️  Mastering échoué ({str(e)[:60]}), voix brute conservée")
+
     audio_duration = get_audio_duration(audio_path)
     print(f"   Durée audio : {audio_duration:.1f}s | {len(words)} mots avec timing")
 

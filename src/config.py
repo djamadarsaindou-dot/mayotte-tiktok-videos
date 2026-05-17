@@ -32,6 +32,18 @@ VOICE_RATE = os.getenv("EDGE_RATE", "-3%").strip()
 COQUI_SPEAKER = os.getenv("COQUI_SPEAKER", "Damien Black").strip()
 COQUI_LANGUAGE = os.getenv("COQUI_LANGUAGE", "fr").strip()
 
+# Voice cloning : si ce fichier WAV existe, XTTS clone CETTE voix au lieu
+# d'utiliser le speaker intégré (qui a un accent anglo). reference_fr.wav =
+# échantillon de voix française métropolitaine native.
+COQUI_SPEAKER_WAV = ASSETS_DIR / "voice" / "reference_fr.wav"
+
+# Réglages fins XTTS (qualité de la synthèse)
+COQUI_TEMPERATURE = float(os.getenv("COQUI_TEMPERATURE", "0.70"))
+COQUI_REPETITION_PENALTY = float(os.getenv("COQUI_REPETITION_PENALTY", "3.0"))
+COQUI_LENGTH_PENALTY = float(os.getenv("COQUI_LENGTH_PENALTY", "1.0"))
+COQUI_TOP_K = int(os.getenv("COQUI_TOP_K", "50"))
+COQUI_TOP_P = float(os.getenv("COQUI_TOP_P", "0.85"))
+
 # Cible : 100-115s de narration (entre 1min30 et 2min — zone monétisable TikTok)
 # Mesuré : ~2.8 mots/s (Coqui -3%) → 12 scènes × ~26 mots ≈ 310 mots ≈ 110s
 TARGET_WORDS_MIN = 290

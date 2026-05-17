@@ -1,0 +1,171 @@
+{
+  "title": "Mayotte : seulement 2 saisons, le choc ! 🌧️☀️",
+  "topic": "fait_insolite",
+  "topic_label": "Fait insolite Mayotte",
+  "hook": "Et si je te disais qu’à Mayotte, il n’y a que deux saisons ? Oublie l’hiver et l’automne !",
+  "hook_punch": "Mayotte défie les saisons",
+  "caption": {
+    "caption": "À Mayotte, on zappe l’hiver et l’automne 🌴☀️! Kashkasi ou kusi, tu préfères quelle saison ? 👇 #TeamPluie ou #TeamSoleil ?",
+    "hashtags": [
+      "mayotte",
+      "976",
+      "oceanindien",
+      "domtom",
+      "dom976",
+      "voyage",
+      "decouverte",
+      "climat",
+      "saisons",
+      "kashkasi",
+      "kusi",
+      "ileauxparfums",
+      "culturemayotte",
+      "meteoexotique"
+    ],
+    "text": "À Mayotte, on zappe l’hiver et l’automne 🌴☀️! Kashkasi ou kusi, tu préfères quelle saison ? 👇 #TeamPluie ou #TeamSoleil ?\n\n#mayotte #976 #oceanindien #domtom #dom976 #voyage #decouverte #climat #saisons #kashkasi #kusi #ileauxparfums #culturemayotte #meteoexotique"
+  },
+  "scenes": [
+    {
+      "narration": "Ici, les Mahorais vivent au rythme du kashkasi, chaud et humide, puis du kusi, plus sec et venteux, un duo climatique qui rythme toute l’année sans jamais s’ennuyer.",
+      "visuals": [
+        "aerial drone shot of Mayotte island lush green landscape vertical 9:16",
+        "close-up of a Mahorais farmer looking at the sky with a smile",
+        "wide shot of a tropical beach with dramatic clouds forming overhead",
+        "young child running barefoot on wet sand after a rain shower"
+      ],
+      "image_prompt": "A stunning vertical 9:16 photorealistic cinematic shot of Mayotte's lush green landscape during the rainy season, aerial drone view showing the contrast between dense tropical vegetation and turquoise lagoon, dramatic clouds forming in the sky, warm golden light filtering through, a Mahorais farmer standing on a hillside looking at the horizon with a serene smile, vibrant colors, ultra-detailed textures of leaves and water.",
+      "fact_used": "Mayotte connaît seulement deux saisons, contrairement aux quatre métropolitaines"
+    },
+    {
+      "narration": "Et pendant le kashkasi, de novembre à avril, les Mahorais affrontent des pluies tropicales qui transforment l’île en un paradis vert et vibrant sous le soleil.",
+      "visuals": [
+        "elderly Mahorais woman pointing at a calendar explaining seasons to a child",
+        "close-up of raindrops falling on large green banana leaves",
+        "wide shot of a village with thatched roofs during a tropical downpour",
+        "handwritten note in shimaoré showing the words kashkasi and kusi"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic cinematic shot of an elderly Mahorais woman sitting under a traditional thatched roof, explaining the seasons to a curious child using a handmade calendar, close-up of her hands pointing at the words 'kashkasi' and 'kusi' written in shimaoré, raindrops falling gently on large banana leaves in the foreground, warm and intimate lighting.",
+      "fact_used": "Kashkasi est la saison des pluies, chaude et humide, de novembre à avril"
+    },
+    {
+      "narration": "Imaginez l’île qui fume sous les averses, l’air chargé d’humidité collant aux vêtements, et les Mahorais qui dansent entre les gouttes comme si c’était la fête de la nature.",
+      "visuals": [
+        "aerial shot of dense tropical forest steaming after heavy rain",
+        "children laughing and playing in puddles on a dirt road",
+        "close-up of water droplets sliding off vibrant tropical flowers",
+        "fishermen repairing their nets under a makeshift shelter from the rain"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic cinematic shot of a dense tropical forest in Mayotte during kashkasi, the rainy season, aerial view showing steam rising from the lush green vegetation after a heavy downpour, children laughing and playing in large puddles on a red dirt road, water droplets sliding off vibrant tropical flowers in close-up, warm and humid atmosphere.",
+      "fact_used": "Kashkasi est la saison des pluies, chaude et humide, de novembre à avril"
+    },
+    {
+      "narration": "Et puis soudain, tout bascule : l’air s’allège, les nuits deviennent douces, et les Mahorais accueillent kusi, cette saison apaisante où le soleil caresse sans brûler.",
+      "visuals": [
+        "sunrise over the lagoon with fishermen launching their boats",
+        "close-up of dry golden grass contrasting with green hills",
+        "villagers gathering under a large tree for a community event",
+        "aerial shot of the island’s coastline with calm turquoise waters"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic cinematic shot of Mayotte during kusi, the dry season, sunrise over the calm turquoise lagoon with fishermen launching their traditional wooden boats, close-up of dry golden grass contrasting with the lush green hills in the background, villagers gathered under a large baobab tree for a community event, warm golden light bathing the scene.",
+      "fact_used": "Kusi est la saison sèche, plus fraîche, de mai à octobre"
+    },
+    {
+      "narration": "Ici, pas de canicule étouffante ni de frimas mordants, juste une douceur permanente qui berce les Mahorais entre 24 et 30 degrés toute l’année.",
+      "visuals": [
+        "thermometer showing 28 degrees under the shade of a palm tree",
+        "family enjoying a picnic on the beach at sunset",
+        "close-up of a Mahorais man wiping sweat from his forehead with a smile",
+        "aerial shot of the lagoon with people swimming in crystal-clear water"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic cinematic shot of a thermometer showing 28 degrees Celsius under the shade of a tall palm tree in Mayotte, a Mahorais family enjoying a picnic on the beach at sunset, close-up of a man wiping sweat from his forehead with a content smile, aerial view of the lagoon with people swimming in crystal-clear turquoise water.",
+      "fact_used": "La température moyenne oscille entre 24 et 30 degrés toute l’année"
+    },
+    {
+      "narration": "Ici, la mer est calme, mais gare aux cyclones comme Chido en 2024, qui rappellent aux Mahorais que leur paradis reste fragile.",
+      "visuals": [
+        "dramatic wide shot of dark storm clouds rolling over the ocean",
+        "close-up of a weather alert on a smartphone screen",
+        "villagers securing their homes with wooden planks and ropes",
+        "aerial shot of huge waves crashing against the coral reef"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic cinematic shot of dark storm clouds rolling dramatically over the ocean towards Mayotte, close-up of a smartphone screen showing a cyclone alert for 'Chido' in December 2024, villagers securing their wooden homes with planks and ropes, aerial view of massive waves crashing against the coral reef, tense and dramatic atmosphere.",
+      "fact_used": "Les cyclones peuvent frapper en kashkasi, comme Chido en décembre 2024"
+    },
+    {
+      "narration": "Face à ces géants du ciel, les Mahorais transforment leur savoir-faire en bouclier : maisons sur pilotis, réserves d’eau et solidarité sans faille.",
+      "visuals": [
+        "community members helping each other board up windows with plywood",
+        "close-up of emergency supplies like water bottles and flashlights",
+        "elderly woman praying in a mosque during the storm",
+        "aerial shot of a village with all lights off, waiting for the cyclone to pass"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic cinematic shot of a Mahorais community working together to prepare for a cyclone, people helping each other board up windows with plywood, close-up of emergency supplies like bottled water and flashlights neatly arranged on a table, an elderly woman praying in a dimly lit mosque during the storm, aerial view of a village at night with all lights off, waiting silently for the cyclone to pass.",
+      "fact_used": "Les cyclones peuvent frapper en kashkasi, comme Chido en décembre 2024"
+    },
+    {
+      "narration": "Quand le cyclone s’en va, Mayotte renaît : champs dévastés, puis fleurs partout en quelques semaines, comme une île qui ne baisse jamais les bras.",
+      "visuals": [
+        "wide shot of uprooted trees and debris scattered on a beach",
+        "close-up of new green shoots growing from a broken branch",
+        "villagers clearing fallen branches and coconuts from a road",
+        "aerial shot of the lagoon with patches of floating debris"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic cinematic shot of Mayotte's landscape after a cyclone, wide shot of uprooted palm trees and debris scattered across a beach, close-up of fresh green shoots sprouting from a broken branch, villagers working together to clear fallen coconuts and branches from a dirt road, aerial view of the lagoon with patches of floating debris, a mix of destruction and signs of rebirth.",
+      "fact_used": "Les cyclones peuvent frapper en kashkasi, comme Chido en décembre 2024"
+    },
+    {
+      "narration": "Kusi arrive : six mois de ciel bleu, nuits douces et lagon turquoise. Les Mahorais le savent, c’est l’heure d’accueillir le monde sans une goutte de pluie.",
+      "visuals": [
+        "tourists hiking up Mont Choungui under a clear blue sky",
+        "close-up of a dugong swimming gracefully in the lagoon",
+        "fishermen returning with a full net of fresh fish at dawn",
+        "aerial shot of a white sand beach with children playing in shallow water"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic cinematic shot of tourists hiking up Mont Choungui during kusi, the dry season, under a clear blue sky, close-up of a dugong swimming gracefully in the turquoise lagoon, fishermen returning to shore at dawn with a full net of fresh fish, aerial view of a pristine white sand beach with children laughing and playing in the shallow water.",
+      "fact_used": "Kusi est la saison sèche, plus fraîche, de mai à octobre"
+    },
+    {
+      "narration": "À Mayotte, pas de printemps ni d’automne, juste deux saisons : le kashkasi, humide, et le kusi, ensoleillé, qui dictent un rythme de vie plus simple et plus vrai.",
+      "visuals": [
+        "family harvesting ylang-ylang flowers in a plantation at sunrise",
+        "close-up of a woman weaving a traditional basket with palm leaves",
+        "children running towards a school bus on a dusty road in kusi",
+        "aerial shot of a village surrounded by lush greenery during kashkasi"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic cinematic shot of a Mahorais family harvesting ylang-ylang flowers in a plantation at sunrise during kusi, close-up of a woman skillfully weaving a traditional basket with dried palm leaves, children in school uniforms running towards a dusty road to catch their school bus, aerial view of a village nestled in lush green hills during kashkasi, warm and vibrant colors.",
+      "fact_used": "Mayotte connaît seulement deux saisons, contrairement aux quatre métropolitaines"
+    },
+    {
+      "narration": "Et c’est justement ce balancier entre kashkasi et kusi qui sculpte l’âme de Mayotte, donnant aux Mahorais ce tempo unique où la nature guide chaque geste, chaque fête, chaque histoire.",
+      "visuals": [
+        "wide shot of a traditional Mahorais dance performance under the stars",
+        "close-up of a plate of traditional food like mtsolola and coconut rice",
+        "elderly man telling stories to children around a fire at night",
+        "aerial shot of the double lagoon glowing under the moonlight"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic cinematic shot of a traditional Mahorais dance performance under a starry sky, close-up of a steaming plate of mtsolola and coconut rice, an elderly man telling stories to a group of children gathered around a small fire at night, aerial view of Mayotte's double lagoon glowing under the moonlight, warm and magical atmosphere.",
+      "fact_used": "Kashkasi est la saison des pluies, chaude et humide, de novembre à avril"
+    },
+    {
+      "narration": "Prêt à échanger vos saisons contre ce soleil qui rythme la vie à Mayotte ? Ici, le temps danse au gré des alizés.",
+      "visuals": [
+        "text overlay on screen: 'Et toi, tu préfères kashkasi ou kusi ?' in bold letters",
+        "close-up of a hand holding a smartphone with a TikTok comment section open",
+        "wide shot of a rainbow forming over the lagoon at sunset",
+        "Mahorais influencer waving at the camera with a big smile"
+      ],
+      "image_prompt": "A vertical 9:16 photorealistic cinematic shot with a bold text overlay on screen reading 'Et toi, tu préfères kashkasi ou kusi ?', close-up of a hand holding a smartphone showing the TikTok comment section with likes and replies, wide shot of a stunning rainbow forming over Mayotte's lagoon at sunset, a local Mahorais influencer waving at the camera with a warm and inviting smile, vibrant and engaging atmosphere.",
+      "fact_used": "Mayotte connaît seulement deux saisons, contrairement aux quatre métropolitaines"
+    }
+  ],
+  "duration": 117.737333,
+  "word_count": 312,
+  "num_clips": 48,
+  "sources_used": {
+    "Pexels vidéo": 36,
+    "Pollinations IA": 12
+  },
+  "voice": "Coqui XTTS v2 / Damien Black",
+  "created_at": "2026-05-17T19:51:24.088020",
+  "video_file": "20260517_192149_mayotte-seulement-2-saisons-le-choc.mp4"
+}
