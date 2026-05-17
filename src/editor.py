@@ -141,13 +141,26 @@ def assemble_video(
         print(result.stderr[-1500:])
         raise RuntimeError("FFmpeg concat a échoué")
 
+    audio_dur = _ffprobe_duration(audio_path)
+
     ass_escaped = str(ass_path.resolve()).replace("\\", "/").replace(":", "\\:")
     fonts_escaped = str(FONTS_DIR.resolve()).replace("\\", "/").replace(":", "\\:")
+
+    # Barre de progression : un rectangle cyan qui se remplit de gauche à droite
+    # sur toute la durée. La largeur dépend du temps courant `t`.
+    bar_h = 12
+    bar_filter = (
+        f"drawbox=x=0:y=ih-{bar_h}:"
+        f"w='iw*min(t/{audio_dur:.3f}\\,1)':h={bar_h}:"
+        f"color=0x00F0FF@0.92:t=fill"
+    )
+    vf = f"{bar_filter},ass='{ass_escaped}':fontsdir='{fonts_escaped}'"
+
     cmd = [
         FFMPEG, "-y",
         "-i", str(silent_concat),
         "-i", str(audio_path),
-        "-vf", f"ass='{ass_escaped}':fontsdir='{fonts_escaped}'",
+        "-vf", vf,
         "-map", "0:v", "-map", "1:a",
         "-c:v", "libx264", "-preset", "medium", "-crf", "20",
         "-pix_fmt", "yuv420p",

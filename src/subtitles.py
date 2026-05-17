@@ -21,10 +21,18 @@ Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour,
 Style: Base,Montserrat Black,108,&H00FFFFFF,&H000000FF,&H00000000,&HAA000000,1,0,0,0,100,100,2,0,1,10,4,2,80,80,0,1
 Style: Hilite,Montserrat Black,108,&H0000F0FF,&H000000FF,&H00000000,&HAA000000,1,0,0,0,100,100,2,0,1,10,4,2,80,80,0,1
 Style: Hook,Montserrat Black,128,&H0000F0FF,&H000000FF,&H00000000,&HCC000000,1,0,0,0,100,100,3,0,1,14,6,5,70,70,0,1
+Style: Number,Montserrat Black,180,&H0000F0FF,&H000000FF,&H00000000,&H00000000,1,0,0,0,100,100,0,0,1,16,8,5,60,60,0,1
+Style: CTA,Montserrat Black,116,&H00FFFFFF,&H000000FF,&H00000000,&HDD000000,1,0,0,0,100,100,2,0,1,12,5,5,70,70,0,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 """
+
+# Mots qui forment une "unité" qu'on garde collée au nombre (1500 km², 95 %…)
+_UNIT_WORDS = {"km", "km²", "km2", "m", "mètres", "metres", "%", "ans", "an",
+               "kg", "tonnes", "habitants", "espèces", "especes", "millions",
+               "milliers", "fois", "siècles", "siecles", "minutes", "heures"}
+_NUMBER_RE = __import__("re").compile(r"\d")
 
 # Position : bas-centre, sur ~30% de la hauteur en bas
 # (Alignement 2 = bas-centre ; MarginV = pixels au-dessus du bord bas)
@@ -84,12 +92,71 @@ def _hook_lines(hook_text: str, width: int, height: int) -> list[str]:
     return [f"Dialogue: 2,{_t(0.10)},{_t(3.60)},Hook,,0,0,0,,{fx}{text}"]
 
 
+def _number_lines(words: list[dict], width: int, height: int) -> list[str]:
+    """Affiche en GROS les nombres prononcés (1500 km², 95 %, 2011…).
+
+    Le chiffre apparaît centré, légèrement au-dessus du milieu, avec un pop
+    pendant qu'il est dit. Renforce l'impact des données factuelles.
+    """
+    lines: list[str] = []
+    pos_x = width // 2
+    pos_y = int(height * 0.42)
+
+    for i, w in enumerate(words):
+        raw = w["word"].strip()
+        if not _NUMBER_RE.search(raw):
+            continue
+        # Colle l'unité qui suit si pertinent (km, %, ans…)
+        display = raw
+        end = w["end"]
+        if i + 1 < len(words):
+            nxt = words[i + 1]["word"].strip().strip(".,;:!?")
+            if nxt.lower() in _UNIT_WORDS:
+                display = f"{raw} {nxt}"
+                end = words[i + 1]["end"]
+        display = display.replace("\\", "").replace("{", "(").replace("}", ")")
+        start = w["start"]
+        dur_end = max(end, start + 1.2) + 0.3
+        fx = (
+            f"{{\\an5\\pos({pos_x},{pos_y})\\bord16\\shad8"
+            f"\\fad(80,200)"
+            f"\\t(0,140,\\fscx125\\fscy125)"
+            f"\\t(140,260,\\fscx100\\fscy100)}}"
+        )
+        lines.append(
+            f"Dialogue: 3,{_t(start)},{_t(dur_end)},Number,,0,0,0,,{fx}{display}"
+        )
+    return lines
+
+
+def _cta_lines(total_duration: float, width: int, height: int) -> list[str]:
+    """Overlay « ABONNE-TOI 🔔 » sur les 4 dernières secondes."""
+    if total_duration < 6:
+        return []
+    pos_x = width // 2
+    pos_y = int(height * 0.40)
+    start = max(0.0, total_duration - 4.0)
+    fx = (
+        f"{{\\an5\\pos({pos_x},{pos_y})\\bord12\\shad5"
+        f"\\fad(200,150)"
+        f"\\t(0,200,\\fscx115\\fscy115)"
+        f"\\t(200,360,\\fscx100\\fscy100)"
+        f"\\t(1600,1900,\\fscx108\\fscy108)"
+        f"\\t(1900,2200,\\fscx100\\fscy100)}}"
+    )
+    return [
+        f"Dialogue: 3,{_t(start)},{_t(total_duration)},CTA,,0,0,0,,{fx}ABONNE-TOI 🔔"
+    ]
+
+
 def build_karaoke_ass(
     words: list[dict],
     ass_path: Path,
     width: int,
     height: int,
     hook_text: str = "",
+    show_numbers: bool = True,
+    cta: bool = True,
 ) -> None:
     """Génère un .ass karaoké style TikTok premium.
 
@@ -104,6 +171,15 @@ def build_karaoke_ass(
 
     # Hook géant 0-3.6s (texte « stop scroll » en haut)
     lines.extend(_hook_lines(hook_text, width, height))
+
+    # Chiffres animés géants (1500 km², 95 %…)
+    if show_numbers and words:
+        lines.extend(_number_lines(words, width, height))
+
+    # CTA « Abonne-toi » sur les 4 dernières secondes
+    if cta and words:
+        total_dur = words[-1]["end"]
+        lines.extend(_cta_lines(total_dur, width, height))
 
     groups = _group_words(words, max_per_group=3)
 

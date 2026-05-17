@@ -64,7 +64,9 @@ CONTRAINTES STRICTES POUR LES VISUELS :
 
 CONTRAINTES STRICTES NARRATIVES :
 - EXACTEMENT {n_scenes} scènes
-- Construction : intro accrocheuse → développement (4-5 angles concrets) → exemple ou témoignage → conclusion mémorable
+- Construction : intro accrocheuse → développement (4-5 angles concrets) → exemple ou témoignage → conclusion
+- LA DERNIÈRE SCÈNE doit être une QUESTION engageante au spectateur + invitation à commenter/s'abonner (ex: "Et toi, tu connaissais cette légende ? Dis-le en commentaire et abonne-toi pour découvrir Mayotte !")
+- Au milieu du récit (scène 6 ou 7), glisse un mini-cliffhanger ("mais le plus fou, c'est…", "et ce que personne ne sait…")
 - Chaque scène s'appuie sur UN fait précis de la liste — pas d'invention
 """
 
@@ -92,6 +94,7 @@ Renvoie UNIQUEMENT du JSON valide :
 
 CONTRAINTES :
 - EXACTEMENT {n_scenes} scènes : intro contextualisant → développement de l'actualité → impact pour les Mahorais → ouverture
+- LA DERNIÈRE SCÈNE doit être une QUESTION au spectateur + invitation à commenter/s'abonner
 - Reste FACTUEL — ne dramatise pas, ne politise pas, ne prends pas parti
 - Si tu manques d'infos, élargis avec le CONTEXTE GÉNÉRAL Mayotte (géographie, démographie, etc.)
 - Visuels concrets décrivant CE QUI EST À L'ÉCRAN (action + sujet + lieu), 6-12 mots, tous différents.
@@ -111,7 +114,7 @@ Contexte du reportage : {context}
 Phrase précédente (pour cohérence narrative) : {prev}
 
 CONTRAINTES NON-NÉGOCIABLES :
-- EXACTEMENT entre 22 et 28 mots
+- EXACTEMENT entre 19 et 24 mots
 - UNE seule phrase
 - DOIT se terminer par un point « . »
 - Ton dynamique, narratif, oral, comme un reportage TF1/Brut
@@ -155,22 +158,22 @@ def _expand(idea: str, context: str, prev: str, fact: str | None = None) -> str:
         )
         sentence = _clean_sentence(chat(EXPAND_SYSTEM, prompt, temperature=0.7 + attempt * 0.1))
         wc = _wc(sentence)
-        if 20 <= wc <= 30:
+        if 17 <= wc <= 26:
             return sentence
-        if wc < 20:
+        if wc < 17:
             adjust = (
                 f"La phrase fait {wc} mots, c'est trop court. Réécris-la pour qu'elle fasse "
-                f"exactement entre 23 et 27 mots, en gardant le sens et le fait. Termine par un point. "
+                f"exactement entre 20 et 23 mots, en gardant le sens et le fait. Termine par un point. "
                 f"Réponds avec UNIQUEMENT la phrase.\n\nPhrase : {sentence}"
             )
         else:
             adjust = (
                 f"La phrase fait {wc} mots, c'est trop long. Réécris-la pour qu'elle fasse "
-                f"exactement entre 23 et 27 mots, sans perdre le fait. Termine par un point. "
+                f"exactement entre 20 et 23 mots, sans perdre le fait. Termine par un point. "
                 f"Réponds avec UNIQUEMENT la phrase.\n\nPhrase : {sentence}"
             )
         sentence2 = _clean_sentence(chat(EXPAND_SYSTEM, adjust, temperature=0.5))
-        if 20 <= _wc(sentence2) <= 30:
+        if 17 <= _wc(sentence2) <= 26:
             return sentence2
     return sentence
 

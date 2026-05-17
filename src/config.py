@@ -32,15 +32,16 @@ VOICE_RATE = os.getenv("EDGE_RATE", "-3%").strip()
 COQUI_SPEAKER = os.getenv("COQUI_SPEAKER", "Damien Black").strip()
 COQUI_LANGUAGE = os.getenv("COQUI_LANGUAGE", "fr").strip()
 
-# Cible : ~150 secondes de narration (2min30 ≈ 380-440 mots à 2.7 mot/s)
-TARGET_WORDS_MIN = 380
-TARGET_WORDS_MAX = 460
+# Cible : 100-115s de narration (entre 1min30 et 2min — zone monétisable TikTok)
+# À ~2.5 mots/s (Coqui -3%) : 100s≈250 mots, 115s≈290 mots
+TARGET_WORDS_MIN = 240
+TARGET_WORDS_MAX = 310
 
-# Découpage visuel : 16 scènes × 4 visuels = 64 clips
-# Pour ~160s d'audio → 2.5s par clip exactement (objectif "coupe toutes les 2.5s")
+# Découpage visuel : 12 scènes × 4 visuels = 48 clips
+# Pour ~110s d'audio → ~2.3s par clip (objectif "coupe ≤ 2.5s")
 VISUAL_MAX_DURATION = 2.5
 VISUALS_PER_SCENE = 4
-NUM_SCENES = 16
+NUM_SCENES = 12
 
 GROQ_MODEL = "llama-3.3-70b-versatile"
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip()
