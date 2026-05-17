@@ -39,7 +39,7 @@ Renvoie UNIQUEMENT du JSON valide :
 {{
   "title": "titre TikTok accrocheur (max 55 caractères) — peut être différent du titre source",
   "hook": "phrase d'accroche, 15-22 mots, intrigante",
-  "hook_punch": "accroche ULTRA-courte de 3 à 6 mots pour le texte géant des 3 premières secondes (ex: 'Le secret du lagon', 'Personne ne sait ça', 'Mayotte va te surprendre')",
+  "hook_punch": "accroche ULTRA-courte de 3 à 5 mots, MAXIMUM 28 caractères, pour le texte d'accroche des 3 premières secondes (ex: 'Le secret du lagon', 'Personne ne sait ça')",
   "scenes": [
     {{
       "idea": "1 phrase d'idée (12-18 mots) — utilise UN des faits ci-dessus",
@@ -82,7 +82,7 @@ Renvoie UNIQUEMENT du JSON valide :
 {{
   "title": "titre TikTok accrocheur (max 55 caractères)",
   "hook": "phrase d'accroche, 15-22 mots",
-  "hook_punch": "accroche ULTRA-courte de 3 à 6 mots pour le texte géant des 3 premières secondes",
+  "hook_punch": "accroche ULTRA-courte de 3 à 5 mots, MAXIMUM 28 caractères, pour le texte d'accroche des 3 premières secondes",
   "scenes": [
     {{
       "idea": "1 phrase d'idée pour cette scène (12-18 mots)",

@@ -20,7 +20,7 @@ WrapStyle: 2
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: Base,Montserrat Black,108,&H00FFFFFF,&H000000FF,&H00000000,&HAA000000,1,0,0,0,100,100,2,0,1,10,4,2,80,80,0,1
 Style: Hilite,Montserrat Black,108,&H0000F0FF,&H000000FF,&H00000000,&HAA000000,1,0,0,0,100,100,2,0,1,10,4,2,80,80,0,1
-Style: Hook,Montserrat Black,128,&H0000F0FF,&H000000FF,&H00000000,&HCC000000,1,0,0,0,100,100,3,0,1,14,6,5,70,70,0,1
+Style: Hook,Montserrat Black,82,&H0000F0FF,&H000000FF,&H00000000,&HCC000000,1,0,0,0,100,100,1,0,1,8,4,5,110,110,0,1
 Style: Number,Montserrat Black,180,&H0000F0FF,&H000000FF,&H00000000,&H00000000,1,0,0,0,100,100,0,0,1,16,8,5,60,60,0,1
 Style: CTA,Montserrat Black,116,&H00FFFFFF,&H000000FF,&H00000000,&HDD000000,1,0,0,0,100,100,2,0,1,12,5,5,70,70,0,1
 
@@ -67,27 +67,44 @@ def _group_words(words: list[dict], max_per_group: int = 3) -> list[list[dict]]:
     return groups
 
 
-def _hook_lines(hook_text: str, width: int, height: int) -> list[str]:
-    """Génère les lignes ASS du hook géant affiché ~0-3.5s en haut de l'écran.
+def _wrap_balanced(text: str, max_chars_per_line: int = 18) -> str:
+    """Répartit le texte sur 1 ou 2 lignes équilibrées (séparateur ASS \\N)."""
+    words = text.split()
+    if len(words) <= 1 or len(text) <= max_chars_per_line:
+        return text
+    # Cherche le point de coupure qui équilibre le mieux les 2 lignes
+    best_split, best_diff = 1, 10**9
+    for k in range(1, len(words)):
+        l1 = len(" ".join(words[:k]))
+        l2 = len(" ".join(words[k:]))
+        diff = abs(l1 - l2)
+        if diff < best_diff:
+            best_diff, best_split = diff, k
+    return " ".join(words[:best_split]) + r"\N" + " ".join(words[best_split:])
 
-    Effet « stop scroll » : apparition en pop (scale 60→110→100), maintien,
-    léger pulse, puis disparition en fondu.
+
+def _hook_lines(hook_text: str, width: int, height: int) -> list[str]:
+    """Génère les lignes ASS du hook affiché ~0-3.5s en haut de l'écran.
+
+    Texte sur 1-2 lignes équilibrées, taille modérée, effet « stop scroll »
+    (pop-in + léger pulse + fondu de sortie).
     """
     if not hook_text or not hook_text.strip():
         return []
     text = hook_text.strip().upper()
-    text = text.replace("\\", "\\\\").replace("{", "(").replace("}", ")")
+    text = text.replace("\\", "").replace("{", "(").replace("}", ")")
+    text = _wrap_balanced(text, max_chars_per_line=18)
     pos_x = width // 2
-    pos_y = int(height * 0.30)  # haut de l'écran, au-dessus des sous-titres
+    pos_y = int(height * 0.26)  # haut de l'écran, au-dessus des sous-titres
 
-    # 0 → 3.6s : pop-in dynamique + pulse léger + fondu de sortie
+    # 0 → 3.6s : pop-in + pulse léger + fondu de sortie
     fx = (
-        f"{{\\an5\\pos({pos_x},{pos_y})\\bord14\\shad6"
+        f"{{\\an5\\pos({pos_x},{pos_y})\\bord8\\shad4"
         f"\\fad(0,250)"
-        f"\\t(0,180,\\fscx112\\fscy112)"
+        f"\\t(0,180,\\fscx108\\fscy108)"
         f"\\t(180,320,\\fscx100\\fscy100)"
-        f"\\t(1400,1700,\\fscx106\\fscy106)"
-        f"\\t(1700,2000,\\fscx100\\fscy100)}}"
+        f"\\t(1500,1750,\\fscx104\\fscy104)"
+        f"\\t(1750,2000,\\fscx100\\fscy100)}}"
     )
     return [f"Dialogue: 2,{_t(0.10)},{_t(3.60)},Hook,,0,0,0,,{fx}{text}"]
 

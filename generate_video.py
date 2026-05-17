@@ -121,6 +121,12 @@ def build_video(topic_key: str | None = None) -> Path:
         print(f"   🎯 Hook visuel : « {hook_punch} »")
     build_karaoke_ass(words, ass_path, VIDEO_WIDTH, VIDEO_HEIGHT, hook_text=hook_punch)
 
+    # Sauvegarde les timings des mots → permet de re-générer les sous-titres
+    # plus tard (rerender) sans relancer la synthèse vocale.
+    (work_dir / "words.json").write_text(
+        json.dumps(words, ensure_ascii=False), encoding="utf-8"
+    )
+
     print(f"🎨 Récup assets — MODE HYBRIDE (1 IA + {VISUALS_PER_SCENE-1} stock par scène)")
     print(f"   {len(script['scenes'])} scènes × {VISUALS_PER_SCENE} visuels = "
           f"{len(script['scenes']) * VISUALS_PER_SCENE} clips")

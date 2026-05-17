@@ -48,6 +48,19 @@ def main() -> int:
     scenes = meta["scenes"]
     print(f"📝 {meta['title']} — {len(scenes)} scènes")
 
+    # Si words.json est dispo, on RÉGÉNÈRE les sous-titres .ass (utile après un
+    # changement de style : hook, CTA, chiffres…). Sinon on garde le .ass existant.
+    words_file = work_dir / "words.json"
+    if words_file.exists():
+        from src.config import VIDEO_HEIGHT, VIDEO_WIDTH
+        from src.subtitles import build_karaoke_ass
+        words = json.loads(words_file.read_text(encoding="utf-8"))
+        hook = meta.get("hook_punch", "")
+        build_karaoke_ass(words, ass_path, VIDEO_WIDTH, VIDEO_HEIGHT, hook_text=hook)
+        print(f"   ↻ Sous-titres régénérés ({len(words)} mots, hook « {hook} »)")
+    else:
+        print("   ℹ️  Pas de words.json — sous-titres existants conservés")
+
     # Reconstruit l'ordre des assets : asset_s{NN}_v{V}.{mp4|jpg}
     asset_paths: list[Path] = []
     for s_idx in range(len(scenes)):
