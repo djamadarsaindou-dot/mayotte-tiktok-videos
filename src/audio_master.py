@@ -26,12 +26,14 @@ VOICE_MASTER_CHAIN = (
     "loudnorm=I=-14:TP=-1.5:LRA=11"
 )
 
-# Chaîne plus douce pour nettoyer un échantillon de référence (voice cloning) :
-# on débruite et on normalise, mais sans compresser (XTTS préfère un timbre naturel).
+# Nettoyage MINIMAL d'un échantillon de référence (voice cloning).
+# Important : XTTS clone fidèlement ce qu'on lui donne. Tout filtre agressif
+# (débruitage, EQ, compression) ALTÈRE le timbre de la voix → mauvaise copie.
+# On se contente donc d'un highpass très bas (sub-grave parasite) + normalisation
+# douce. Le timbre de la voix reste intact.
 SAMPLE_CLEAN_CHAIN = (
-    "highpass=f=75,"
-    "afftdn=nr=10:nf=-25,"
-    "loudnorm=I=-18:TP=-2:LRA=11"
+    "highpass=f=55,"
+    "loudnorm=I=-20:TP=-3:LRA=14"
 )
 
 
