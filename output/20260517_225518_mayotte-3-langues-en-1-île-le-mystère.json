@@ -1,0 +1,171 @@
+{
+  "title": "Mayotte : 3 langues en 1 île, le mystère ?",
+  "topic": "fait_insolite",
+  "topic_label": "Fait insolite Mayotte",
+  "hook": "À Mayotte, on parle 3 langues sans même s’en rendre compte… Le saviez-vous ?",
+  "hook_punch": "Le secret des langues",
+  "caption": {
+    "caption": "À Mayotte, on passe du shimaoré au français en 1 clic 🌍✨ Tu savais que 3 langues cohabitent ici au quotidien ? 🤔 Et toi, tu parles combien de langues ?",
+    "hashtags": [
+      "mayotte",
+      "976",
+      "oceanindien",
+      "domtom",
+      "culturemayotte",
+      "multilinguisme",
+      "langues",
+      "shimaore",
+      "kibushi",
+      "decouverte",
+      "ileauxparfums",
+      "voyage",
+      "culture",
+      "societe"
+    ],
+    "text": "À Mayotte, on passe du shimaoré au français en 1 clic 🌍✨ Tu savais que 3 langues cohabitent ici au quotidien ? 🤔 Et toi, tu parles combien de langues ?\n\n#mayotte #976 #oceanindien #domtom #culturemayotte #multilinguisme #langues #shimaore #kibushi #decouverte #ileauxparfums #voyage #culture #societe"
+  },
+  "scenes": [
+    {
+      "narration": "Ici, les Mahorais passent du français au shimaoré ou au kibushi en un clin d’œil, comme on change de rythme dans une chanson.",
+      "visuals": [
+        "medium shot family sitting on floor talking laughing evening light",
+        "close-up hands holding smartphone with messages in different languages",
+        "wide shot market vendors chatting in shimaoré with customers",
+        "aerial view children playing near school speaking mixed languages"
+      ],
+      "image_prompt": "A photorealistic vertical 9:16 image of a warm evening in Mayotte, showing a Mahorais family sitting on a colorful mat in their courtyard. The parents and children are laughing and talking, switching effortlessly between French, shimaoré, and kibushi. The scene is bathed in golden sunset light, with traditional woven baskets and modern smartphones visible. The expressions are joyful and natural, capturing the everyday beauty of multilingualism.",
+      "fact_used": "Trois langues coexistent au quotidien : français, shimaoré et kibushi"
+    },
+    {
+      "narration": "À l’école, c’est le français qui ouvre les portes du savoir, mais une fois rentrés, les Mahorais retrouvent leurs mots doux en shimaoré ou en kibushi pour parler du quotidien.",
+      "visuals": [
+        "close-up teacher writing French words on blackboard in classroom",
+        "medium shot children raising hands answering questions in French",
+        "wide shot schoolyard with kids playing and speaking French",
+        "close-up notebook with French exercises and shimaoré doodles"
+      ],
+      "image_prompt": "A cinematic vertical 9:16 shot of a lively classroom in Mayotte. A Mahorais teacher, dressed in a colorful kanga, writes French vocabulary on a blackboard while smiling students raise their hands to answer. The room is bright, with posters in French and local languages on the walls. Some children whisper to each other in shimaoré, blending the formal and informal languages seamlessly.",
+      "fact_used": "L'enseignement scolaire se fait en français, mais le foyer parle souvent les langues locales"
+    },
+    {
+      "narration": "Et ce shimaoré, c’est bien plus qu’une langue : un héritage bantou qui danse avec le swahili, et que les Mahorais murmurent comme une mélodie du passé.",
+      "visuals": [
+        "close-up elderly woman telling story in shimaoré to children",
+        "medium shot group of friends laughing and speaking shimaoré",
+        "wide shot village gathering with people conversing in shimaoré",
+        "close-up hands writing shimaoré words in a notebook"
+      ],
+      "image_prompt": "A warm, intimate vertical 9:16 scene of an elderly Mahorais woman sitting under a mango tree, surrounded by children. She tells a story in shimaoré, her hands gesturing expressively, while the kids listen with rapt attention. The background shows traditional huts and lush greenery, with the sound of waves in the distance, evoking the African roots of the language.",
+      "fact_used": "Le shimaoré est une langue bantoue, parente du swahili"
+    },
+    {
+      "narration": "Et si je vous disais qu’ici, les Mahorais parlent aussi une langue venue tout droit des îles de l’océan Indien, aussi proche du malgache que le vent l’est des alizés ?",
+      "visuals": [
+        "medium shot fishermen on beach speaking kibushi while working",
+        "close-up young girl singing a song in kibushi",
+        "wide shot family cooking together while speaking kibushi",
+        "close-up old book with kibushi proverbs written in it"
+      ],
+      "image_prompt": "A vibrant vertical 9:16 image of a Mahorais family preparing a meal on the beach at sunset. The father and son are cleaning fish while speaking kibushi, their voices blending with the sound of the waves. The mother and daughter sing a traditional song in kibushi, their faces lit by the warm glow of the fire. The scene captures the Malagasy influence in the language and culture.",
+      "fact_used": "Le kibushi est une langue austronésienne, parente du malgache"
+    },
+    {
+      "narration": "Et ces deux langues, le shimaoré et le kibushi, racontent à elles seules des siècles de voyages entre l’Afrique et Madagascar, comme une carte vivante des racines mahoraises.",
+      "visuals": [
+        "aerial shot boats arriving on Mayotte’s shores in historical reenactment",
+        "medium shot museum exhibit showing migration routes to Mayotte",
+        "close-up map of Indian Ocean with arrows pointing to Mayotte",
+        "wide shot cultural festival with dances from Africa and Madagascar"
+      ],
+      "image_prompt": "A dramatic vertical 9:16 aerial shot of traditional wooden boats arriving on the shores of Mayotte, evoking the historical migrations from Africa and Madagascar. The scene is cinematic, with the turquoise lagoon contrasting against the lush green hills. In the distance, a cultural festival unfolds, with dancers performing traditional African and Malagasy routines, symbolizing the blend of cultures.",
+      "fact_used": "Ces deux langues témoignent des migrations africaines et malgaches"
+    },
+    {
+      "narration": "Mais ce qui rend Mayotte vraiment unique en France, c’est que les Mahorais jonglent au quotidien avec une troisième langue, et pas n’importe laquelle.",
+      "visuals": [
+        "close-up surprised teenager hearing a fun fact about Mayotte",
+        "medium shot person holding French passport with Mayotte mentioned",
+        "wide shot Mayotte landscape with French flag waving",
+        "close-up hand pointing to Mayotte on a map of France"
+      ],
+      "image_prompt": "A vertical 9:16 close-up of a curious Mahorais teenager, eyes widening as they learn that Mayotte is the only place in France where three languages coexist daily. The background is blurred but shows a French passport and a map of Mayotte, highlighting its unique status. The expression is one of surprise and pride, setting up the cliffhanger.",
+      "fact_used": "Cette richesse linguistique fait de Mayotte un cas unique en France"
+    },
+    {
+      "narration": "Imaginez : ici, les Mahorais parlent français à l’école, shimaoré dans la rue et kibushi à la maison, une mosaïque linguistique qui n’existe nulle part ailleurs en France.",
+      "visuals": [
+        "medium shot group of friends switching languages mid-conversation",
+        "close-up smartphone screen showing translation app for shimaoré",
+        "wide shot Mayotte’s lagoon with voiceover about uniqueness",
+        "close-up hand writing 'Mayotte' in three languages on paper"
+      ],
+      "image_prompt": "A dynamic vertical 9:16 shot of a group of Mahorais friends sitting on a pier by the lagoon. They effortlessly switch between French, shimaoré, and kibushi in their conversation, laughing and teasing each other. The turquoise water of the lagoon sparkles in the background, emphasizing the uniqueness of Mayotte’s linguistic landscape in France.",
+      "fact_used": "Cette richesse linguistique fait de Mayotte un cas unique en France"
+    },
+    {
+      "narration": "Et c’est dans l’intimité des foyers que les Mahorais transmettent ces trésors linguistiques, où chaque mot chuchoté devient un pont entre les générations.",
+      "visuals": [
+        "close-up mother teaching her child shimaoré words at home",
+        "medium shot grandmother telling a kibushi story to grandchildren",
+        "wide shot family dinner with conversations in local languages",
+        "close-up child’s drawing with words in shimaoré and kibushi"
+      ],
+      "image_prompt": "A tender vertical 9:16 scene of a Mahorais mother teaching her young child to speak shimaoré at home. They sit on a woven mat, surrounded by traditional decorations, as the mother points to objects and names them in the local language. The child repeats the words, giggling, while the grandmother watches fondly from the background, holding a cup of tea.",
+      "fact_used": "Le foyer parle souvent les langues locales"
+    },
+    {
+      "narration": "Imaginez, le shimaoré, cette langue bantoue cousine du swahili, se transmet ici comme un secret précieux, de bouche à oreille, depuis des siècles sans jamais perdre sa force.",
+      "visuals": [
+        "medium shot elderly man singing a traditional song in kibushi",
+        "close-up children mimicking the song with joyful expressions",
+        "wide shot village elders sharing stories under a baobab tree",
+        "close-up hands clapping to the rhythm of a shimaoré poem"
+      ],
+      "image_prompt": "A vertical 9:16 shot of an elderly Mahorais man sitting under a baobab tree, singing a traditional song in kibushi. A group of children gather around him, clapping and mimicking his words, their faces filled with wonder. The scene is warm and golden, capturing the oral tradition of passing down languages through stories and songs.",
+      "fact_used": "Le shimaoré est une langue bantoue, parente du swahili"
+    },
+    {
+      "narration": "Et pourtant, à quelques kilomètres seulement, les Mahorais parlent aussi le kibushi, une langue venue des mers, aussi mystérieuse que le malgache dont elle partage les racines lointaines.",
+      "visuals": [
+        "wide shot traditional dance performance with lyrics in shimaoré",
+        "medium shot artist painting a mural with words in kibushi",
+        "close-up musician playing a traditional instrument and singing",
+        "aerial shot festival crowd celebrating with multilingual chants"
+      ],
+      "image_prompt": "A vibrant vertical 9:16 aerial shot of a cultural festival in Mayotte, where a large crowd gathers to celebrate. Traditional dancers perform to lyrics in shimaoré, while musicians play instruments and sing in kibushi. The scene is colorful and energetic, with the crowd joining in the chants, showcasing the deep connection between language and culture.",
+      "fact_used": "Le kibushi est une langue austronésienne, parente du malgache"
+    },
+    {
+      "narration": "Pour comprendre ce mélange unique, on a rencontré Aïcha, une Mahoraise qui jongle entre ces trois langues comme on respire au rythme des vagues du lagon.",
+      "visuals": [
+        "close-up young Mahorais woman speaking directly to the camera",
+        "medium shot her switching languages in a single sentence",
+        "wide shot her walking through a village while talking",
+        "close-up her smiling as she finishes her story"
+      ],
+      "image_prompt": "A vertical 9:16 close-up of a young Mahorais woman speaking directly to the camera with a warm smile. She shares her experience of growing up multilingual, effortlessly switching between French, shimaoré, and kibushi in a single sentence. The background shows her walking through a bustling village, with children playing and elders chatting, illustrating the natural blend of languages in her daily life.",
+      "fact_used": "Trois langues coexistent au quotidien : français, shimaoré et kibushi"
+    },
+    {
+      "narration": "Et si cette harmonie entre le shimaoré, le kibushi et le français était la clé secrète qui rend les Mahorais si fiers de leur île ?",
+      "visuals": [
+        "medium shot host smiling at the camera with Mayotte’s lagoon behind",
+        "close-up text on screen: 'Et toi, tu parles combien de langues ?'",
+        "wide shot beautiful Mayotte landscape with call-to-action",
+        "close-up hand pointing to comment section on TikTok"
+      ],
+      "image_prompt": "A vertical 9:16 shot of the host standing by the lagoon in Mayotte, smiling at the camera. The turquoise water and lush greenery create a stunning backdrop. Text appears on the screen: 'Et toi, tu parles combien de langues ?' The host gestures toward the comment section, inviting viewers to share their thoughts and subscribe for more stories about Mayotte.",
+      "fact_used": "Cette richesse linguistique fait de Mayotte un cas unique en France"
+    }
+  ],
+  "duration": 103.944,
+  "word_count": 322,
+  "num_clips": 48,
+  "sources_used": {
+    "Pexels vidéo": 36,
+    "Pollinations IA": 12
+  },
+  "voice": "Coqui XTTS v2 / Damien Black",
+  "created_at": "2026-05-17T23:32:53.077652",
+  "video_file": "20260517_225518_mayotte-3-langues-en-1-île-le-mystère.mp4"
+}

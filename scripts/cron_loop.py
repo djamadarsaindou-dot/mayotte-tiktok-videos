@@ -11,7 +11,9 @@ Logique :
 
 Tout est loggé dans logs/cron_loop_YYYY-MM-DD_HH-MM-SS.log.
 """
+import atexit
 import datetime as dt
+import os
 import subprocess
 import sys
 import time
@@ -30,6 +32,44 @@ PYTHON_EXE = ROOT / ".venv" / "Scripts" / "python.exe"
 GENERATE_SCRIPT = ROOT / "generate_video.py"
 CLEANUP_SCRIPT = ROOT / "scripts" / "cleanup_videos.py"
 LOG_DIR = ROOT / "logs"
+
+
+LOCK_FILE = LOG_DIR / "cron.lock"
+
+
+def _pid_alive(pid: int) -> bool:
+    """Vrai si un process avec ce PID tourne actuellement."""
+    try:
+        import psutil
+        return psutil.pid_exists(pid)
+    except Exception:
+        # Fallback sans psutil : tasklist
+        try:
+            out = subprocess.run(
+                ["tasklist", "/FI", f"PID eq {pid}"],
+                capture_output=True, text=True,
+            )
+            return str(pid) in out.stdout
+        except Exception:
+            return False
+
+
+def acquire_lock() -> bool:
+    """Verrou anti-doublon : empêche 2 cron_loop de tourner en même temps.
+
+    Renvoie True si le verrou est acquis, False si une instance tourne déjà.
+    """
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
+    if LOCK_FILE.exists():
+        try:
+            old_pid = int(LOCK_FILE.read_text().strip())
+            if old_pid != os.getpid() and _pid_alive(old_pid):
+                return False  # une autre instance tourne
+        except Exception:
+            pass  # lock corrompu → on le récupère
+    LOCK_FILE.write_text(str(os.getpid()), encoding="utf-8")
+    atexit.register(lambda: LOCK_FILE.unlink(missing_ok=True))
+    return True
 
 
 def now_str() -> str:
@@ -63,6 +103,10 @@ def sleep_until_next_slot(start_time: float) -> None:
 
 def main() -> int:
     LOG_DIR.mkdir(parents=True, exist_ok=True)
+    if not acquire_lock():
+        log("⚠️  Une instance du cron tourne déjà — arrêt de ce doublon.")
+        return 0
+
     log(f"🚀 Cron loop démarré (intervalle {INTERVAL_HOURS}h)")
     log(f"   Project root : {ROOT}")
     log(f"   Python venv  : {PYTHON_EXE}")
