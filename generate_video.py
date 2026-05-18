@@ -250,6 +250,13 @@ def main() -> int:
     parser.add_argument("--topic", choices=list(TOPICS.keys()), help="Forcer un thème")
     args = parser.parse_args()
 
+    # Verrou mono-instance : si une génération tourne déjà, on s'arrête net
+    # (évite tout doublon de génération → gaspillage d'API Mistral/Pollinations).
+    from src.locking import acquire
+    if not acquire(TEMP_DIR.parent.parent / "logs" / "generate.lock"):
+        print("⚠️  Une génération est déjà en cours — ce doublon s'arrête.")
+        return 0
+
     start = time.time()
     try:
         build_video(args.topic)
