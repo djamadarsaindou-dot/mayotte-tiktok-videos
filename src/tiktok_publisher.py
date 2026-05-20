@@ -23,6 +23,13 @@ from pathlib import Path
 
 import requests
 
+# Charge .env pour que ce module soit utilisable en standalone (tests, debug)
+try:
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+except Exception:
+    pass
+
 INBOX_INIT_URL = "https://open.tiktokapis.com/v2/post/publish/inbox/video/init/"
 TOKEN_URL = "https://open.tiktokapis.com/v2/oauth/token/"
 STATUS_URL = "https://open.tiktokapis.com/v2/post/publish/status/fetch/"
@@ -117,26 +124,54 @@ def _post_with_auto_refresh(url: str, *, json=None, headers: dict | None = None,
     return r
 
 
+MAX_CHUNK = 64 * 1024 * 1024  # TikTok : chunk_size max 64 MB
+MIN_CHUNK = 5 * 1024 * 1024   # TikTok : chunk_size min 5 MB
+
+
+def _compute_chunks(size: int) -> tuple[int, int]:
+    """Calcule (chunk_size, total_chunks) selon les règles strictes TikTok :
+    - total_chunks = video_size // chunk_size (FLOOR division)
+    - Le dernier chunk = chunk_size + (video_size - chunk_size * total_chunks)
+      (donc il peut être plus gros que chunk_size, mais ≤ 2× chunk_size)
+    - chunk_size doit être entre 5 MB et 64 MB
+    - Pour ≤ 64 MB : 1 chunk de taille = video_size
+
+    Stratégie : choisir le plus petit total tel que chunk_size = size//total ≤ 64 MB.
+    """
+    import math
+    if size <= MAX_CHUNK:
+        return size, 1
+    total = math.ceil(size / MAX_CHUNK)
+    chunk = size // total
+    if chunk < MIN_CHUNK:
+        total = max(1, size // MIN_CHUNK)
+        chunk = size // total
+    return chunk, total
+
+
 def publish_inbox(video_path: Path) -> dict:
     """Upload la vidéo en mode INBOX (brouillon privé).
 
     Retourne {'publish_id': str, 'status': str, 'video': str}.
     L'utilisateur doit ensuite ouvrir TikTok pour finaliser la publication.
+    Gère le chunking automatique selon les contraintes TikTok (5 MB ≤ chunk ≤ 64 MB).
     """
     if not video_path.exists():
         raise FileNotFoundError(video_path)
 
     size = video_path.stat().st_size
+    chunk_size, total_chunks = _compute_chunks(size)
+
     init_body = {
         "source_info": {
             "source": "FILE_UPLOAD",
             "video_size": size,
-            "chunk_size": size,
-            "total_chunk_count": 1,
+            "chunk_size": chunk_size,
+            "total_chunk_count": total_chunks,
         }
     }
 
-    print(f"  🚀 TikTok : init upload ({size/1024/1024:.1f} MB)...")
+    print(f"  🚀 TikTok : init upload ({size/1024/1024:.1f} MB en {total_chunks} chunk(s))...")
     r = _post_with_auto_refresh(
         INBOX_INIT_URL,
         json=init_body,
@@ -150,21 +185,32 @@ def publish_inbox(video_path: Path) -> dict:
     if not publish_id or not upload_url:
         raise RuntimeError(f"Réponse TikTok inattendue : {data}")
 
-    print(f"  ⬆️  TikTok : upload du fichier...")
+    print(f"  ⬆️  TikTok : upload...")
     with video_path.open("rb") as f:
-        content = f.read()
-    up = requests.put(
-        upload_url,
-        data=content,
-        headers={
-            "Content-Type": "video/mp4",
-            "Content-Length": str(size),
-            "Content-Range": f"bytes 0-{size-1}/{size}",
-        },
-        timeout=300,
-    )
-    if up.status_code not in (200, 201):
-        raise RuntimeError(f"TikTok upload HTTP {up.status_code}: {up.text[:400]}")
+        for i in range(total_chunks):
+            start = i * chunk_size
+            # Tous les chunks font chunk_size SAUF le dernier qui prend le reste
+            # (peut être plus gros que chunk_size, c'est la règle TikTok)
+            this_chunk = chunk_size if i < total_chunks - 1 else size - start
+            content = f.read(this_chunk)
+            up = requests.put(
+                upload_url,
+                data=content,
+                headers={
+                    "Content-Type": "video/mp4",
+                    "Content-Length": str(this_chunk),
+                    "Content-Range": f"bytes {start}-{start+this_chunk-1}/{size}",
+                },
+                timeout=300,
+            )
+            # 206 = partial accepted, 200/201 = final accepted
+            if up.status_code not in (200, 201, 206):
+                raise RuntimeError(
+                    f"TikTok upload chunk {i+1}/{total_chunks} HTTP {up.status_code}: "
+                    f"{up.text[:400]}"
+                )
+            print(f"     chunk {i+1}/{total_chunks} ({this_chunk/1024/1024:.1f} MB) → "
+                  f"HTTP {up.status_code}")
 
     # Petit poll de statut (best-effort)
     time.sleep(2)
