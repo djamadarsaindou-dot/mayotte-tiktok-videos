@@ -186,25 +186,50 @@ _BACKENDS = {
 }
 
 
+def _model_for(name: str) -> str:
+    if name == "mistral": return MISTRAL_MODEL
+    if name == "gemini": return GEMINI_MODEL
+    return GROQ_MODEL
+
+
 def chat(system: str, user: str, json_mode: bool = False, temperature: float = 0.85) -> str:
     primary = _resolve_provider()
     last_err: Exception | None = None
 
+    # Cache hit ? On essaye d'abord sans payer l'appel
     try:
-        return _BACKENDS[primary][1](system, user, json_mode, temperature)
+        from src.llm_cache import get as _cache_get
+        cached = _cache_get(primary, _model_for(primary), system, user, json_mode, temperature)
+        if cached is not None:
+            return cached
+    except Exception:
+        pass
+
+    try:
+        result = _BACKENDS[primary][1](system, user, json_mode, temperature)
+        try:
+            from src.llm_cache import put as _cache_put
+            _cache_put(primary, _model_for(primary), system, user, json_mode, temperature, result)
+        except Exception:
+            pass
+        return result
     except Exception as e:
         last_err = e
         print(f"  ⚠️  LLM {primary} a échoué : {str(e)[:120]}")
 
     # Fallback : essaye toujours les autres providers configurés en cas d'échec.
-    # On ne respecte le forçage que pour le PREMIER essai, ensuite on accepte
-    # tout backend dispo plutôt que de faire planter le pipeline entier.
     for name, (has_key, fn) in _BACKENDS.items():
         if name == primary or not has_key():
             continue
         try:
             print(f"  ↪  Fallback sur {name}")
-            return fn(system, user, json_mode, temperature)
+            result = fn(system, user, json_mode, temperature)
+            try:
+                from src.llm_cache import put as _cache_put
+                _cache_put(name, _model_for(name), system, user, json_mode, temperature, result)
+            except Exception:
+                pass
+            return result
         except Exception as e2:
             last_err = e2
             print(f"  ⚠️  Fallback {name} a aussi échoué : {str(e2)[:120]}")

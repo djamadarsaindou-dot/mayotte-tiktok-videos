@@ -1,0 +1,171 @@
+{
+  "title": "Mayotte : le lagon qui défie la science 🌊",
+  "topic": "decouverte_mayotte",
+  "topic_label": "Découverte Mayotte",
+  "hook": "Imaginez un lagon si grand qu’il cache un secret géologique unique au monde…",
+  "hook_punch": "Le lagon invisible",
+  "caption": {
+    "caption": "Saviez-vous que Mayotte cache un lagon si immense qu’il abrite un secret géologique unique ? 🌍💙 Lequel ? Dites-le en commentaire !",
+    "hashtags": [
+      "mayotte",
+      "976",
+      "oceanindien",
+      "lagon",
+      "geologie",
+      "voyage",
+      "decouverte",
+      "nature",
+      "ile",
+      "science",
+      "merveille",
+      "domtom",
+      "exploration",
+      "biodiversite"
+    ],
+    "text": "Saviez-vous que Mayotte cache un lagon si immense qu’il abrite un secret géologique unique ? 🌍💙 Lequel ? Dites-le en commentaire !\n\n#mayotte #976 #oceanindien #lagon #geologie #voyage #decouverte #nature #ile #science #merveille #domtom #exploration #biodiversite"
+  },
+  "scenes": [
+    {
+      "narration": "Et ici, les Mahorais vous le confirment : ce double lagon fermé est une pépite bleue que même la science peine à expliquer.",
+      "visuals": [
+        "aerial drone wide shot Mayotte double lagoon turquoise waters clear sky",
+        "close-up coral reef structures underwater sunlight filtering through water",
+        "medium shot scientist in diving gear pointing at two parallel coral barriers",
+        "extreme wide shot horizon line separating lagoon from open ocean"
+      ],
+      "image_prompt": "Photorealistic vertical 9:16 aerial drone shot of Mayotte's double lagoon, two distinct coral reef barriers creating parallel turquoise water gradients, shallow inner lagoon with sandy patches, deeper outer lagoon transitioning to deep blue ocean, golden hour lighting, crystal clear visibility, dramatic perspective showing the unique geological formation, no people visible, ultra-detailed textures of coral and water surface.",
+      "fact_used": "Mayotte possède l'un des deux seuls doubles lagons fermés au monde, avec la Nouvelle-Calédonie"
+    },
+    {
+      "narration": "Voilà un lagon grand comme Paris, cerclé de corail : le joyau de Mayotte. Ici, la vie danse avec les marées, entre eaux turquoise et mystères marins.",
+      "visuals": [
+        "aerial shot lagoon stretching to the horizon with mountainous island backdrop",
+        "underwater wide angle coral barrier extending into the distance",
+        "drone shot following a traditional mahorais boat crossing the lagoon",
+        "close-up map animation showing 1500 km² lagoon area compared to Paris"
+      ],
+      "image_prompt": "Cinematic vertical 9:16 aerial view of Mayotte's vast 1500 km² lagoon, turquoise waters contrasting with lush green mountainous islands, traditional wooden pirogue sailing across the center, coral reef patterns visible beneath the surface, soft morning light creating gentle water reflections, ultra-high definition showing every detail of the natural landscape.",
+      "fact_used": "Le lagon couvre environ 1500 km², parmi les plus vastes lagons fermés de la planète"
+    },
+    {
+      "narration": "Et ce rempart de 195 km de corail, c’est leur bouclier naturel : il protège les Mahorais des vagues, tout en abritant un écosystème unique au monde.",
+      "visuals": [
+        "aerial drone following the 195 km coral barrier curving around the island",
+        "underwater shot coral wall rising from ocean floor to surface",
+        "medium shot waves crashing against the outer coral reef",
+        "close-up broken coral pieces showing vibrant colors and textures"
+      ],
+      "image_prompt": "Dramatic vertical 9:16 aerial drone sequence following Mayotte's 195 km coral barrier, waves crashing against the outer reef edge, turquoise lagoon waters on one side contrasting with deep blue ocean on the other, sunlight creating sparkling water effects, natural coral formations visible through crystal clear water, no human presence, ultra-realistic textures.",
+      "fact_used": "Une barrière de corail de 195 km entoure l'île"
+    },
+    {
+      "narration": "Ce lagon unique au monde a deux barrières de corail, un écrin où la nature dicte sa loi et où les Mahorais vivent en harmonie.",
+      "visuals": [
+        "aerial shot two parallel coral reefs visible beneath the water surface",
+        "underwater diver swimming between two coral walls",
+        "close-up small fish swimming in the protected channel between reefs",
+        "medium shot shallow water between reefs with sunlight creating patterns"
+      ],
+      "image_prompt": "Photorealistic vertical 9:16 underwater view of Mayotte's double coral reef system, diver in full gear swimming between two parallel coral walls, sunlight filtering through water creating golden rays, small tropical fish swimming in the protected channel, vibrant coral colors and textures, crystal clear visibility showing the unique geological formation.",
+      "fact_used": "Le récif intérieur double la barrière externe sur certaines zones"
+    },
+    {
+      "narration": "Et sous la surface, plus de 250 espèces de coraux transforment ce lagon en un tableau vivant, où les Mahorais plongent au cœur d’un monde aux mille couleurs.",
+      "visuals": [
+        "close-up vibrant coral formations in various shapes and colors",
+        "underwater wide shot coral garden with diverse species",
+        "macro shot coral polyps extending their tentacles to catch food",
+        "medium shot coral reef with sunlight creating rainbow effects"
+      ],
+      "image_prompt": "Ultra-detailed vertical 9:16 underwater macro shot of Mayotte's coral diversity, over 250 species visible in vibrant colors - reds, purples, yellows, blues - forming intricate structures, sunlight creating prismatic effects through water, small fish swimming between coral branches, crystal clear visibility, National Geographic quality.",
+      "fact_used": "Plus de 250 espèces de coraux y vivent"
+    },
+    {
+      "narration": "Et ici, 760 espèces de poissons dansent entre les coraux, du plus petit poisson-clown au majestueux requin-baleine, offrant aux Mahorais un spectacle sous-marin sans égal.",
+      "visuals": [
+        "school of colorful tropical fish swimming through coral arches",
+        "close-up clownfish in anemone home",
+        "medium shot large grouper fish near coral wall",
+        "underwater wide shot diverse fish species swimming together"
+      ],
+      "image_prompt": "Cinematic vertical 9:16 underwater shot of Mayotte's fish biodiversity, 760 species represented - from tiny neon gobies to majestic groupers - swimming through vibrant coral gardens, sunlight creating sparkling water effects, diverse colors and patterns, natural behavior captured in ultra-high definition, sense of underwater paradise.",
+      "fact_used": "760 espèces de poissons y vivent"
+    },
+    {
+      "narration": "Et ce qui épate même les plongeurs du monde entier, c’est cette fameuse passe en S au sud, où les courants jouent à cache-cache avec les Mahorais comme nulle part ailleurs.",
+      "visuals": [
+        "aerial shot S-shaped channel cutting through coral reef",
+        "underwater divers being gently pushed by current in the pass",
+        "close-up water swirling through the narrow S-shaped passage",
+        "medium shot boat anchored near the pass with divers preparing"
+      ],
+      "image_prompt": "Dramatic vertical 9:16 aerial view of Mayotte's famous S-shaped pass, turquoise water channel cutting through the coral reef, white water indicating strong currents, divers visible as tiny figures exploring the underwater passage, surrounding lagoon waters contrasting with the deep blue ocean beyond, golden hour lighting creating water reflections.",
+      "fact_used": "La passe en S, au sud, est mondialement connue des plongeurs"
+    },
+    {
+      "narration": "Plongez à Mayotte : raies mantas en ballet, tortues centenaires en glisse, requins complices qui vous frôlent sans peur. Ici, l’océan respire la confiance.",
+      "visuals": [
+        "underwater shot diver swimming alongside large manta ray",
+        "close-up sea turtle swimming near coral reef",
+        "medium shot group of divers watching a reef shark pass by",
+        "wide shot divers exploring the S-shaped pass with sunlight rays"
+      ],
+      "image_prompt": "Photorealistic vertical 9:16 underwater scene in Mayotte's S-pass, international divers in colorful gear swimming alongside a majestic manta ray, sea turtle visible in the background, reef sharks patrolling the area, sunlight creating dramatic rays through the water, vibrant coral formations framing the scene, sense of adventure and wonder.",
+      "fact_used": "La passe en S, au sud, est mondialement connue des plongeurs"
+    },
+    {
+      "narration": "Et pour percer les secrets de ce géant bleu de 1500 km², on suit Saïd, un guide mahorais qui en connaît chaque courant depuis qu’il marche à peine.",
+      "visuals": [
+        "medium shot elderly mahorais man pointing at different parts of the lagoon",
+        "close-up his hands showing traditional fishing techniques",
+        "wide shot him standing on a pirogue with the lagoon behind him",
+        "medium shot him telling stories to a group of children on the beach"
+      ],
+      "image_prompt": "Warm vertical 9:16 portrait of an elderly mahorais guide standing on a traditional pirogue, pointing towards different areas of the vast 1500 km² lagoon, turquoise waters stretching to the horizon, golden hour lighting creating a peaceful atmosphere, his weathered hands showing signs of a lifetime spent on the water, authentic local clothing, sense of wisdom and connection to the sea.",
+      "fact_used": "Le lagon couvre environ 1500 km², parmi les plus vastes lagons fermés de la planète"
+    },
+    {
+      "narration": "Saïd nous montre comment ce double lagon, protégé par 195 km de corail, crée un bouclier naturel qui préserve les villages mahorais des assauts de l’océan.",
+      "visuals": [
+        "medium shot guide gesturing towards the outer coral reef",
+        "aerial shot waves breaking on the outer reef while lagoon stays calm",
+        "close-up traditional mahorais village with lagoon in background",
+        "medium shot children playing safely in shallow lagoon waters"
+      ],
+      "image_prompt": "Cinematic vertical 9:16 sequence showing a mahorais guide explaining the protective role of the 195 km coral barrier, aerial shot of ocean waves crashing against the outer reef while the lagoon remains calm, traditional village visible in the background, children playing safely in the shallow lagoon waters, warm tropical lighting, sense of natural protection and community.",
+      "fact_used": "Une barrière de corail de 195 km entoure l'île"
+    },
+    {
+      "narration": "Et ce trésor sous-marin, unique au monde avec ses 250 coraux et 760 poissons, les Mahorais le défendent bec et ongles au quotidien pour qu’il reste ce paradis fragile.",
+      "visuals": [
+        "medium shot group of mahorais volunteers cleaning coral nurseries",
+        "close-up hands planting new coral fragments on artificial structures",
+        "wide shot community meeting on the beach about lagoon protection",
+        "medium shot children learning about marine life in a classroom"
+      ],
+      "image_prompt": "Heartwarming vertical 9:16 scene of mahorais community protecting their lagoon, volunteers in traditional clothing carefully cleaning coral nurseries, hands planting new coral fragments on artificial reef structures, diverse group of people including elders and children working together, turquoise lagoon waters visible in the background, sense of hope and environmental stewardship.",
+      "fact_used": "Plus de 250 espèces de coraux et 760 espèces de poissons y vivent"
+    },
+    {
+      "narration": "Et devine quoi ? Ce bijou bleu, c’est l’un des deux seuls doubles lagons fermés de la planète, un miracle géologique que les Mahorais chérissent comme un héritage sacré.",
+      "visuals": [
+        "medium shot presenter looking at camera with lagoon background",
+        "close-up hand holding phone showing Mayotte's location on map",
+        "wide shot drone rising above the double lagoon for final view",
+        "text overlay on screen asking viewers to comment"
+      ],
+      "image_prompt": "Engaging vertical 9:16 final scene with presenter standing in front of Mayotte's double lagoon, looking directly at camera with warm smile, drone shot rising above the turquoise waters showing both coral barriers, text overlay asking viewers 'Savais-tu que Mayotte a l'un des deux seuls doubles lagons au monde ?', golden hour lighting, inviting and friendly atmosphere.",
+      "fact_used": "Mayotte possède l'un des deux seuls doubles lagons fermés au monde, avec la Nouvelle-Calédonie"
+    }
+  ],
+  "duration": 110.239333,
+  "word_count": 322,
+  "num_clips": 48,
+  "sources_used": {
+    "Pexels vidéo": 36,
+    "Pollinations IA": 12
+  },
+  "voice": "Coqui XTTS v2 / Damien Black",
+  "created_at": "2026-05-18T19:20:40.747098",
+  "video_file": "20260518_185233_mayotte-le-lagon-qui-défie-la-science.mp4"
+}

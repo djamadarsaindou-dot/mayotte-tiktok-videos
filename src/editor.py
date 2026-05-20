@@ -162,7 +162,7 @@ def assemble_video(
         "-i", str(audio_path),
         "-vf", vf,
         "-map", "0:v", "-map", "1:a",
-        "-c:v", "libx264", "-preset", "medium", "-crf", "20",
+        "-c:v", "libx264", "-preset", "ultrafast", "-crf", "22",
         "-pix_fmt", "yuv420p",
         "-c:a", "aac", "-b:a", "192k",
         "-r", str(VIDEO_FPS),

@@ -165,13 +165,14 @@ def build_video(topic_key: str | None = None) -> Path:
             sources_used[source] = sources_used.get(source, 0) + 1
             print(f"   ✓ s{s_idx+1:02d}.v{v_idx+1} [{source[:22]:22s}] {query[:42]}")
 
-    # Phase 2 : IA en séquentiel (Pollinations rate-limit sévèrement)
-    print(f"   🎨 Phase IA ({len(ai_tasks)} visuels, séquentiel)...")
-    for task in ai_tasks:
-        s_idx, v_idx, asset, query, source = fetch_visual(task)
-        visual_results[(s_idx, v_idx)] = asset
-        sources_used[source] = sources_used.get(source, 0) + 1
-        print(f"   ✓ s{s_idx+1:02d}.v{v_idx+1} [{source[:22]:22s}] {query[:42]}")
+    # Phase 2 : IA en parallèle limité (2 simultanées) — équilibre vitesse/rate-limit
+    AI_PARALLEL = 2
+    print(f"   🎨 Phase IA ({len(ai_tasks)} visuels, parallélisme {AI_PARALLEL})...")
+    with ThreadPoolExecutor(max_workers=AI_PARALLEL) as ex:
+        for s_idx, v_idx, asset, query, source in ex.map(fetch_visual, ai_tasks):
+            visual_results[(s_idx, v_idx)] = asset
+            sources_used[source] = sources_used.get(source, 0) + 1
+            print(f"   ✓ s{s_idx+1:02d}.v{v_idx+1} [{source[:22]:22s}] {query[:42]}")
 
     # Calcul des durées : chaque scène consomme une fraction de l'audio
     # proportionnelle à son nombre de mots, puis on divise entre ses 3 visuels
@@ -228,6 +229,7 @@ def build_video(topic_key: str | None = None) -> Path:
     print(f"   Sources : {src_summary}")
 
     # Copie la vidéo finale + métadonnées + légende dans le dossier dédié de l'utilisateur
+    final_video = output_path
     try:
         import shutil
         FINAL_VIDEOS_DIR.mkdir(parents=True, exist_ok=True)
@@ -241,6 +243,13 @@ def build_video(topic_key: str | None = None) -> Path:
             print(f"📱 Légende TikTok : {caption_path.name}")
     except Exception as e:
         print(f"⚠️  Copie vers dossier final a échoué : {e}")
+
+    # Notification Windows : « vidéo prête » avec bouton pour ouvrir le dossier
+    try:
+        from src.notify import notify_video_ready
+        notify_video_ready(final_video, caption_text)
+    except Exception as e:
+        print(f"  ℹ️  Notification : {e}")
 
     return output_path
 
