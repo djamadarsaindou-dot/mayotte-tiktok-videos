@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Mayotte TikTok — Auto-publication de vidéos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+         max-width: 720px; margin: 2rem auto; padding: 0 1rem; line-height: 1.6;
+         color: #222; }
+  h1 { color: #ff0050; }
+  a { color: #ff0050; }
+  .card { background: #f7f7f8; border-radius: 12px; padding: 1.5rem; margin: 1rem 0; }
+</style>
+</head>
+<body>
+<h1>🎬 Mayotte TikTok</h1>
+<p>Application personnelle qui génère et publie automatiquement des vidéos
+TikTok éducatives sur Mayotte (légendes, traditions, faune, actualités).</p>
+
+<div class="card">
+  <strong>Compte TikTok :</strong> <a href="https://www.tiktok.com/@mister_decouverte">@mister_decouverte</a><br>
+  <strong>Auteur :</strong> Djama Darsaindou (Mayotte, France)<br>
+  <strong>Code source :</strong> <a href="https://github.com/djamadarsaindou-dot/mayotte-tiktok-videos">github.com/djamadarsaindou-dot/mayotte-tiktok-videos</a>
+</div>
+
+<h2>📄 Documents légaux</h2>
+<ul>
+  <li><a href="privacy.html">Politique de confidentialité</a></li>
+  <li><a href="terms.html">Conditions d'utilisation</a></li>
+</ul>
+
+<h2>🛠 Fonctionnement</h2>
+<ol>
+  <li>Toutes les 6h, un script Python génère une vidéo verticale TikTok (1080×1920)</li>
+  <li>Le script utilise une IA (Mistral) pour écrire un texte éducatif sur Mayotte</li>
+  <li>Une voix de synthèse (Coqui XTTS) narre le texte</li>
+  <li>Des images IA (Pollinations) et stock (Pexels) illustrent le récit</li>
+  <li>FFmpeg assemble la vidéo finale avec sous-titres karaoké</li>
+  <li>La vidéo est envoyée dans la boîte de réception TikTok de l'auteur pour validation</li>
+</ol>
+
+<p><em>Cette application n'est utilisée que par son auteur pour publier sur son propre
+compte TikTok personnel. Aucune donnée d'utilisateur tiers n'est collectée.</em></p>
+</body>
+</html>

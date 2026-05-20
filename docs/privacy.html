@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Politique de confidentialité — Mayotte TikTok</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+         max-width: 720px; margin: 2rem auto; padding: 0 1rem; line-height: 1.6;
+         color: #222; }
+  h1, h2 { color: #ff0050; }
+  a { color: #ff0050; }
+</style>
+</head>
+<body>
+<h1>Politique de confidentialité</h1>
+<p><strong>Dernière mise à jour : 20 mai 2026</strong></p>
+
+<h2>1. Qui sommes-nous</h2>
+<p>« Mayotte TikTok » est une application personnelle développée et utilisée
+exclusivement par Djama Darsaindou (Mayotte, France) pour publier des vidéos
+sur son propre compte TikTok <a href="https://www.tiktok.com/@mister_decouverte">@mister_decouverte</a>.
+Cette application n'est pas distribuée à des tiers et n'a pas d'utilisateur final autre que son auteur.</p>
+
+<h2>2. Données collectées</h2>
+<p>L'application n'enregistre aucune donnée personnelle d'utilisateurs tiers.
+Les seules données techniques manipulées sont :</p>
+<ul>
+  <li>Les tokens d'accès TikTok de l'auteur (stockés localement dans un fichier <code>.env</code> chiffré, jamais envoyés à des tiers)</li>
+  <li>Les vidéos générées (stockées localement sur l'ordinateur de l'auteur)</li>
+  <li>Les compteurs de rotation thématique (fichier texte local)</li>
+</ul>
+
+<h2>3. Utilisation de l'API TikTok</h2>
+<p>L'application utilise l'API TikTok Content Posting pour :</p>
+<ul>
+  <li><strong>Uploader des vidéos</strong> sur le compte TikTok de l'auteur (scope <code>video.upload</code> ou <code>video.publish</code>)</li>
+  <li><strong>Récupérer le profil basique</strong> de l'auteur pour valider l'authentification (scope <code>user.info.basic</code>)</li>
+</ul>
+<p>Aucune donnée d'autres utilisateurs TikTok n'est consultée ni stockée.</p>
+
+<h2>4. Partage des données</h2>
+<p>Aucune donnée n'est partagée avec des tiers. Les tokens d'accès TikTok
+sont conservés localement et ne quittent jamais la machine de l'auteur.</p>
+
+<h2>5. Sécurité</h2>
+<p>Les tokens d'accès sont stockés dans un fichier <code>.env</code> exclu du
+versioning Git (via <code>.gitignore</code>) et accessible uniquement à l'auteur
+sur sa machine personnelle.</p>
+
+<h2>6. Vos droits</h2>
+<p>L'application n'ayant pas d'utilisateur final autre que son auteur,
+les questions de droit d'accès / rectification / suppression ne s'appliquent
+pas à des tiers. L'auteur peut révoquer ses propres tokens à tout moment
+depuis <a href="https://www.tiktok.com/settings/manage-app-permissions">les paramètres TikTok</a>.</p>
+
+<h2>7. Contact</h2>
+<p>Pour toute question : <a href="https://github.com/djamadarsaindou-dot/mayotte-tiktok-videos/issues">GitHub issues</a></p>
+
+<p><a href="index.html">← Retour</a></p>
+</body>
+</html>

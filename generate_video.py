@@ -257,12 +257,29 @@ def build_video(topic_key: str | None = None) -> Path:
         if TIKTOK_AUTO_PUBLISH:
             from src.tiktok_publisher import is_configured, publish_inbox
             if is_configured():
-                publish_inbox(final_video)
+                result = publish_inbox(final_video)
+                # Push Telegram pour pouvoir valider depuis le téléphone
+                try:
+                    from src.telegram_notifier import is_configured as tg_ok, send_draft_ready
+                    if tg_ok():
+                        send_draft_ready(
+                            video_name=final_video.name,
+                            caption=caption_text or "",
+                            publish_id=result.get("publish_id"),
+                        )
+                except Exception as e:
+                    print(f"  ℹ️  Telegram : {e}")
             else:
                 print("  ℹ️  TIKTOK_AUTO_PUBLISH=true mais tokens manquants. "
                       "Lance scripts/setup_tiktok.py.")
     except Exception as e:
         print(f"  ⚠️  Publication TikTok a échoué : {e}")
+        # Notif Telegram d'erreur (best-effort)
+        try:
+            from src.telegram_notifier import send_error
+            send_error(f"Publication TikTok : {e}")
+        except Exception:
+            pass
 
     return output_path
 
