@@ -251,6 +251,19 @@ def build_video(topic_key: str | None = None) -> Path:
     except Exception as e:
         print(f"  ℹ️  Notification : {e}")
 
+    # Auto-publication TikTok (mode brouillon — l'utilisateur valide dans l'app)
+    try:
+        from src.config import TIKTOK_AUTO_PUBLISH
+        if TIKTOK_AUTO_PUBLISH:
+            from src.tiktok_publisher import is_configured, publish_inbox
+            if is_configured():
+                publish_inbox(final_video)
+            else:
+                print("  ℹ️  TIKTOK_AUTO_PUBLISH=true mais tokens manquants. "
+                      "Lance scripts/setup_tiktok.py.")
+    except Exception as e:
+        print(f"  ⚠️  Publication TikTok a échoué : {e}")
+
     return output_path
 
 

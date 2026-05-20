@@ -90,6 +90,11 @@ POLLINATIONS_MAX_RETRIES = int(os.getenv("POLLINATIONS_MAX_RETRIES", "6"))
 # Nettoyage auto : garde les N vidéos les plus récentes
 KEEP_LAST_N_VIDEOS = int(os.getenv("KEEP_LAST_N_VIDEOS", "50"))
 
+# Auto-publication TikTok (mode INBOX = brouillon privé)
+# Nécessite : TIKTOK_CLIENT_KEY + TIKTOK_CLIENT_SECRET + ACCESS_TOKEN + REFRESH_TOKEN
+# Et avoir lancé scripts/setup_tiktok.py une fois
+TIKTOK_AUTO_PUBLISH = os.getenv("TIKTOK_AUTO_PUBLISH", "false").strip().lower() == "true"
+
 
 def find_ffmpeg() -> str:
     explicit = os.getenv("FFMPEG_PATH", "").strip()
