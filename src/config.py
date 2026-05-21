@@ -76,6 +76,12 @@ LLM_PROVIDER = (os.getenv("LLM_PROVIDER", "auto").strip().lower() or "auto")
 PEXELS_API_KEY = os.getenv("PEXELS_API_KEY", "").strip()
 PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY", "").strip()
 
+# Cloudflare Workers AI — génération d'images IA (remplace Pollinations payant).
+# Free tier 10k neurons/jour (~130 images), sans carte bancaire.
+# Setup : scripts/setup_cloudflare.py
+CLOUDFLARE_ACCOUNT_ID = os.getenv("CLOUDFLARE_ACCOUNT_ID", "").strip()
+CLOUDFLARE_API_TOKEN = os.getenv("CLOUDFLARE_API_TOKEN", "").strip()
+
 # --- Visuels ---
 # VISUAL_PROVIDER : "ai_first" (Pollinations IA prioritaire, corrélation forte avec
 # le texte) ou "stock_first" (Pexels d'abord, plus rapide mais générique)

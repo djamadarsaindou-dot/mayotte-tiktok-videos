@@ -1,9 +1,12 @@
 """Trouve un asset visuel en essayant plusieurs sources.
 
-Mode `ai_first` (défaut) : Pollinations IA → Pexels → Pixabay → Wikimedia
+Provider IA : Cloudflare Workers AI (FLUX-schnell) si configuré, sinon
+Pollinations en repli. Voir src/cloudflare_images.py et src/images.py.
+
+Mode `ai_first` (défaut) : IA → Pexels → Pixabay → Wikimedia
   → idéal pour des images en CORRÉLATION FORTE avec le texte.
 
-Mode `stock_first` : Pexels vidéo → Pixabay vidéo → Wikimedia → Pollinations IA
+Mode `stock_first` : Pexels vidéo → Pixabay vidéo → Wikimedia → IA
   → plus rapide, contenu visuel plus générique.
 
 Mode hybride utilisé par generate_video.py : 1er visuel de chaque scène en IA
@@ -13,25 +16,39 @@ Mode hybride utilisé par generate_video.py : 1er visuel de chaque scène en IA
 import random
 from pathlib import Path
 
+from src import cloudflare_images
+from src.cloudflare_images import CloudflareUnavailable
 from src.config import VISUAL_PROVIDER
-from src.images import PollinationsUnavailable, generate_image
+from src.images import PollinationsUnavailable
+from src.images import generate_image as pollinations_generate_image
 from src.stock_pixabay import search_photo as pixabay_photo
 from src.stock_pixabay import search_video as pixabay_video
 from src.stock_videos import search_photo as pexels_photo
 from src.stock_videos import search_video as pexels_video
 from src.stock_wikimedia import search_image as wikimedia_image
 
+# Exceptions « IA définitivement indisponible » — quel que soit le provider,
+# le caller ne doit pas réessayer mais basculer en fallback stock.
+AI_UNAVAILABLE = (PollinationsUnavailable, CloudflareUnavailable)
+
 
 def _ai_generate(query: str, image_prompt_fallback: str, output_path: Path,
                  mayotte_specific: bool) -> Path:
+    """Génère une image IA. Cloudflare en priorité (gratuit, fiable),
+    Pollinations en repli si Cloudflare n'est pas configuré dans .env."""
     base = image_prompt_fallback or query
-    suffix = ", cinematic, vertical 9:16, no text, photorealistic"
+    # FLUX-schnell génère carré → « centered composition » pour que le sujet
+    # survive au recadrage 9:16 effectué ensuite par le montage FFmpeg.
+    suffix = ", cinematic, centered composition, no text, photorealistic"
     if mayotte_specific and "mayotte" not in base.lower():
         prompt = f"{base}, Mayotte Indian Ocean French overseas department{suffix}"
     else:
         prompt = base + suffix
     seed = random.randint(1, 1_000_000)
-    generate_image(prompt, output_path, seed=seed)
+    if cloudflare_images.is_configured():
+        cloudflare_images.generate_image(prompt, output_path, seed=seed)
+    else:
+        pollinations_generate_image(prompt, output_path, seed=seed)
     return output_path
 
 
@@ -49,17 +66,17 @@ def find_asset(
     p_jpg = output_dir / f"{name}.jpg"
 
     if VISUAL_PROVIDER == "ai_first":
-        # 1) Pollinations IA en PRIORITÉ ABSOLUE (qualité IA = exigence utilisateur).
+        # 1) Image IA en PRIORITÉ ABSOLUE (qualité IA = exigence utilisateur).
         # 2 tentatives avec des seeds différents avant de céder au fallback stock.
         for ai_attempt in range(2):
             try:
                 _ai_generate(query, image_prompt_fallback, p_jpg, mayotte_specific)
-                return p_jpg, "Pollinations IA"
-            except PollinationsUnavailable:
-                # Erreur définitive (service payant/bloqué) : inutile de retenter.
+                return p_jpg, "IA"
+            except AI_UNAVAILABLE:
+                # Erreur définitive (service payant/quota épuisé) : pas de retry.
                 break
             except Exception as e:
-                print(f"  ⚠️  Pollinations IA tentative {ai_attempt+1}/2 a échoué : "
+                print(f"  ⚠️  Image IA tentative {ai_attempt+1}/2 a échoué : "
                       f"{str(e)[:80]}")
         print(f"  ↪  Bascule fallback stock pour : {query[:60]}")
 
@@ -94,7 +111,7 @@ def find_asset(
     if pixabay_photo(query, p_jpg):
         return p_jpg, "Pixabay photo"
     _ai_generate(query, image_prompt_fallback, p_jpg, mayotte_specific)
-    return p_jpg, "Pollinations IA"
+    return p_jpg, "IA"
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -116,9 +133,9 @@ def find_ai_asset(
     for ai_attempt in range(2):
         try:
             _ai_generate(query, image_prompt_fallback, p_jpg, mayotte_specific)
-            return p_jpg, "Pollinations IA"
-        except PollinationsUnavailable:
-            # Erreur définitive (service payant/bloqué) : inutile de retenter.
+            return p_jpg, "IA"
+        except AI_UNAVAILABLE:
+            # Erreur définitive (service payant/quota épuisé) : pas de retry.
             break
         except Exception as e:
             print(f"  ⚠️  IA tentative {ai_attempt+1}/2 a échoué : {str(e)[:70]}")
@@ -160,6 +177,6 @@ def find_stock_asset(
     # Dernier recours : IA même en stock_first
     try:
         _ai_generate(query, image_prompt_fallback, p_jpg, mayotte_specific)
-        return p_jpg, "Pollinations IA (stock-fallback)"
+        return p_jpg, "IA (stock-fallback)"
     except Exception:
         raise RuntimeError(f"Aucune source pour : {query}")
