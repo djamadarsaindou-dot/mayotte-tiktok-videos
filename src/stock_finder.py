@@ -14,7 +14,7 @@ import random
 from pathlib import Path
 
 from src.config import VISUAL_PROVIDER
-from src.images import generate_image
+from src.images import PollinationsUnavailable, generate_image
 from src.stock_pixabay import search_photo as pixabay_photo
 from src.stock_pixabay import search_video as pixabay_video
 from src.stock_videos import search_photo as pexels_photo
@@ -55,6 +55,9 @@ def find_asset(
             try:
                 _ai_generate(query, image_prompt_fallback, p_jpg, mayotte_specific)
                 return p_jpg, "Pollinations IA"
+            except PollinationsUnavailable:
+                # Erreur définitive (service payant/bloqué) : inutile de retenter.
+                break
             except Exception as e:
                 print(f"  ⚠️  Pollinations IA tentative {ai_attempt+1}/2 a échoué : "
                       f"{str(e)[:80]}")
@@ -114,6 +117,9 @@ def find_ai_asset(
         try:
             _ai_generate(query, image_prompt_fallback, p_jpg, mayotte_specific)
             return p_jpg, "Pollinations IA"
+        except PollinationsUnavailable:
+            # Erreur définitive (service payant/bloqué) : inutile de retenter.
+            break
         except Exception as e:
             print(f"  ⚠️  IA tentative {ai_attempt+1}/2 a échoué : {str(e)[:70]}")
 

@@ -80,6 +80,11 @@ PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY", "").strip()
 # VISUAL_PROVIDER : "ai_first" (Pollinations IA prioritaire, corrélation forte avec
 # le texte) ou "stock_first" (Pexels d'abord, plus rapide mais générique)
 VISUAL_PROVIDER = os.getenv("VISUAL_PROVIDER", "ai_first").strip().lower()
+# Pollinations a introduit un paywall (HTTP 402) en mai 2026. Mettre à "false"
+# pour ne même pas le tenter (100% stock, génération bien plus rapide).
+# Si "true" : on tente, mais un circuit breaker coupe Pollinations dès le
+# premier 402 du run (les images suivantes passent direct en stock).
+POLLINATIONS_ENABLED = os.getenv("POLLINATIONS_ENABLED", "true").strip().lower() == "true"
 POLLINATIONS_MODEL = os.getenv("POLLINATIONS_MODEL", "flux").strip()
 # Parallélisme 1 = séquentiel. Pollinations rate-limit dès qu'on passe à 2+ workers.
 # En séquentiel, on a une image toutes les ~10-20s, soit ~15 min pour 64 images.

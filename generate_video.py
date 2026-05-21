@@ -5,6 +5,7 @@ import re
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
 
@@ -59,6 +60,35 @@ GENERIC_FALLBACK_PROMPT = (
     "cinematic, vertical 9:16, photorealistic"
 )
 
+# Chronométrage par phase — sert à diagnostiquer les goulots d'étranglement
+# (quelle phase prend le plus de temps : voix, visuels, montage, upload…).
+_PHASE_TIMINGS: dict[str, float] = {}
+
+
+@contextmanager
+def _timed(label: str):
+    """Mesure et logge la durée d'une phase du pipeline."""
+    t0 = time.time()
+    try:
+        yield
+    finally:
+        dt = time.time() - t0
+        _PHASE_TIMINGS[label] = _PHASE_TIMINGS.get(label, 0.0) + dt
+        print(f"   ⏱️  [{label}] {dt:.0f}s")
+
+
+def _print_timing_report() -> None:
+    """Affiche le récap des durées par phase, trié du plus lent au plus rapide."""
+    if not _PHASE_TIMINGS:
+        return
+    total = sum(_PHASE_TIMINGS.values())
+    print("\n┌─ ⏱️  Répartition du temps ─────────────────────────")
+    for label, dt in sorted(_PHASE_TIMINGS.items(), key=lambda x: -x[1]):
+        pct = (dt / total * 100) if total else 0
+        bar = "█" * int(pct / 4)
+        print(f"│ {label:20s} {dt:6.0f}s  {pct:5.1f}%  {bar}")
+    print(f"└─ total mesuré : {total:.0f}s")
+
 
 def fetch_visual(args) -> tuple[int, int, Path, str, str]:
     """Pour la scène scene_idx, visuel visual_idx, télécharge l'asset.
@@ -100,7 +130,8 @@ def build_video(topic_key: str | None = None) -> Path:
 
     print(f"\n🎬 Thème : {topic_def['label']}")
     print("📝 Génération du scénario via Groq (2 passes, peut prendre 1 min)...")
-    script = generate_script(topic_def)
+    with _timed("Script LLM"):
+        script = generate_script(topic_def)
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     slug = slugify(script.get("title", topic_key))
@@ -112,12 +143,14 @@ def build_video(topic_key: str | None = None) -> Path:
     audio_path = work_dir / "voice.mp3"
 
     print("🔊 Synthèse vocale...")
-    words = synthesize(full_text, audio_path)
+    with _timed("Voix (TTS)"):
+        words = synthesize(full_text, audio_path)
 
     # Mastering : voix « radio » (highpass + EQ + compression + normalisation)
     print("   🎚️  Mastering audio de la voix...")
     try:
-        master_voice(audio_path)
+        with _timed("Mastering audio"):
+            master_voice(audio_path)
     except Exception as e:
         print(f"   ⚠️  Mastering échoué ({str(e)[:60]}), voix brute conservée")
 
@@ -159,20 +192,22 @@ def build_video(topic_key: str | None = None) -> Path:
 
     # Phase 1 : stock en parallèle (rapide) — les Pexels acceptent le parallélisme
     print(f"   🏃 Phase stock ({len(stock_tasks)} visuels, parallélisme {POLLINATIONS_PARALLEL})...")
-    with ThreadPoolExecutor(max_workers=max(1, POLLINATIONS_PARALLEL)) as ex:
-        for s_idx, v_idx, asset, query, source in ex.map(fetch_visual, stock_tasks):
-            visual_results[(s_idx, v_idx)] = asset
-            sources_used[source] = sources_used.get(source, 0) + 1
-            print(f"   ✓ s{s_idx+1:02d}.v{v_idx+1} [{source[:22]:22s}] {query[:42]}")
+    with _timed("Visuels stock"):
+        with ThreadPoolExecutor(max_workers=max(1, POLLINATIONS_PARALLEL)) as ex:
+            for s_idx, v_idx, asset, query, source in ex.map(fetch_visual, stock_tasks):
+                visual_results[(s_idx, v_idx)] = asset
+                sources_used[source] = sources_used.get(source, 0) + 1
+                print(f"   ✓ s{s_idx+1:02d}.v{v_idx+1} [{source[:22]:22s}] {query[:42]}")
 
     # Phase 2 : IA en parallèle limité (2 simultanées) — équilibre vitesse/rate-limit
     AI_PARALLEL = 2
     print(f"   🎨 Phase IA ({len(ai_tasks)} visuels, parallélisme {AI_PARALLEL})...")
-    with ThreadPoolExecutor(max_workers=AI_PARALLEL) as ex:
-        for s_idx, v_idx, asset, query, source in ex.map(fetch_visual, ai_tasks):
-            visual_results[(s_idx, v_idx)] = asset
-            sources_used[source] = sources_used.get(source, 0) + 1
-            print(f"   ✓ s{s_idx+1:02d}.v{v_idx+1} [{source[:22]:22s}] {query[:42]}")
+    with _timed("Visuels IA"):
+        with ThreadPoolExecutor(max_workers=AI_PARALLEL) as ex:
+            for s_idx, v_idx, asset, query, source in ex.map(fetch_visual, ai_tasks):
+                visual_results[(s_idx, v_idx)] = asset
+                sources_used[source] = sources_used.get(source, 0) + 1
+                print(f"   ✓ s{s_idx+1:02d}.v{v_idx+1} [{source[:22]:22s}] {query[:42]}")
 
     # Calcul des durées : chaque scène consomme une fraction de l'audio
     # proportionnelle à son nombre de mots, puis on divise entre ses 3 visuels
@@ -189,7 +224,8 @@ def build_video(topic_key: str | None = None) -> Path:
 
     output_path = OUTPUT_DIR / f"{timestamp}_{slug}.mp4"
     print(f"🎞️  Montage final ({len(asset_paths)} clips, durée moy {sum(asset_durations)/len(asset_durations):.1f}s)...")
-    assemble_video(asset_paths, asset_durations, audio_path, ass_path, output_path, work_dir)
+    with _timed("Montage FFmpeg"):
+        assemble_video(asset_paths, asset_durations, audio_path, ass_path, output_path, work_dir)
 
     caption = script.get("caption", {})
 
@@ -257,7 +293,8 @@ def build_video(topic_key: str | None = None) -> Path:
         if TIKTOK_AUTO_PUBLISH:
             from src.tiktok_publisher import is_configured, publish_inbox
             if is_configured():
-                result = publish_inbox(final_video)
+                with _timed("Upload TikTok"):
+                    result = publish_inbox(final_video)
                 # Push Telegram pour pouvoir valider depuis le téléphone
                 try:
                     from src.telegram_notifier import is_configured as tg_ok, send_draft_ready
@@ -281,6 +318,7 @@ def build_video(topic_key: str | None = None) -> Path:
         except Exception:
             pass
 
+    _print_timing_report()
     return output_path
 
 
