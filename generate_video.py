@@ -335,8 +335,12 @@ def main() -> int:
         return 0
 
     start = time.time()
+    # keep_awake : empêche Windows de se mettre en veille pendant la génération
+    # (sinon le process est gelé — une génération de 15 min peut "durer" des heures).
+    from src.keep_awake import keep_awake
     try:
-        build_video(args.topic)
+        with keep_awake():
+            build_video(args.topic)
     except Exception as e:
         print(f"\n❌ Erreur : {e}", file=sys.stderr)
         import traceback; traceback.print_exc()
