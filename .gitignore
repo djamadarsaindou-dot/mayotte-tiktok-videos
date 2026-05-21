@@ -9,6 +9,8 @@ output/*.jpg
 output/*.ass
 output/*.srt
 output/temp/
+output/used_topics.json
+output/rotation_counter.txt
 .venv/
 venv/
 .idea/

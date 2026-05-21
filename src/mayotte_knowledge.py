@@ -10,7 +10,9 @@ Chaque entrée a :
 - visual_hints : indications spécifiques pour les visuels (pour Pollinations IA)
 - avoid : pièges à éviter dans le récit
 """
+import json
 import random
+from pathlib import Path
 from typing import TypedDict
 
 
@@ -389,12 +391,68 @@ ALL_TOPICS_BY_THEME: dict[str, list[KnowledgeEntry]] = {
 }
 
 
-def random_topic_for(theme: str) -> KnowledgeEntry:
-    """Renvoie un sujet aléatoire pour un thème donné."""
+# Anti-répétition : on mémorise les sujets déjà utilisés (par titre, par
+# thème) dans output/used_topics.json. Tant que tout le pool d'un thème n'a
+# pas été utilisé, on ne ressort jamais le même sujet. Quand le pool est
+# épuisé, il est réinitialisé → nouveau cycle, ordre rebrassé.
+_USED_FILE = Path(__file__).resolve().parent.parent / "output" / "used_topics.json"
+
+
+def _read_used() -> dict[str, list[str]]:
+    """Renvoie {theme: [titres déjà utilisés]}. Tolérant aux erreurs."""
+    try:
+        data = json.loads(_USED_FILE.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+
+def _write_used(used: dict[str, list[str]]) -> None:
+    try:
+        _USED_FILE.parent.mkdir(parents=True, exist_ok=True)
+        _USED_FILE.write_text(
+            json.dumps(used, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+    except Exception:
+        pass
+
+
+def pick_topic_for(theme: str) -> KnowledgeEntry:
+    """Choisit un sujet pour le thème, en évitant les sujets déjà utilisés.
+
+    Anti-répétition : tant que tous les sujets du thème n'ont pas servi au
+    moins une fois, on ne ressort jamais le même. Pool épuisé → réinitialisé.
+    """
     pool = ALL_TOPICS_BY_THEME.get(theme, [])
     if not pool:
         raise ValueError(f"Thème inconnu : {theme}")
-    return random.choice(pool)
+
+    used = _read_used()
+    used_titles = set(used.get(theme, []))
+
+    available = [e for e in pool if e["title"] not in used_titles]
+    if not available:
+        # Tous les sujets du thème ont été vus → on relance un cycle complet.
+        # On exclut le tout dernier sujet utilisé pour ne pas le ressortir
+        # immédiatement à la jonction des deux cycles.
+        print(f"   ♻️  Tous les sujets « {theme} » ont été utilisés — nouveau cycle.")
+        last_used = used.get(theme, [])[-1:]
+        used[theme] = []
+        available = [e for e in pool if e["title"] not in last_used] or list(pool)
+
+    entry = random.choice(available)
+    used.setdefault(theme, [])
+    used[theme].append(entry["title"])
+    _write_used(used)
+
+    remaining = len(pool) - len(used[theme])
+    print(f"   📚 Sujet pioché ({remaining}/{len(pool)} restants ce cycle)")
+    return entry
+
+
+def random_topic_for(theme: str) -> KnowledgeEntry:
+    """Conservé pour compat — applique désormais l'anti-répétition."""
+    return pick_topic_for(theme)
 
 
 GLOBAL_CONTEXT_PROMPT = """Tu écris pour une chaîne TikTok francophone consacrée à Mayotte, le 101e département français.
