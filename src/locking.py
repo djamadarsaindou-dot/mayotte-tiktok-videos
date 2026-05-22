@@ -34,6 +34,21 @@ def _pid_alive(pid: int) -> bool:
         return True  # incertain → on suppose vivant (ne casse pas un lock légitime)
 
 
+def _release_if_owned(lock_path: Path, my_pid: int) -> None:
+    """Libère le verrou UNIQUEMENT s'il nous appartient encore.
+
+    Sans cette vérification, un process qui se termine effacerait le verrou
+    même s'il a entre-temps été (légitimement) repris par un autre process —
+    ce qui ouvre la porte à des doublons en cascade.
+    """
+    try:
+        if (lock_path.exists()
+                and lock_path.read_text(encoding="utf-8").strip() == str(my_pid)):
+            lock_path.unlink(missing_ok=True)
+    except Exception:
+        pass
+
+
 def acquire(lock_path: Path) -> bool:
     """Tente d'acquérir le verrou. True = acquis, False = déjà pris par un autre."""
     lock_path.parent.mkdir(parents=True, exist_ok=True)
@@ -56,5 +71,5 @@ def acquire(lock_path: Path) -> bool:
     except FileExistsError:
         return False
 
-    atexit.register(lambda: lock_path.unlink(missing_ok=True))
+    atexit.register(_release_if_owned, lock_path, os.getpid())
     return True
