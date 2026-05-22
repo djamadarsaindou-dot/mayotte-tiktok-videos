@@ -92,9 +92,10 @@ VISUAL_PROVIDER = os.getenv("VISUAL_PROVIDER", "ai_first").strip().lower()
 # premier 402 du run (les images suivantes passent direct en stock).
 POLLINATIONS_ENABLED = os.getenv("POLLINATIONS_ENABLED", "true").strip().lower() == "true"
 POLLINATIONS_MODEL = os.getenv("POLLINATIONS_MODEL", "flux").strip()
-# Parallélisme 1 = séquentiel. Pollinations rate-limit dès qu'on passe à 2+ workers.
-# En séquentiel, on a une image toutes les ~10-20s, soit ~15 min pour 64 images.
-POLLINATIONS_PARALLEL = int(os.getenv("POLLINATIONS_PARALLEL", "4"))
+# Parallélisme des téléchargements de visuels (phase stock).
+# 2 par défaut : compromis vitesse / fiabilité sur connexion instable.
+# Trop élevé sature une connexion fragile (Mayotte) → téléchargements en échec.
+POLLINATIONS_PARALLEL = int(os.getenv("POLLINATIONS_PARALLEL", "2"))
 # Nombre d'essais avant fallback stock (plus haut = qualité IA garantie mais plus long)
 POLLINATIONS_MAX_RETRIES = int(os.getenv("POLLINATIONS_MAX_RETRIES", "6"))
 

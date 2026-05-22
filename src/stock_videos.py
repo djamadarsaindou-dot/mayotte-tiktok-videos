@@ -6,9 +6,8 @@ n'a pas de résultat ou si la clé API n'est pas configurée, renvoie None.
 import time
 from pathlib import Path
 
-import requests
-
 from src.config import PEXELS_API_KEY
+from src.net import SESSION
 
 PEXELS_VIDEOS = "https://api.pexels.com/videos/search"
 PEXELS_PHOTOS = "https://api.pexels.com/v1/search"
@@ -41,7 +40,7 @@ def search_video(query: str, output_path: Path, min_duration: float = 4.0) -> Pa
         return None
 
     try:
-        r = requests.get(
+        r = SESSION.get(
             PEXELS_VIDEOS,
             headers=_headers(),
             params={
@@ -54,7 +53,7 @@ def search_video(query: str, output_path: Path, min_duration: float = 4.0) -> Pa
         )
         if r.status_code == 429:
             time.sleep(5)
-            r = requests.get(PEXELS_VIDEOS, headers=_headers(),
+            r = SESSION.get(PEXELS_VIDEOS, headers=_headers(),
                              params={"query": query, "orientation": "portrait", "per_page": 5},
                              timeout=TIMEOUT)
         r.raise_for_status()
@@ -74,7 +73,7 @@ def search_video(query: str, output_path: Path, min_duration: float = 4.0) -> Pa
             continue
         try:
             output_path.parent.mkdir(parents=True, exist_ok=True)
-            with requests.get(chosen["link"], stream=True, timeout=TIMEOUT) as dl:
+            with SESSION.get(chosen["link"], stream=True, timeout=TIMEOUT) as dl:
                 dl.raise_for_status()
                 with output_path.open("wb") as f:
                     for chunk in dl.iter_content(chunk_size=65536):
@@ -95,7 +94,7 @@ def search_photo(query: str, output_path: Path) -> Path | None:
         return None
 
     try:
-        r = requests.get(
+        r = SESSION.get(
             PEXELS_PHOTOS,
             headers=_headers(),
             params={"query": query, "orientation": "portrait", "per_page": 5},
@@ -112,7 +111,7 @@ def search_photo(query: str, output_path: Path) -> Path | None:
             continue
         try:
             output_path.parent.mkdir(parents=True, exist_ok=True)
-            r = requests.get(url, timeout=TIMEOUT)
+            r = SESSION.get(url, timeout=TIMEOUT)
             r.raise_for_status()
             output_path.write_bytes(r.content)
             return output_path

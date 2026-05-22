@@ -15,8 +15,6 @@ import time
 import urllib.parse
 from pathlib import Path
 
-import requests
-
 from src.config import (
     POLLINATIONS_ENABLED,
     POLLINATIONS_MAX_RETRIES,
@@ -24,6 +22,7 @@ from src.config import (
     VIDEO_HEIGHT,
     VIDEO_WIDTH,
 )
+from src.net import SESSION
 
 POLLINATIONS_BASE = "https://image.pollinations.ai/prompt/"
 TIMEOUT = 180
@@ -97,7 +96,7 @@ def generate_image(prompt: str, output_path: Path, seed: int | None = None) -> P
         model = chain[attempt - 1]
         url = _build_url(prompt, model, seed)
         try:
-            r = requests.get(url, timeout=TIMEOUT)
+            r = SESSION.get(url, timeout=TIMEOUT)
 
             # Erreur DÉFINITIVE → on coupe Pollinations pour tout le run.
             if r.status_code in FATAL_STATUS:

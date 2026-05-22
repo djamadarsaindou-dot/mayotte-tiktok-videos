@@ -5,9 +5,8 @@ API doc : https://pixabay.com/api/docs/
 import time
 from pathlib import Path
 
-import requests
-
 from src.config import PIXABAY_API_KEY
+from src.net import SESSION
 
 PIXABAY_VIDEOS = "https://pixabay.com/api/videos/"
 PIXABAY_IMAGES = "https://pixabay.com/api/"
@@ -29,7 +28,7 @@ def search_video(query: str, output_path: Path, min_duration: float = 3.0) -> Pa
         return None
 
     try:
-        r = requests.get(
+        r = SESSION.get(
             PIXABAY_VIDEOS,
             params={
                 "key": PIXABAY_API_KEY,
@@ -42,7 +41,7 @@ def search_video(query: str, output_path: Path, min_duration: float = 3.0) -> Pa
         )
         if r.status_code == 429:
             time.sleep(5)
-            r = requests.get(PIXABAY_VIDEOS, params={"key": PIXABAY_API_KEY, "q": query, "per_page": 5}, timeout=TIMEOUT)
+            r = SESSION.get(PIXABAY_VIDEOS, params={"key": PIXABAY_API_KEY, "q": query, "per_page": 5}, timeout=TIMEOUT)
         r.raise_for_status()
         videos = r.json().get("hits", [])
     except Exception as e:
@@ -61,7 +60,7 @@ def search_video(query: str, output_path: Path, min_duration: float = 3.0) -> Pa
         url, _, _ = chosen
         try:
             output_path.parent.mkdir(parents=True, exist_ok=True)
-            with requests.get(url, stream=True, timeout=TIMEOUT) as dl:
+            with SESSION.get(url, stream=True, timeout=TIMEOUT) as dl:
                 dl.raise_for_status()
                 with output_path.open("wb") as f:
                     for chunk in dl.iter_content(chunk_size=65536):
@@ -80,7 +79,7 @@ def search_photo(query: str, output_path: Path) -> Path | None:
         return None
 
     try:
-        r = requests.get(
+        r = SESSION.get(
             PIXABAY_IMAGES,
             params={
                 "key": PIXABAY_API_KEY,
@@ -104,7 +103,7 @@ def search_photo(query: str, output_path: Path) -> Path | None:
             continue
         try:
             output_path.parent.mkdir(parents=True, exist_ok=True)
-            r = requests.get(url, timeout=TIMEOUT)
+            r = SESSION.get(url, timeout=TIMEOUT)
             r.raise_for_status()
             output_path.write_bytes(r.content)
             return output_path

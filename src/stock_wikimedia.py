@@ -5,7 +5,7 @@ API doc : https://commons.wikimedia.org/w/api.php
 import urllib.parse
 from pathlib import Path
 
-import requests
+from src.net import SESSION
 
 WIKI_API = "https://commons.wikimedia.org/w/api.php"
 TIMEOUT = 30
@@ -24,7 +24,7 @@ def search_image(query: str, output_path: Path, force_mayotte: bool = True) -> P
     """
     full_query = f"{query} Mayotte" if force_mayotte else query
     try:
-        r = requests.get(
+        r = SESSION.get(
             WIKI_API,
             params={
                 "action": "query",
@@ -79,7 +79,7 @@ def search_image(query: str, output_path: Path, force_mayotte: bool = True) -> P
     for url, _, _ in candidates:
         try:
             output_path.parent.mkdir(parents=True, exist_ok=True)
-            r = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
+            r = SESSION.get(url, headers=HEADERS, timeout=TIMEOUT)
             r.raise_for_status()
             output_path.write_bytes(r.content)
             if output_path.stat().st_size > 50_000:

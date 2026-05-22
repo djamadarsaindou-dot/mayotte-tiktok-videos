@@ -30,9 +30,8 @@ import threading
 import time
 from pathlib import Path
 
-import requests
-
 from src.config import CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_TOKEN
+from src.net import SESSION
 
 MODEL = "@cf/black-forest-labs/flux-1-schnell"
 TIMEOUT = 120
@@ -97,7 +96,7 @@ def generate_image(prompt: str, output_path: Path, seed: int | None = None) -> P
         if _breaker.is_set():
             raise CloudflareUnavailable(f"Cloudflare indisponible ({_breaker_reason})")
         try:
-            r = requests.post(_endpoint(), json=payload, headers=headers, timeout=TIMEOUT)
+            r = SESSION.post(_endpoint(), json=payload, headers=headers, timeout=TIMEOUT)
 
             # Erreurs DÉFINITIVES → circuit breaker, pas de retry.
             if r.status_code in (401, 403):
