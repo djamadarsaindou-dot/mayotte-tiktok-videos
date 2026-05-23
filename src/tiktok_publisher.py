@@ -128,6 +128,10 @@ def _post_with_auto_refresh(url: str, *, json=None, headers: dict | None = None,
 
 MAX_CHUNK = 64 * 1024 * 1024  # TikTok : chunk_size max 64 MB
 MIN_CHUNK = 5 * 1024 * 1024   # TikTok : chunk_size min 5 MB
+# Petits chunks volontairement, pour résister aux connexions instables :
+# si la liaison coupe en plein milieu d'un chunk, le retry n'a qu'un petit
+# volume à reprendre — beaucoup plus robuste à Mayotte qu'un upload de 60 MB.
+TARGET_CHUNK = 10 * 1024 * 1024  # 10 MB
 
 
 def _compute_chunks(size: int) -> tuple[int, int]:
@@ -136,14 +140,15 @@ def _compute_chunks(size: int) -> tuple[int, int]:
     - Le dernier chunk = chunk_size + (video_size - chunk_size * total_chunks)
       (donc il peut être plus gros que chunk_size, mais ≤ 2× chunk_size)
     - chunk_size doit être entre 5 MB et 64 MB
-    - Pour ≤ 64 MB : 1 chunk de taille = video_size
+    - Pour ≤ TARGET_CHUNK : 1 chunk de taille = video_size
 
-    Stratégie : choisir le plus petit total tel que chunk_size = size//total ≤ 64 MB.
+    Stratégie : viser TARGET_CHUNK (10 MB) — petits chunks plus robustes
+    sur connexion instable. Floor MIN_CHUNK appliqué si nécessaire.
     """
     import math
-    if size <= MAX_CHUNK:
+    if size <= TARGET_CHUNK:
         return size, 1
-    total = math.ceil(size / MAX_CHUNK)
+    total = math.ceil(size / TARGET_CHUNK)
     chunk = size // total
     if chunk < MIN_CHUNK:
         total = max(1, size // MIN_CHUNK)
@@ -203,7 +208,10 @@ def publish_inbox(video_path: Path) -> dict:
                     "Content-Length": str(this_chunk),
                     "Content-Range": f"bytes {start}-{start+this_chunk-1}/{size}",
                 },
-                timeout=300,
+                # Timeout court : sur connexion instable, mieux vaut échouer
+                # vite et relancer (la session retente automatiquement) que
+                # bloquer 5 minutes sur une socket en train de mourir.
+                timeout=120,
             )
             # 206 = partial accepted, 200/201 = final accepted
             if up.status_code not in (200, 201, 206):
