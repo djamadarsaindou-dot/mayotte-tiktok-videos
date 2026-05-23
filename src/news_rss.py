@@ -11,7 +11,7 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
-import requests
+from src.net import SESSION
 
 RSS_FEEDS = [
     ("Mayotte la 1ère", "https://la1ere.francetvinfo.fr/mayotte/rss"),
@@ -43,7 +43,7 @@ def _strip_html(text: str) -> str:
 
 def _parse_feed(source: str, url: str) -> list[NewsItem]:
     try:
-        r = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
+        r = SESSION.get(url, headers=HEADERS, timeout=TIMEOUT)
         r.raise_for_status()
         root = ET.fromstring(r.content)
     except Exception as e:

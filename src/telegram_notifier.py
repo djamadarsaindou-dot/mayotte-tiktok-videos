@@ -23,7 +23,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-import requests
+from src.net import SESSION
 
 try:
     from dotenv import load_dotenv
@@ -76,7 +76,7 @@ def send_draft_ready(video_name: str, caption: str, publish_id: str | None = Non
     }
 
     try:
-        r = requests.post(
+        r = SESSION.post(
             f"{API_BASE}/bot{token}/sendMessage",
             json={
                 "chat_id": chat_id,
@@ -105,7 +105,7 @@ def send_error(message: str) -> bool:
     if not token or not chat_id:
         return False
     try:
-        r = requests.post(
+        r = SESSION.post(
             f"{API_BASE}/bot{token}/sendMessage",
             json={
                 "chat_id": chat_id,

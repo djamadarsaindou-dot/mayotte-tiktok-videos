@@ -89,7 +89,7 @@ def _throttle_mistral() -> None:
 def _chat_mistral(system: str, user: str, json_mode: bool, temperature: float) -> str:
     import time
 
-    import requests
+    from src.net import SESSION
     headers = {
         "Authorization": f"Bearer {MISTRAL_API_KEY}",
         "Content-Type": "application/json",
@@ -110,7 +110,7 @@ def _chat_mistral(system: str, user: str, json_mode: bool, temperature: float) -
     # Retry avec backoff sur 429
     for attempt in range(4):
         _throttle_mistral()
-        r = requests.post(MISTRAL_ENDPOINT, headers=headers, json=body, timeout=120)
+        r = SESSION.post(MISTRAL_ENDPOINT, headers=headers, json=body, timeout=120)
         if r.status_code == 200:
             data = r.json()
             return (data["choices"][0]["message"]["content"] or "").strip()

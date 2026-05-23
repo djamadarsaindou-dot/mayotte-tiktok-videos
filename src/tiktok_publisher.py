@@ -21,7 +21,9 @@ import os
 import time
 from pathlib import Path
 
-import requests
+import requests  # conservé pour le type hint requests.Response
+
+from src.net import SESSION
 
 # Charge .env pour que ce module soit utilisable en standalone (tests, debug)
 try:
@@ -79,7 +81,7 @@ def refresh_access_token() -> str:
     if not all([client_key, client_secret, refresh_token]):
         raise RuntimeError("TIKTOK_CLIENT_KEY/SECRET/REFRESH_TOKEN manquants dans .env")
 
-    r = requests.post(
+    r = SESSION.post(
         TOKEN_URL,
         data={
             "client_key": client_key,
@@ -115,12 +117,12 @@ def _post_with_auto_refresh(url: str, *, json=None, headers: dict | None = None,
     if not access_token:
         access_token = refresh_access_token()
     headers["Authorization"] = f"Bearer {access_token}"
-    r = requests.post(url, json=json, data=data, headers=headers, timeout=60)
+    r = SESSION.post(url, json=json, data=data, headers=headers, timeout=60)
     if r.status_code == 401:
         # Token expiré → refresh + retry
         access_token = refresh_access_token()
         headers["Authorization"] = f"Bearer {access_token}"
-        r = requests.post(url, json=json, data=data, headers=headers, timeout=60)
+        r = SESSION.post(url, json=json, data=data, headers=headers, timeout=60)
     return r
 
 
@@ -193,7 +195,7 @@ def publish_inbox(video_path: Path) -> dict:
             # (peut être plus gros que chunk_size, c'est la règle TikTok)
             this_chunk = chunk_size if i < total_chunks - 1 else size - start
             content = f.read(this_chunk)
-            up = requests.put(
+            up = SESSION.put(
                 upload_url,
                 data=content,
                 headers={
