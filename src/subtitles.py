@@ -20,8 +20,10 @@ WrapStyle: 2
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: Base,Montserrat Black,108,&H00FFFFFF,&H000000FF,&H00000000,&HAA000000,1,0,0,0,100,100,2,0,1,10,4,2,80,80,0,1
 Style: Hilite,Montserrat Black,108,&H0000F0FF,&H000000FF,&H00000000,&HAA000000,1,0,0,0,100,100,2,0,1,10,4,2,80,80,0,1
+Style: Keyword,Montserrat Black,108,&H005000FF,&H000000FF,&H00000000,&HAA000000,1,0,0,0,100,100,2,0,1,10,4,2,80,80,0,1
 Style: Hook,Montserrat Black,82,&H0000F0FF,&H000000FF,&H00000000,&HCC000000,1,0,0,0,100,100,1,0,1,8,4,5,110,110,0,1
 Style: Number,Montserrat Black,180,&H0000F0FF,&H000000FF,&H00000000,&H00000000,1,0,0,0,100,100,0,0,1,16,8,5,60,60,0,1
+Style: Emoji,Arial,160,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,0,4,5,80,80,0,1
 Style: CTA,Montserrat Black,116,&H00FFFFFF,&H000000FF,&H00000000,&HDD000000,1,0,0,0,100,100,2,0,1,12,5,5,70,70,0,1
 
 [Events]
@@ -33,6 +35,82 @@ _UNIT_WORDS = {"km", "km²", "km2", "m", "mètres", "metres", "%", "ans", "an",
                "kg", "tonnes", "habitants", "espèces", "especes", "millions",
                "milliers", "fois", "siècles", "siecles", "minutes", "heures"}
 _NUMBER_RE = __import__("re").compile(r"\d")
+
+# Mots-clés colorés en ROSE TIKTOK au lieu du jaune par défaut (noms propres,
+# concepts forts, mots à impact narratif). Match en minuscules sans accents
+# n'est pas fait — on stocke directement les variantes les plus courantes.
+KEYWORD_COLORS = {
+    # Noms propres
+    "mayotte", "mahorais", "mahoraise", "mahoraises",
+    # Faune/flore emblématique
+    "tortue", "tortues", "baleine", "baleines", "dauphin", "dauphins",
+    "lagon", "dugong", "baobab", "baobabs", "maki", "makis",
+    "caméléon", "ylang", "vanille", "corail", "coraux", "manta",
+    # Culture mahoraise
+    "djinn", "djinns", "esprit", "esprits", "légende",
+    "manzaraka", "debaa", "salouva", "kishali", "wadaha", "mawlid",
+    # Émotions / mots à impact
+    "secret", "secrets", "mystère", "mystères", "magique", "magie",
+    "incroyable", "fou", "folle", "extraordinaire",
+    "interdit", "interdite", "jamais", "personne", "unique",
+}
+
+# Mots-clés → emoji affiché en gros qui pop quand le mot est prononcé.
+# Chaque emoji n'apparaît qu'UNE FOIS par vidéo (la 1ère occurrence) pour
+# éviter le spam visuel.
+KEYWORD_EMOJIS = {
+    # Mer & vie aquatique
+    "lagon": "🌊", "mer": "🌊", "océan": "🌊", "vague": "🌊", "vagues": "🌊",
+    "tortue": "🐢", "tortues": "🐢",
+    "baleine": "🐋", "baleines": "🐋",
+    "dauphin": "🐬", "dauphins": "🐬",
+    "corail": "🪸", "coraux": "🪸", "récif": "🪸",
+    "dugong": "🦭",
+    "poisson": "🐠", "poissons": "🐠",
+    "plongée": "🤿", "plongeur": "🤿",
+    # Faune terrestre
+    "maki": "🐒", "makis": "🐒", "lémurien": "🐒",
+    "caméléon": "🦎", "gecko": "🦎",
+    "oiseau": "🐦", "oiseaux": "🐦", "drongo": "🐦",
+    "crabe": "🦀", "crabes": "🦀",
+    "papillon": "🦋",
+    # Flore
+    "baobab": "🌳", "baobabs": "🌳",
+    "fleur": "🌺", "fleurs": "🌺", "vanille": "🌺", "ylang": "🌺",
+    "forêt": "🌳", "arbre": "🌳", "arbres": "🌳",
+    # Lieux / nature
+    "île": "🏝️", "îles": "🏝️", "mayotte": "🏝️",
+    "plage": "🏖️", "plages": "🏖️",
+    "montagne": "⛰️", "volcan": "🌋",
+    "cascade": "💦", "rivière": "💧",
+    "soleil": "☀️", "lune": "🌙",
+    "cyclone": "🌀", "pluie": "🌧️",
+    # Culture & société
+    "musique": "🎵", "danse": "💃", "chant": "🎤", "chants": "🎤",
+    "mariage": "💍",
+    "mosquée": "🕌", "prière": "🤲",
+    "or": "💛",
+    # Cuisine
+    "feu": "🔥", "grillé": "🔥", "grillée": "🔥",
+    "coco": "🥥", "noix": "🥥",
+    "banane": "🍌", "bananes": "🍌",
+    "piment": "🌶️", "épice": "🌶️", "épices": "🌶️",
+    # Émotions / impact narratif
+    "secret": "🤫", "secrets": "🤫",
+    "mystère": "🔮", "mystères": "🔮",
+    "magique": "✨", "magie": "✨",
+    "incroyable": "🤯", "fou": "🤯", "folle": "🤯",
+    "esprit": "👻", "esprits": "👻", "djinn": "👻", "djinns": "👻",
+    "légende": "📜",
+    "interdit": "⛔", "interdite": "⛔", "danger": "⚠️",
+    "record": "🏆",
+}
+
+
+def _normalize_word(raw: str) -> str:
+    """Normalise un mot pour la comparaison aux dictionnaires de mots-clés
+    (minuscules + suppression de la ponctuation et des espaces)."""
+    return raw.lower().strip(" .,;:!?\"'()[]«»\t\n")
 
 # Position : bas-centre, sur ~30% de la hauteur en bas
 # (Alignement 2 = bas-centre ; MarginV = pixels au-dessus du bord bas)
@@ -146,6 +224,46 @@ def _number_lines(words: list[dict], width: int, height: int) -> list[str]:
     return lines
 
 
+def _emoji_lines(words: list[dict], width: int, height: int) -> list[str]:
+    """Affiche en gros un emoji pop quand un mot-clé Mayotte est prononcé.
+
+    Chaque emoji n'apparaît qu'UNE seule fois par vidéo (sa 1ère occurrence)
+    pour rester impactant sans pollution visuelle. Position : centre vertical,
+    au-dessus de la zone karaoké, en dessous du hook.
+    """
+    lines: list[str] = []
+    pos_x = width // 2
+    pos_y = int(height * 0.50)
+    already_shown: set[str] = set()
+
+    for w in words:
+        key = _normalize_word(w["word"])
+        emoji = KEYWORD_EMOJIS.get(key)
+        if not emoji or emoji in already_shown:
+            continue
+        already_shown.add(emoji)
+
+        start = w["start"]
+        # On n'affiche pas les emojis pendant la zone du hook (0-3.6s) pour
+        # ne pas surcharger l'attention dès l'intro
+        if start < 3.7:
+            continue
+        end = start + 1.4
+
+        # Pop-in spectaculaire : 130% → 100%, fade out long pour adoucir
+        fx = (
+            f"{{\\an5\\pos({pos_x},{pos_y})"
+            f"\\fad(60,300)"
+            f"\\t(0,140,\\fscx130\\fscy130)"
+            f"\\t(140,280,\\fscx100\\fscy100)}}"
+        )
+        lines.append(
+            f"Dialogue: 4,{_t(start)},{_t(end)},Emoji,,0,0,0,,{fx}{emoji}"
+        )
+
+    return lines
+
+
 def _cta_lines(total_duration: float, width: int, height: int) -> list[str]:
     """Overlay « ABONNE-TOI 🔔 » sur les 4 dernières secondes."""
     if total_duration < 6:
@@ -193,6 +311,10 @@ def build_karaoke_ass(
     if show_numbers and words:
         lines.extend(_number_lines(words, width, height))
 
+    # Emojis pop sur les mots-clés Mayotte (1 occurrence par emoji max)
+    if words:
+        lines.extend(_emoji_lines(words, width, height))
+
     # CTA « Abonne-toi » sur les 4 dernières secondes
     if cta and words:
         total_dur = words[-1]["end"]
@@ -229,8 +351,11 @@ def build_karaoke_ass(
             )
             full = (invis_before + (" " if before else "") + fx + current
                     + (" " if after else "") + invis_after)
+            # Mots-clés Mayotte → style "Keyword" (rose TikTok)
+            # Sinon → "Hilite" (jaune par défaut)
+            style = "Keyword" if _normalize_word(w["word"]) in KEYWORD_COLORS else "Hilite"
             lines.append(
-                f"Dialogue: 1,{_t(w['start'])},{_t(w['end'] + 0.05)},Hilite,,0,0,0,,{full}"
+                f"Dialogue: 1,{_t(w['start'])},{_t(w['end'] + 0.05)},{style},,0,0,0,,{full}"
             )
 
     ass_path.write_text("\n".join(lines), encoding="utf-8")
