@@ -25,6 +25,7 @@ Style: Hook,Montserrat Black,82,&H0000F0FF,&H000000FF,&H00000000,&HCC000000,1,0,
 Style: Number,Montserrat Black,180,&H0000F0FF,&H000000FF,&H00000000,&H00000000,1,0,0,0,100,100,0,0,1,16,8,5,60,60,0,1
 Style: Emoji,Arial,160,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,0,4,5,80,80,0,1
 Style: Brand,Montserrat Black,38,&H00FFFFFF,&H000000FF,&H00000000,&H88000000,1,0,0,0,100,100,0,0,1,2,2,9,30,30,30,1
+Style: Label,Montserrat Black,52,&H00FFFFFF,&H000000FF,&H0000F0FF,&HBB000000,1,0,0,0,100,100,0,0,1,3,2,2,60,60,0,1
 Style: CTA,Montserrat Black,116,&H00FFFFFF,&H000000FF,&H00000000,&HDD000000,1,0,0,0,100,100,2,0,1,12,5,5,70,70,0,1
 
 [Events]
@@ -225,6 +226,24 @@ def _number_lines(words: list[dict], width: int, height: int) -> list[str]:
     return lines
 
 
+def _label_lines(label: str, width: int, height: int) -> list[str]:
+    """Étiquette « lower-third » avec le nom du sujet (style documentaire).
+
+    Affichée de 4s à 9s, au-dessus de la zone des sous-titres karaoké, avec
+    une entrée en fondu. Donne un cachet « reportage » et crédibilise le sujet.
+    """
+    if not label or not label.strip():
+        return []
+    text = label.strip().replace("\\", "").replace("{", "(").replace("}", ")")
+    if len(text) > 44:
+        text = text[:42].rstrip() + "…"
+    text = "📍 " + text
+    pos_x = width // 2
+    pos_y = int(height * 0.63)
+    fx = f"{{\\an2\\pos({pos_x},{pos_y})\\fad(280,300)\\bord3\\shad2}}"
+    return [f"Dialogue: 2,{_t(4.0)},{_t(9.0)},Label,,0,0,0,,{fx}{text}"]
+
+
 def _emoji_lines(words: list[dict], width: int, height: int) -> list[str]:
     """Affiche en gros un emoji pop quand un mot-clé Mayotte est prononcé.
 
@@ -293,6 +312,7 @@ def build_karaoke_ass(
     hook_text: str = "",
     show_numbers: bool = True,
     cta: bool = True,
+    topic_label: str = "",
 ) -> None:
     """Génère un .ass karaoké style TikTok premium.
 
@@ -316,6 +336,9 @@ def build_karaoke_ass(
 
     # Hook géant 0-3.6s (texte « stop scroll » en haut)
     lines.extend(_hook_lines(hook_text, width, height))
+
+    # Étiquette lower-third (nom du sujet) ~4-9s, style reportage
+    lines.extend(_label_lines(topic_label, width, height))
 
     # Chiffres animés géants (1500 km², 95 %…)
     if show_numbers and words:

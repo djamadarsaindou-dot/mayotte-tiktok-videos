@@ -161,7 +161,11 @@ def build_video(topic_key: str | None = None) -> Path:
     hook_punch = script.get("hook_punch", "")
     if hook_punch:
         print(f"   🎯 Hook visuel : « {hook_punch} »")
-    build_karaoke_ass(words, ass_path, VIDEO_WIDTH, VIDEO_HEIGHT, hook_text=hook_punch)
+    build_karaoke_ass(
+        words, ass_path, VIDEO_WIDTH, VIDEO_HEIGHT,
+        hook_text=hook_punch,
+        topic_label=script.get("anchor", ""),
+    )
 
     # Sauvegarde les timings des mots → permet de re-générer les sous-titres
     # plus tard (rerender) sans relancer la synthèse vocale.
