@@ -48,6 +48,12 @@ def _normalize_asset(asset_path: Path, target_path: Path, duration: float, scene
     """
     target_path.parent.mkdir(parents=True, exist_ok=True)
 
+    # Fondu d'entrée court sur les clips qui démarrent une nouvelle scène
+    # (transition douce). Le tout 1er clip est exclu : il a déjà le flash
+    # blanc d'intro géré au montage final.
+    is_scene_start = scene_index % VISUALS_PER_SCENE == 0 and scene_index > 0
+    fade_suffix = ",fade=t=in:st=0:d=0.22" if is_scene_start else ""
+
     if _is_video(asset_path):
         src_dur = _ffprobe_duration(asset_path)
         loops = 0
@@ -56,7 +62,7 @@ def _normalize_asset(asset_path: Path, target_path: Path, duration: float, scene
         scale_filter = (
             f"scale={VIDEO_WIDTH}:{VIDEO_HEIGHT}:force_original_aspect_ratio=increase,"
             f"crop={VIDEO_WIDTH}:{VIDEO_HEIGHT},"
-            f"setsar=1,fps={VIDEO_FPS}"
+            f"setsar=1,fps={VIDEO_FPS}{fade_suffix}"
         )
         cmd = [FFMPEG, "-y"]
         if loops > 0:
@@ -78,16 +84,28 @@ def _normalize_asset(asset_path: Path, target_path: Path, duration: float, scene
         # Plus simple : `-loop 1 -i image -vf "...,zoompan=d=N:fps=FPS:s=WxH" -t DURATION`
         # avec -t en SORTIE pour limiter la durée finale.
         frames = max(1, int(duration * VIDEO_FPS))
-        if scene_index % 2 == 0:
-            zoom_expr = "min(zoom+0.0012,1.35)"
-        else:
-            zoom_expr = "if(lte(zoom,1.0),1.35,max(zoom-0.0012,1.05))"
+        denom = max(1, frames - 1)
+        # Ken Burns varié : 4 mouvements de caméra alternés pour éviter
+        # l'effet répétitif (zoom avant / arrière / pano horizontal / vertical).
+        mode = scene_index % 4
+        if mode == 0:            # zoom avant, centré
+            z = "min(zoom+0.0012,1.35)"
+            x, y = "iw/2-(iw/zoom/2)", "ih/2-(ih/zoom/2)"
+        elif mode == 1:          # zoom arrière, centré
+            z = "if(lte(zoom,1.0),1.35,max(zoom-0.0012,1.05))"
+            x, y = "iw/2-(iw/zoom/2)", "ih/2-(ih/zoom/2)"
+        elif mode == 2:          # panoramique gauche → droite, zoom fixe
+            z = "1.2"
+            x, y = f"(iw-iw/zoom)*on/{denom}", "ih/2-(ih/zoom/2)"
+        else:                    # panoramique haut → bas, zoom fixe
+            z = "1.2"
+            x, y = "iw/2-(iw/zoom/2)", f"(ih-ih/zoom)*on/{denom}"
         kb = (
             f"scale={VIDEO_WIDTH*2}:{VIDEO_HEIGHT*2}:force_original_aspect_ratio=increase,"
             f"crop={VIDEO_WIDTH*2}:{VIDEO_HEIGHT*2},"
-            f"zoompan=z='{zoom_expr}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':"
+            f"zoompan=z='{z}':x='{x}':y='{y}':"
             f"d={frames}:s={VIDEO_WIDTH}x{VIDEO_HEIGHT}:fps={VIDEO_FPS},setsar=1,"
-            f"trim=duration={duration:.3f}"
+            f"trim=duration={duration:.3f}{fade_suffix}"
         )
         cmd = [
             FFMPEG, "-y",
@@ -233,11 +251,20 @@ def assemble_video(
     )
     hook_intro_fade = "fade=t=in:st=0:d=0.3:color=white,"
 
+    # === Color grading cinéma ===
+    # Harmonise les images de sources variées (Pexels, Cloudflare IA, Pixabay)
+    # en un look tropical chaud et contrasté, type documentaire. Appliqué AVANT
+    # l'ass pour ne pas altérer les couleurs des sous-titres/emojis.
+    grade_filter = (
+        "eq=contrast=1.08:saturation=1.20:brightness=0.01:gamma=0.98,"
+        "colorbalance=rs=0.03:gm=0.01:bs=-0.04"
+    )
+
     # Branding : le watermark « @mister_decouverte » est dessiné par le
     # système ASS (voir Style "Brand" dans subtitles.py) — plus fiable sur
     # Windows que drawtext FFmpeg qui dépend de fontconfig.
     vf = (
-        f"{hook_zoom}{hook_intro_fade}{bar_filter},"
+        f"{grade_filter},{hook_zoom}{hook_intro_fade}{bar_filter},"
         f"ass='{ass_escaped}':fontsdir='{fonts_escaped}'"
     )
 
