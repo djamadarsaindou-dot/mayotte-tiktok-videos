@@ -2,9 +2,17 @@
 import subprocess
 from pathlib import Path
 
-from src.config import ASSETS_DIR, FFMPEG, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
+from src.config import (
+    ASSETS_DIR,
+    FFMPEG,
+    VIDEO_FPS,
+    VIDEO_HEIGHT,
+    VIDEO_WIDTH,
+    VISUALS_PER_SCENE,
+)
 
 FONTS_DIR = ASSETS_DIR / "fonts"
+SFX_DIR = ASSETS_DIR / "sfx"
 
 
 def _ffprobe_path() -> str:
@@ -101,6 +109,61 @@ def _normalize_asset(asset_path: Path, target_path: Path, duration: float, scene
     return target_path
 
 
+def _mix_sfx(audio_path: Path, scene_durations: list[float], work_dir: Path) -> Path:
+    """Mixe la voix avec un impact d'intro et un whoosh à chaque transition
+    de scène. Retourne le chemin de l'audio mixé, ou l'audio original si les
+    SFX sont absents ou si le mix échoue (dégradation gracieuse).
+
+    Le sound design léger rend les transitions audibles et donne un effet
+    « production pro » sans masquer la voix.
+    """
+    whoosh = SFX_DIR / "whoosh.wav"
+    impact = SFX_DIR / "impact.wav"
+    if not whoosh.exists() or not impact.exists():
+        return audio_path
+
+    # Positions cumulées des transitions de scène (fin de chaque groupe de
+    # VISUALS_PER_SCENE clips), sauf la toute dernière (= fin de vidéo).
+    cum = 0.0
+    transitions: list[float] = []
+    for i, d in enumerate(scene_durations):
+        cum += d
+        if (i + 1) % VISUALS_PER_SCENE == 0 and i < len(scene_durations) - 1:
+            transitions.append(cum)
+
+    mixed = work_dir / "voice_mixed.m4a"
+    inputs = ["-i", str(audio_path), "-i", str(impact)]
+    for _ in transitions:
+        inputs += ["-i", str(whoosh)]
+
+    # Impact d'intro à 220 ms (juste après le début), volume modéré pour ne
+    # pas couvrir la voix. Whooshes 80 ms avant chaque transition pour donner
+    # l'impression d'anticiper la coupe.
+    parts = ["[1:a]adelay=220|220,volume=0.45[hookimp]"]
+    for j, pos in enumerate(transitions):
+        delay_ms = max(0, int(pos * 1000) - 80)
+        parts.append(f"[{j+2}:a]adelay={delay_ms}|{delay_ms},volume=0.40[w{j}]")
+    streams = "[0:a][hookimp]" + "".join(f"[w{j}]" for j in range(len(transitions)))
+    n = 2 + len(transitions)
+    parts.append(
+        f"{streams}amix=inputs={n}:duration=first:dropout_transition=0,"
+        f"volume=1.1[out]"
+    )
+
+    cmd = [FFMPEG, "-y", "-hide_banner", "-loglevel", "error"] + inputs + [
+        "-filter_complex", ";".join(parts),
+        "-map", "[out]",
+        "-c:a", "aac", "-b:a", "192k",
+        str(mixed),
+    ]
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        print(f"  ⚠️  Sound design : mix échoué, voix brute conservée")
+        return audio_path
+    print(f"  🔊 Sound design : impact intro + {len(transitions)} whooshes")
+    return mixed
+
+
 def assemble_video(
     asset_paths: list[Path],
     scene_durations: list[float],
@@ -143,6 +206,11 @@ def assemble_video(
 
     audio_dur = _ffprobe_duration(audio_path)
 
+    # === Sound design : mixe la voix avec un impact d'intro + whooshes ===
+    # à chaque transition de scène. Si les SFX sont absents, on garde la voix
+    # brute (dégradation gracieuse).
+    mixed_audio = _mix_sfx(audio_path, scene_durations, work_dir)
+
     ass_escaped = str(ass_path.resolve()).replace("\\", "/").replace(":", "\\:")
     fonts_escaped = str(FONTS_DIR.resolve()).replace("\\", "/").replace(":", "\\:")
 
@@ -159,7 +227,7 @@ def assemble_video(
     cmd = [
         FFMPEG, "-y",
         "-i", str(silent_concat),
-        "-i", str(audio_path),
+        "-i", str(mixed_audio),
         "-vf", vf,
         "-map", "0:v", "-map", "1:a",
         "-c:v", "libx264", "-preset", "ultrafast", "-crf", "22",
