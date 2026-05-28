@@ -10,6 +10,7 @@ Pipeline en 2 passes :
 3. PASSE B : pour chaque scène, le LLM rédige UNE phrase de 22-28 mots terminée par un point
 """
 import json
+import random
 import re
 
 from src.config import (
@@ -21,6 +22,103 @@ from src.config import (
 from src.llm import chat, chat_json, get_provider
 from src.mayotte_knowledge import GLOBAL_CONTEXT_PROMPT, random_topic_for
 from src.news_rss import fetch_recent_news, pick_news_topic
+
+
+# Styles narratifs alternés aléatoirement pour éviter que toutes les vidéos
+# aient la même structure (mystère / énumération / anecdote / comparaison).
+# Le LLM reçoit les hints du style choisi et adapte le plan en conséquence.
+NARRATIVE_STYLES = [
+    {
+        "name": "mystère",
+        "intro_hint": (
+            "Commence par une question intrigante ou un fait étrange qui "
+            "crée une zone d'ombre — on doit avoir envie de connaître la suite."
+        ),
+        "construction": (
+            "intro mystérieuse → indices accumulés → cliffhanger central "
+            "« mais le plus fou, c'est… » → révélation finale qui éclaire tout"
+        ),
+        "closing_hint": (
+            "Termine sur la révélation qui laisse pensif, puis demande au "
+            "spectateur s'il connaissait + invite à s'abonner pour d'autres "
+            "secrets de Mayotte."
+        ),
+    },
+    {
+        "name": "énumération",
+        "intro_hint": (
+            "Annonce d'emblée le nombre de choses à découvrir (« 5 choses "
+            "incroyables sur… » ou « voici 3 secrets… »)."
+        ),
+        "construction": (
+            "intro annonçant le nombre → énumération claire avec marqueurs "
+            "« 1, 2, 3… » → un bonus inattendu en fin de liste → CTA"
+        ),
+        "closing_hint": (
+            "Termine en disant « et le numéro 1 va te surprendre » ou un "
+            "bonus surprise, puis invite à commenter son préféré."
+        ),
+    },
+    {
+        "name": "anecdote",
+        "intro_hint": (
+            "Commence comme si tu racontais une histoire vraie ou une "
+            "rencontre personnelle (« Un Mahorais m'a raconté que… »)."
+        ),
+        "construction": (
+            "scène d'ouverture immersive → développement narratif avec "
+            "moments précis et sensations → conclusion qui tire une leçon"
+        ),
+        "closing_hint": (
+            "Conclus par une réflexion personnelle ou un témoignage, puis "
+            "demande au spectateur s'il vit la même chose."
+        ),
+    },
+    {
+        "name": "comparaison",
+        "intro_hint": (
+            "Oppose ce qu'on croit savoir à ce qu'on va découvrir "
+            "(« Tu pensais X ? En vrai c'est très différent… »)."
+        ),
+        "construction": (
+            "intro qui démonte une idée reçue → comparaisons multiples "
+            "« avant / maintenant », « croyance / réalité » → vérité révélée"
+        ),
+        "closing_hint": (
+            "Conclus en pointant ce qui change la perspective, puis invite "
+            "à commenter si l'on avait soi-même cette idée reçue."
+        ),
+    },
+]
+
+
+# Hashtags spécifiques au thème (en plus du noyau mayotte/976/oceanindien)
+HASHTAGS_BY_THEME = {
+    "decouverte_mayotte": [
+        "voyage", "tropical", "paradis", "lagon", "iledemayotte",
+        "nature", "decouverte",
+    ],
+    "tradition_mahoraise": [
+        "tradition", "culture", "shimaore", "patrimoine", "afrique",
+        "culturefrancaise", "comores",
+    ],
+    "legende_mahoraise": [
+        "legende", "mythologie", "mystere", "histoiresvraies", "spiritualite",
+        "contes", "mystique",
+    ],
+    "fait_insolite": [
+        "insolite", "saviezvous", "incroyable", "fact", "histoire",
+        "anecdote",
+    ],
+    "actu_mayotte": [
+        "actu", "info", "news", "actualite", "mayotte2026",
+    ],
+}
+
+# Hashtags TikTok pour la portée algorithmique — on en pioche 1-2 au hasard
+# par vidéo pour ne pas paraître spammé.
+HASHTAGS_BROADCAST = ["pourtoi", "fyp", "tiktokfrance", "foryou", "viral"]
+HASHTAGS_CORE = ["mayotte", "976", "oceanindien", "mahorais"]
 
 
 PLAN_PROMPT_KNOWLEDGE = """Tu vas écrire le plan d'un mini-reportage TikTok de 2min10 à 2min30 sur le sujet suivant à Mayotte.
@@ -64,9 +162,10 @@ CONTRAINTES STRICTES POUR LES VISUELS :
 
 CONTRAINTES STRICTES NARRATIVES :
 - EXACTEMENT {n_scenes} scènes
-- Construction : intro accrocheuse → développement (4-5 angles concrets) → exemple ou témoignage → conclusion
-- LA DERNIÈRE SCÈNE doit être une QUESTION engageante au spectateur + invitation à commenter/s'abonner (ex: "Et toi, tu connaissais cette légende ? Dis-le en commentaire et abonne-toi pour découvrir Mayotte !")
-- Au milieu du récit (scène 6 ou 7), glisse un mini-cliffhanger ("mais le plus fou, c'est…", "et ce que personne ne sait…")
+- Style narratif imposé : {narrative_name}
+  • Intro : {narrative_intro_hint}
+  • Construction : {narrative_construction}
+  • Conclusion (dernière scène) : {narrative_closing_hint}
 - Chaque scène s'appuie sur UN fait précis de la liste — pas d'invention
 """
 
@@ -204,7 +303,12 @@ def _build_plan_for_knowledge(theme: str) -> tuple[dict, str, str]:
     visual_hints_str = "\n".join(f"  • {h}" for h in entry.get("visual_hints", []))
     avoid_str = ", ".join(entry["avoid"]) if entry["avoid"] else "rien de spécifique"
 
+    # Tire au sort un style narratif pour varier la structure d'une vidéo à
+    # l'autre (mystère / énumération / anecdote / comparaison).
+    style = random.choice(NARRATIVE_STYLES)
+
     print(f"   🎯 Sujet ancré : {entry['title']}")
+    print(f"   🎭 Style narratif : {style['name']}")
 
     user_prompt = PLAN_PROMPT_KNOWLEDGE.format(
         title=entry["title"],
@@ -213,6 +317,10 @@ def _build_plan_for_knowledge(theme: str) -> tuple[dict, str, str]:
         avoid=avoid_str,
         n_scenes=NUM_SCENES,
         n_visuals=VISUALS_PER_SCENE,
+        narrative_name=style["name"],
+        narrative_intro_hint=style["intro_hint"],
+        narrative_construction=style["construction"],
+        narrative_closing_hint=style["closing_hint"],
     )
     plan = chat_json(GLOBAL_CONTEXT_PROMPT, user_prompt, temperature=0.85)
     plan = _normalize_plan(plan, entry["title"])
@@ -269,8 +377,14 @@ CONTRAINTES :
 """
 
 
-def generate_caption(title: str, anchor: str, hook: str) -> dict:
-    """Génère la légende + hashtags TikTok. Renvoie {'caption', 'hashtags', 'text'}."""
+def generate_caption(title: str, anchor: str, hook: str, theme: str = "") -> dict:
+    """Génère la légende + hashtags TikTok. Renvoie {'caption', 'hashtags', 'text'}.
+
+    Les hashtags sont enrichis automatiquement avec :
+    - Le noyau identité (mayotte, 976, oceanindien, mahorais) — toujours présent
+    - Des hashtags spécifiques au thème (legende/tradition/etc.) — variés à chaque vidéo
+    - 1-2 hashtags TikTok pour la portée algorithmique
+    """
     try:
         data = chat_json(
             "Tu es expert en croissance TikTok francophone.",
@@ -282,21 +396,43 @@ def generate_caption(title: str, anchor: str, hook: str) -> dict:
     except Exception as e:
         print(f"   ⚠️  Génération légende échouée ({str(e)[:60]}), fallback simple")
         caption = title
-        tags = ["mayotte", "976", "oceanindien", "dom", "tiktokvoyage"]
+        tags = []
 
-    # Nettoie les hashtags : sans #, sans espace, minuscules
-    clean_tags = []
+    # Nettoie les hashtags LLM : sans #, sans espace, minuscules
+    clean_tags: list[str] = []
     for t in tags:
         t = re.sub(r"[^\w]", "", str(t)).lower()
         if t and t not in clean_tags:
             clean_tags.append(t)
-    for must in ("mayotte", "976", "oceanindien"):
-        if must not in clean_tags:
-            clean_tags.insert(0, must)
 
-    hashtag_line = " ".join(f"#{t}" for t in clean_tags[:14])
+    # Noyau identité (mayotte/976/oceanindien/mahorais) — toujours en tête
+    core_in = [t for t in HASHTAGS_CORE if t in clean_tags]
+    other = [t for t in clean_tags if t not in HASHTAGS_CORE]
+    for t in HASHTAGS_CORE:
+        if t not in core_in:
+            core_in.append(t)
+    clean_tags = core_in + other
+
+    # Thème : 3-4 hashtags tirés au hasard de la banque (varient à chaque vidéo)
+    theme_pool = HASHTAGS_BY_THEME.get(theme, [])
+    if theme_pool:
+        picks = random.sample(theme_pool, min(4, len(theme_pool)))
+        for t in picks:
+            if t not in clean_tags:
+                clean_tags.append(t)
+
+    # Broadcast TikTok (1-2 hashtags pour le push algo)
+    broadcast_picks = random.sample(
+        HASHTAGS_BROADCAST, min(2, len(HASHTAGS_BROADCAST))
+    )
+    for t in broadcast_picks:
+        if t not in clean_tags:
+            clean_tags.append(t)
+
+    final = clean_tags[:14]
+    hashtag_line = " ".join(f"#{t}" for t in final)
     full_text = f"{caption}\n\n{hashtag_line}"
-    return {"caption": caption, "hashtags": clean_tags[:14], "text": full_text}
+    return {"caption": caption, "hashtags": final, "text": full_text}
 
 
 def generate_script(topic_def: dict) -> dict:
@@ -340,9 +476,11 @@ def generate_script(topic_def: dict) -> dict:
     title = plan.get("title", anchor)
     hook = plan.get("hook", "")
 
-    # Légende TikTok (description + hashtags) prête à copier-coller
+    # Légende TikTok (description + hashtags) prête à copier-coller.
+    # On passe le thème pour enrichir les hashtags avec la banque thématique.
+    theme = topic_def.get("knowledge_theme") or topic_def.get("kind", "")
     print("   📱 Génération de la légende TikTok...")
-    caption = generate_caption(title, anchor, hook)
+    caption = generate_caption(title, anchor, hook, theme=theme)
 
     return {
         "title": title,
