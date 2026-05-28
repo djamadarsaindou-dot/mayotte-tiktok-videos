@@ -24,6 +24,7 @@ Style: Keyword,Montserrat Black,108,&H005000FF,&H000000FF,&H00000000,&HAA000000,
 Style: Hook,Montserrat Black,82,&H0000F0FF,&H000000FF,&H00000000,&HCC000000,1,0,0,0,100,100,1,0,1,8,4,5,110,110,0,1
 Style: Number,Montserrat Black,180,&H0000F0FF,&H000000FF,&H00000000,&H00000000,1,0,0,0,100,100,0,0,1,16,8,5,60,60,0,1
 Style: Emoji,Arial,160,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,0,4,5,80,80,0,1
+Style: Brand,Montserrat Black,38,&H00FFFFFF,&H000000FF,&H00000000,&H88000000,1,0,0,0,100,100,0,0,1,2,2,9,30,30,30,1
 Style: CTA,Montserrat Black,116,&H00FFFFFF,&H000000FF,&H00000000,&HDD000000,1,0,0,0,100,100,2,0,1,12,5,5,70,70,0,1
 
 [Events]
@@ -303,6 +304,15 @@ def build_karaoke_ass(
     lines = [ASS_HEADER.format(w=width, h=height)]
     pos_x = width // 2
     pos_y = int(height * POS_Y_RATIO)
+
+    # Watermark de la chaîne (@mister_decouverte) en haut à droite,
+    # visible toute la vidéo, semi-transparent pour ne pas distraire.
+    if words:
+        total_dur = words[-1]["end"]
+        lines.append(
+            f"Dialogue: 0,{_t(0)},{_t(total_dur)},Brand,,0,0,0,,"
+            f"{{\\alpha&H40&}}@mister_decouverte"
+        )
 
     # Hook géant 0-3.6s (texte « stop scroll » en haut)
     lines.extend(_hook_lines(hook_text, width, height))

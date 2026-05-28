@@ -222,7 +222,24 @@ def assemble_video(
         f"w='iw*min(t/{audio_dur:.3f}\\,1)':h={bar_h}:"
         f"color=0x00F0FF@0.92:t=fill"
     )
-    vf = f"{bar_filter},ass='{ass_escaped}':fontsdir='{fonts_escaped}'"
+
+    # === Hook visuel des 3 premières secondes ===
+    # 1. Flash blanc en intro (fade-in from white sur 0.3s) — pattern interrupt
+    #    qui stoppe le scroll TikTok dès les premières frames.
+    # 2. Zoom out subtil 110% → 100% sur 2s — effet cinéma qui happe le regard.
+    hook_zoom = (
+        f"scale='iw*(1.10-0.05*min(t\\,2))':'ih*(1.10-0.05*min(t\\,2))':eval=frame,"
+        f"crop={VIDEO_WIDTH}:{VIDEO_HEIGHT},"
+    )
+    hook_intro_fade = "fade=t=in:st=0:d=0.3:color=white,"
+
+    # Branding : le watermark « @mister_decouverte » est dessiné par le
+    # système ASS (voir Style "Brand" dans subtitles.py) — plus fiable sur
+    # Windows que drawtext FFmpeg qui dépend de fontconfig.
+    vf = (
+        f"{hook_zoom}{hook_intro_fade}{bar_filter},"
+        f"ass='{ass_escaped}':fontsdir='{fonts_escaped}'"
+    )
 
     cmd = [
         FFMPEG, "-y",
