@@ -86,6 +86,11 @@ CLOUDFLARE_API_TOKEN = os.getenv("CLOUDFLARE_API_TOKEN", "").strip()
 # VISUAL_PROVIDER : "ai_first" (Pollinations IA prioritaire, corrélation forte avec
 # le texte) ou "stock_first" (Pexels d'abord, plus rapide mais générique)
 VISUAL_PROVIDER = os.getenv("VISUAL_PROVIDER", "ai_first").strip().lower()
+
+# 100% images IA : TOUS les visuels passent par l'IA (Cloudflare FLUX), le
+# stock (Pexels/Pixabay) ne servant plus que de fallback si l'IA échoue.
+# Quota Cloudflare gratuit ~130 images/jour → viser 2 vidéos/jour (2×48=96).
+VISUALS_AI_ONLY = os.getenv("VISUALS_AI_ONLY", "false").strip().lower() == "true"
 # Pollinations a introduit un paywall (HTTP 402) en mai 2026. Mettre à "false"
 # pour ne même pas le tenter (100% stock, génération bien plus rapide).
 # Si "true" : on tente, mais un circuit breaker coupe Pollinations dès le

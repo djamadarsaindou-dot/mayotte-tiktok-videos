@@ -25,6 +25,7 @@ from src.config import (
     VIDEO_HEIGHT,
     VIDEO_WIDTH,
     VISUAL_PROVIDER,
+    VISUALS_AI_ONLY,
     VISUALS_PER_SCENE,
     VOICE,
 )
@@ -102,7 +103,10 @@ def fetch_visual(args) -> tuple[int, int, Path, str, str]:
     scene_idx, visual_idx, query, fallback_prompt, work_dir = args
     name = f"asset_s{scene_idx:02d}_v{visual_idx}"
     mayotte = _is_mayotte_specific(query) or _is_mayotte_specific(fallback_prompt)
-    finder = find_ai_asset if visual_idx == 0 else find_stock_asset
+    # En mode 100% IA, tous les visuels passent par l'IA (stock = fallback
+    # interne à find_ai_asset). Sinon, mode hybride : 1er visuel IA, reste stock.
+    use_ai = VISUALS_AI_ONLY or visual_idx == 0
+    finder = find_ai_asset if use_ai else find_stock_asset
     try:
         asset, source = finder(query, fallback_prompt, work_dir, name, mayotte_specific=mayotte)
         return scene_idx, visual_idx, asset, query, source
@@ -173,7 +177,9 @@ def build_video(topic_key: str | None = None) -> Path:
         json.dumps(words, ensure_ascii=False), encoding="utf-8"
     )
 
-    print(f"🎨 Récup assets — MODE HYBRIDE (1 IA + {VISUALS_PER_SCENE-1} stock par scène)")
+    mode_label = ("100% IA" if VISUALS_AI_ONLY
+                  else f"HYBRIDE (1 IA + {VISUALS_PER_SCENE-1} stock par scène)")
+    print(f"🎨 Récup assets — MODE {mode_label}")
     print(f"   {len(script['scenes'])} scènes × {VISUALS_PER_SCENE} visuels = "
           f"{len(script['scenes']) * VISUALS_PER_SCENE} clips")
 
@@ -186,10 +192,14 @@ def build_video(topic_key: str | None = None) -> Path:
         for v_idx, query in enumerate(visuals[:VISUALS_PER_SCENE]):
             all_tasks.append((s_idx, v_idx, query, scene.get("image_prompt", ""), work_dir))
 
-    # On sépare en 2 phases pour éviter que plusieurs IA se déclenchent en
-    # parallèle (Pollinations rate-limit).
-    ai_tasks = [t for t in all_tasks if t[1] == 0]       # visual_idx == 0 → IA
-    stock_tasks = [t for t in all_tasks if t[1] != 0]    # autres → stock rapide
+    # Séparation en 2 phases. En mode 100% IA, tous les visuels passent en
+    # phase IA (le stock ne sert plus que de fallback interne à find_ai_asset).
+    if VISUALS_AI_ONLY:
+        ai_tasks = all_tasks
+        stock_tasks = []
+    else:
+        ai_tasks = [t for t in all_tasks if t[1] == 0]      # visual_idx == 0 → IA
+        stock_tasks = [t for t in all_tasks if t[1] != 0]   # autres → stock rapide
 
     visual_results: dict[tuple[int, int], Path] = {}
     sources_used: dict[str, int] = {}

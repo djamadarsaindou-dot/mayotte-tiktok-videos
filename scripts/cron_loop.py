@@ -32,8 +32,9 @@ sys.path.insert(0, str(ROOT))
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
-# Heures de génération (24h). 4 vidéos/jour. Modifiable ici.
-SLOT_HOURS = [8, 12, 16, 20]
+# Heures de génération (24h). 2 vidéos/jour (matin + soir) pour rester dans
+# le quota Cloudflare gratuit en mode 100% images IA (2 × 48 = 96 img/jour).
+SLOT_HOURS = [8, 18]
 
 PYTHON_EXE = ROOT / ".venv" / "Scripts" / "python.exe"
 GENERATE_SCRIPT = ROOT / "generate_video.py"
