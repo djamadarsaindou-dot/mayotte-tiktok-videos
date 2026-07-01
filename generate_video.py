@@ -27,12 +27,19 @@ from src.config import (
     VISUAL_PROVIDER,
     VISUALS_AI_ONLY,
     VISUALS_PER_SCENE,
+    VISUALS_SMART_MIX,
     VOICE,
 )
 from src.audio_master import master_voice
 from src.editor import assemble_video, get_audio_duration
 from src.script_writer import generate_script
-from src.stock_finder import find_ai_asset, find_asset, find_stock_asset
+from src.stock_finder import (
+    decide_visual_route,
+    find_ai_asset,
+    find_ambiance_clip,
+    find_asset,
+    find_stock_asset,
+)
 from src.subtitles import build_karaoke_ass
 from src.topics import TOPICS, random_topic
 from src.voice import assemble_narration, synthesize
@@ -94,21 +101,33 @@ def _print_timing_report() -> None:
 def fetch_visual(args) -> tuple[int, int, Path, str, str]:
     """Pour la scène scene_idx, visuel visual_idx, télécharge l'asset.
 
-    Mode HYBRIDE :
-    - visual_idx == 0 : IA Pollinations (ancre du sens, corrélation forte texte/image)
-    - visual_idx > 0  : stock (Pexels/Pixabay/Wikimedia) — rapide
+    Routage (décidé par decide_visual_route, dans l'ordre de priorité) :
+    - VISUALS_AI_ONLY : tout en IA (stock = fallback interne à find_ai_asset)
+    - VISUALS_SMART_MIX : scène « ambiance » → VRAI clip vidéo stock
+      (mouvement réel = meilleure rétention), « specifique » → image IA
+    - legacy : 1er visuel IA (ancre du sens), les autres stock (rapide)
 
     En cas d'échec total, retombe sur une requête Mayotte générique.
+    seed_key rend les images IA reproductibles d'un run à l'autre.
     """
-    scene_idx, visual_idx, query, fallback_prompt, work_dir = args
+    scene_idx, visual_idx, query, fallback_prompt, work_dir, seed_key, visual_kind = args
     name = f"asset_s{scene_idx:02d}_v{visual_idx}"
     mayotte = _is_mayotte_specific(query) or _is_mayotte_specific(fallback_prompt)
-    # En mode 100% IA, tous les visuels passent par l'IA (stock = fallback
-    # interne à find_ai_asset). Sinon, mode hybride : 1er visuel IA, reste stock.
-    use_ai = VISUALS_AI_ONLY or visual_idx == 0
-    finder = find_ai_asset if use_ai else find_stock_asset
+    route = decide_visual_route(visual_kind, visual_idx)
     try:
-        asset, source = finder(query, fallback_prompt, work_dir, name, mayotte_specific=mayotte)
+        if route == "stock_clip":
+            asset, source = find_ambiance_clip(
+                query, fallback_prompt, work_dir, name, mayotte_specific=mayotte,
+                seed_key=seed_key, shot_index=visual_idx)
+        elif route == "ai":
+            asset, source = find_ai_asset(
+                query, fallback_prompt, work_dir, name, mayotte_specific=mayotte,
+                seed_key=seed_key, shot_index=visual_idx,
+                full_stock_fallback=VISUALS_SMART_MIX)
+        else:
+            asset, source = find_stock_asset(
+                query, fallback_prompt, work_dir, name, mayotte_specific=mayotte,
+                seed_key=seed_key, shot_index=visual_idx)
         return scene_idx, visual_idx, asset, query, source
     except Exception as e:
         print(f"   ⚠️  Visuel s{scene_idx+1:02d}.v{visual_idx+1} a échoué ({str(e)[:60]}), fallback générique")
@@ -119,6 +138,8 @@ def fetch_visual(args) -> tuple[int, int, Path, str, str]:
                 work_dir,
                 f"{name}_fallback",
                 mayotte_specific=True,
+                seed_key=seed_key,
+                shot_index=visual_idx,
             )
             return scene_idx, visual_idx, asset, query, f"{source} (fallback générique)"
         except Exception as e2:
@@ -177,29 +198,36 @@ def build_video(topic_key: str | None = None) -> Path:
         json.dumps(words, ensure_ascii=False), encoding="utf-8"
     )
 
-    mode_label = ("100% IA" if VISUALS_AI_ONLY
-                  else f"HYBRIDE (1 IA + {VISUALS_PER_SCENE-1} stock par scène)")
+    if VISUALS_AI_ONLY:
+        mode_label = "100% IA"
+    elif VISUALS_SMART_MIX:
+        n_amb = sum(1 for s in script["scenes"] if s.get("visual_kind") == "ambiance")
+        mode_label = (f"SMART MIX ({n_amb} scènes ambiance → clips vidéo, "
+                      f"{len(script['scenes']) - n_amb} spécifiques → IA)")
+    else:
+        mode_label = f"HYBRIDE (1 IA + {VISUALS_PER_SCENE-1} stock par scène)"
     print(f"🎨 Récup assets — MODE {mode_label}")
     print(f"   {len(script['scenes'])} scènes × {VISUALS_PER_SCENE} visuels = "
           f"{len(script['scenes']) * VISUALS_PER_SCENE} clips")
 
-    # Construit la liste de tâches : (scene_idx, visual_idx, query, fallback, work_dir)
+    # Construit la liste de tâches :
+    # (scene_idx, visual_idx, query, fallback, work_dir, seed_key, visual_kind)
+    # seed_key = « topic-scène » → seed IA déterministe, reproductible inter-runs.
     all_tasks = []
     for s_idx, scene in enumerate(script["scenes"]):
         visuals = scene.get("visuals", [])
         while len(visuals) < VISUALS_PER_SCENE:
             visuals.append(scene.get("image_prompt", ""))
+        seed_key = f"{topic_key}-{s_idx}"
+        visual_kind = scene.get("visual_kind", "specifique")
         for v_idx, query in enumerate(visuals[:VISUALS_PER_SCENE]):
-            all_tasks.append((s_idx, v_idx, query, scene.get("image_prompt", ""), work_dir))
+            all_tasks.append((s_idx, v_idx, query, scene.get("image_prompt", ""),
+                              work_dir, seed_key, visual_kind))
 
-    # Séparation en 2 phases. En mode 100% IA, tous les visuels passent en
-    # phase IA (le stock ne sert plus que de fallback interne à find_ai_asset).
-    if VISUALS_AI_ONLY:
-        ai_tasks = all_tasks
-        stock_tasks = []
-    else:
-        ai_tasks = [t for t in all_tasks if t[1] == 0]      # visual_idx == 0 → IA
-        stock_tasks = [t for t in all_tasks if t[1] != 0]   # autres → stock rapide
+    # Séparation en 2 phases selon le routage (IA lente / stock rapide).
+    # Les clips « ambiance » du smart mix partent en phase stock (parallèle).
+    ai_tasks = [t for t in all_tasks if decide_visual_route(t[6], t[1]) == "ai"]
+    stock_tasks = [t for t in all_tasks if decide_visual_route(t[6], t[1]) != "ai"]
 
     visual_results: dict[tuple[int, int], Path] = {}
     sources_used: dict[str, int] = {}
@@ -243,6 +271,26 @@ def build_video(topic_key: str | None = None) -> Path:
 
     caption = script.get("caption", {})
 
+    # Cover de série : image héro de la scène 1 (la plus spectaculaire selon
+    # les nouvelles règles du prompt) + titre punchy. À choisir comme
+    # miniature au moment de publier — la grille profil devient une vraie
+    # collection. Best-effort : None si échec.
+    cover_path = None
+    try:
+        from src.editor import make_cover
+        cover_title = script.get("hook_punch") or script.get("title") or ""
+        if cover_title:
+            cover_path = make_cover(
+                visual_results[(0, 0)],
+                cover_title,
+                OUTPUT_DIR / f"{timestamp}_{slug}_cover.png",
+                badge=topic_def["label"].upper(),
+            )
+            if cover_path:
+                print(f"🖼️  Cover générée : {cover_path.name}")
+    except Exception as e:
+        print(f"  ⚠️  Cover : {e}")
+
     meta_path = OUTPUT_DIR / f"{timestamp}_{slug}.json"
     meta_path.write_text(
         json.dumps({
@@ -251,6 +299,7 @@ def build_video(topic_key: str | None = None) -> Path:
             "topic_label": topic_def["label"],
             "hook": script.get("hook"),
             "hook_punch": script.get("hook_punch"),
+            "look": script.get("look"),
             "caption": caption,
             "scenes": script["scenes"],
             "duration": audio_duration,
@@ -288,6 +337,8 @@ def build_video(topic_key: str | None = None) -> Path:
         shutil.copy2(meta_path, FINAL_VIDEOS_DIR / meta_path.name)
         if caption_text and caption_path.exists():
             shutil.copy2(caption_path, FINAL_VIDEOS_DIR / caption_path.name)
+        if cover_path:
+            shutil.copy2(cover_path, FINAL_VIDEOS_DIR / cover_path.name)
         print(f"📂 Copie dans : {final_video}")
         if caption_text:
             print(f"📱 Légende TikTok : {caption_path.name}")
@@ -311,13 +362,19 @@ def build_video(topic_key: str | None = None) -> Path:
                     result = publish_inbox(final_video)
                 # Push Telegram pour pouvoir valider depuis le téléphone
                 try:
-                    from src.telegram_notifier import is_configured as tg_ok, send_draft_ready
+                    from src.telegram_notifier import (
+                        is_configured as tg_ok,
+                        send_cover,
+                        send_draft_ready,
+                    )
                     if tg_ok():
                         send_draft_ready(
                             video_name=final_video.name,
                             caption=caption_text or "",
                             publish_id=result.get("publish_id"),
                         )
+                        if cover_path:
+                            send_cover(cover_path, final_video.name)
                 except Exception as e:
                     print(f"  ℹ️  Telegram : {e}")
             else:

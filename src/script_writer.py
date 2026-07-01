@@ -115,10 +115,65 @@ HASHTAGS_BY_THEME = {
     ],
 }
 
-# Hashtags TikTok pour la portée algorithmique — on en pioche 1-2 au hasard
-# par vidéo pour ne pas paraître spammé.
-HASHTAGS_BROADCAST = ["pourtoi", "fyp", "tiktokfrance", "foryou", "viral"]
-HASHTAGS_CORE = ["mayotte", "976", "oceanindien", "mahorais"]
+# Stratégie hashtags 2026 : EXACTEMENT 3-5 hashtags = 1-2 larges + 2-3 nichés.
+# Les tags génériques « de portée » (#fyp/#pourtoi/#viral) sont ignorés voire
+# pénalisés par l'algorithme TikTok → bannis du pool.
+HASHTAGS_BROAD = ["mayotte", "outremer"]
+HASHTAGS_NICHE_CORE = ["oceanindien", "culturemahoraise", "mahorais"]
+BANNED_HASHTAGS = {
+    "fyp", "fypage", "foryou", "foryoupage", "pourtoi", "pourtoipage",
+    "viral", "virale", "tiktokfrance",
+}
+
+# Formules d'accroche interdites (hooks usés qui font scroller) — vérifiées
+# dans le hook du plan ET dans la 1re phrase parlée (scène 1).
+BANNED_HOOK_PHRASES = [
+    "saviez-vous que", "saviez vous que", "et si je vous disais", "bienvenue",
+]
+
+# « Looks » visuels : UN look est tiré au sort par vidéo puis injecté dans
+# TOUS les image_prompt — même éclairage/palette sur les 48 visuels
+# (cohérence visuelle, la vidéo ne ressemble plus à un patchwork).
+VISUAL_LOOKS = [
+    "warm golden hour light, soft shadows, amber tones",
+    "vivid tropical noon light, high clarity, saturated turquoise palette",
+    "cool blue hour light, cinematic teal and orange grade",
+    "soft overcast morning light, gentle pastel palette",
+    "late afternoon sun, long shadows, warm cinematic film grade",
+]
+
+# Règles d'accroche communes aux 2 prompts de plan (knowledge + actu).
+# La 1re phrase PARLÉE doit contenir « Mayotte » : l'ASR TikTok indexe la
+# voix, c'est du SEO gratuit sur les 3 premières secondes.
+_HOOK_RULES = """
+CONTRAINTES STRICTES SUR L'ACCROCHE (hook + scène 1) :
+- La 1re phrase du script (l'« idea » de la scène 1) = un FAIT CHOC SPÉCIFIQUE (chiffre précis, nom de lieu, ou superlatif vérifiable) ET contient obligatoirement le mot « Mayotte »
+- Le champ "hook" suit les mêmes règles (fait choc spécifique + mot « Mayotte »)
+- FORMULES INTERDITES, ni dans le hook ni dans les scènes : « Saviez-vous que », « Et si je vous disais », « Bienvenue »
+- Choisis librement UNE de ces formules d'accroche (varie d'une vidéo à l'autre) :
+  1. Affirmation contre-intuitive (qui contredit ce qu'on croit savoir)
+  2. Question de VRAIE curiosité (pas une question rhétorique creuse)
+  3. Preuve chiffrée d'abord (le chiffre le plus fort dès les premiers mots)
+"""
+
+# Règles de rétention communes : relances régulières + pic d'intérêt au
+# milieu de la vidéo (~50% = point mort classique de la courbe de rétention).
+_RETENTION_RULES = """
+CONTRAINTES DE RÉTENTION :
+- Toutes les 3-4 scènes, place un TURNING POINT : une info nouvelle ou un retournement qui relance l'attention (« mais en réalité… », « et c'est là que tout bascule »)
+- Le fait LE PLUS insolite du sujet arrive vers la scène {mid_scene} (~50% de la vidéo) — PAS à la fin
+- La scène 1 décrit l'image la plus spectaculaire du sujet : son image_prompt est le visuel le plus impressionnant de toute la vidéo
+- LOOK VISUEL IMPOSÉ (cohérence des visuels) : chaque "image_prompt" se termine par « {look} » — même éclairage et même palette pour toute la vidéo
+"""
+
+# Description du champ visual_kind (routage IA / vrais clips vidéo stock).
+_VISUAL_KIND_FIELD = (
+    '"visual_kind": "ambiance" OU "specifique" — "ambiance" UNIQUEMENT si la '
+    "scène s'illustre par un plan générique de nature (lagon, plage, océan, "
+    "forêt, drone) sans personnage précis, sans lieu identifiable ni fait "
+    'historique ; sinon "specifique". Vise 2 à 3 scènes "ambiance" par vidéo, '
+    "jamais plus de 3."
+)
 
 
 PLAN_PROMPT_KNOWLEDGE = """Tu vas écrire le plan d'un mini-reportage TikTok de 2min10 à 2min30 sur le sujet suivant à Mayotte.
@@ -142,6 +197,7 @@ Renvoie UNIQUEMENT du JSON valide :
     {{
       "idea": "1 phrase d'idée (12-18 mots) — utilise UN des faits ci-dessus",
       "fact_used": "le fait précis utilisé (copie-colle depuis la liste)",
+      "visual_kind": <{visual_kind_field}>,
       "visuals": [<EXACTEMENT {n_visuals} PHRASES EN ANGLAIS, chacune décrivant une SCÈNE PHYSIQUE CONCRÈTE visible à l'écran, angles différents (large/moyen/gros-plan/détail)>],
       "image_prompt": "description en ANGLAIS riche et détaillée d'une scène cinématique vertical 9:16 photoréaliste de Mayotte"
     }}
@@ -167,7 +223,7 @@ CONTRAINTES STRICTES NARRATIVES :
   • Construction : {narrative_construction}
   • Conclusion (dernière scène) : {narrative_closing_hint}
 - Chaque scène s'appuie sur UN fait précis de la liste — pas d'invention
-"""
+""" + _HOOK_RULES + _RETENTION_RULES
 
 
 PLAN_PROMPT_NEWS = """Tu vas écrire le plan d'un mini-reportage TikTok de 2min10 à 2min30 sur cette actualité Mayotte récente.
@@ -185,6 +241,7 @@ Renvoie UNIQUEMENT du JSON valide :
   "scenes": [
     {{
       "idea": "1 phrase d'idée pour cette scène (12-18 mots)",
+      "visual_kind": <{visual_kind_field}>,
       "visuals": [<EXACTEMENT {n_visuals} PHRASES EN ANGLAIS, scènes physiques concrètes, angles variés>],
       "image_prompt": "description en ANGLAIS d'une scène cinématique vertical 9:16 photoréaliste"
     }}
@@ -197,7 +254,7 @@ CONTRAINTES :
 - Reste FACTUEL — ne dramatise pas, ne politise pas, ne prends pas parti
 - Si tu manques d'infos, élargis avec le CONTEXTE GÉNÉRAL Mayotte (géographie, démographie, etc.)
 - Visuels concrets décrivant CE QUI EST À L'ÉCRAN (action + sujet + lieu), 6-12 mots, tous différents.
-"""
+""" + _HOOK_RULES + _RETENTION_RULES
 
 
 EXPAND_SYSTEM = (
@@ -220,9 +277,20 @@ CONTRAINTES NON-NÉGOCIABLES :
 - Pas de répétition avec la phrase précédente
 - Évite les énumérations à virgules en cascade
 - Utilise « les Mahorais » (pas « les Mayottes »)
-- Réponds avec UNIQUEMENT la phrase, sans guillemets ni préfixe
+{extra_rules}- Réponds avec UNIQUEMENT la phrase, sans guillemets ni préfixe
 
 Ta phrase :"""
+
+
+# Règles supplémentaires pour la 1re phrase parlée de la vidéo (le hook) :
+# « Mayotte » obligatoire (indexé par l'ASR TikTok) + pas de formule bannie.
+HOOK_EXPAND_RULES = (
+    "- C'est la TOUTE PREMIÈRE phrase de la vidéo : elle DOIT contenir le mot "
+    "« Mayotte » et ouvrir sur le fait choc (chiffre, lieu ou superlatif) dès "
+    "les premiers mots\n"
+    "- INTERDIT de commencer par : « Saviez-vous que », « Et si je vous "
+    "disais », « Bienvenue »\n"
+)
 
 
 WORD_RE = re.compile(r"\S+")
@@ -246,19 +314,34 @@ def _clean_sentence(s: str) -> str:
     return _ensure_period(s)
 
 
-def _expand(idea: str, context: str, prev: str, fact: str | None = None) -> str:
+def _hook_ok(sentence: str) -> bool:
+    """Vrai si la phrase respecte les règles du hook parlé :
+    contient « Mayotte » et aucune formule d'accroche bannie."""
+    low = sentence.lower()
+    return "mayotte" in low and not any(b in low for b in BANNED_HOOK_PHRASES)
+
+
+def _expand(idea: str, context: str, prev: str, fact: str | None = None,
+            is_hook: bool = False) -> str:
     fact_block = f"Fait vérifié à narrer : {fact}\n" if fact else ""
+    extra_rules = HOOK_EXPAND_RULES if is_hook else ""
+    sentence = ""
     for attempt in range(3):
         prompt = EXPAND_PROMPT.format(
             idea=idea,
             context=context,
             fact_block=fact_block,
             prev=prev or "(début)",
+            extra_rules=extra_rules,
         )
         sentence = _clean_sentence(chat(EXPAND_SYSTEM, prompt, temperature=0.7 + attempt * 0.1))
         wc = _wc(sentence)
-        if 22 <= wc <= 31:
+        if 22 <= wc <= 31 and (not is_hook or _hook_ok(sentence)):
             return sentence
+        if is_hook and not _hook_ok(sentence):
+            # Hook non conforme (« Mayotte » absent ou formule bannie) :
+            # on retente avec une température différente.
+            continue
         if wc < 22:
             adjust = (
                 f"La phrase fait {wc} mots, c'est trop court. Réécris-la pour qu'elle fasse "
@@ -272,19 +355,41 @@ def _expand(idea: str, context: str, prev: str, fact: str | None = None) -> str:
                 f"Réponds avec UNIQUEMENT la phrase.\n\nPhrase : {sentence}"
             )
         sentence2 = _clean_sentence(chat(EXPAND_SYSTEM, adjust, temperature=0.5))
-        if 22 <= _wc(sentence2) <= 31:
+        if 22 <= _wc(sentence2) <= 31 and (not is_hook or _hook_ok(sentence2)):
             return sentence2
+    # Dernier filet pour le hook : on injecte « Mayotte » si toujours absent
+    # (l'ASR TikTok indexe la voix — le mot doit être prononcé en 1er).
+    if is_hook and sentence and "mayotte" not in sentence.lower():
+        print("   ⚠️  Hook sans « Mayotte » après 3 essais → injection manuelle")
+        sentence = _ensure_period("À Mayotte, " + sentence[0].lower() + sentence[1:])
     return sentence
 
 
-def _normalize_plan(plan: dict, default_title: str) -> dict:
+# Plafond de scènes « ambiance » : 3 scènes × 4 visuels = 12 clips stock max
+# par vidéo (le budget recommandé est 8-12 vrais clips vidéo).
+AMBIANCE_MAX_SCENES = 3
+
+
+def _fallback_hook_punch(hook: str) -> str:
+    """Fabrique le texte d'accroche court à partir du hook : les 3-5 premiers
+    mots nettoyés, 28 caractères max. Utilisé quand le LLM renvoie un
+    hook_punch vide (bug : l'accroche des 3 premières secondes disparaissait)."""
+    words = re.findall(r"[\w'’À-ÿ-]+", hook or "")[:5]
+    while len(words) > 3 and len(" ".join(words)) > 28:
+        words.pop()
+    return " ".join(words)[:28].strip()
+
+
+def _normalize_plan(plan: dict, default_title: str, look: str = "") -> dict:
     scenes = plan.get("scenes", [])[:NUM_SCENES]
     while len(scenes) < NUM_SCENES:
         scenes.append({
             "idea": f"Conclusion sur {default_title}",
+            "visual_kind": "ambiance",
             "visuals": ["mayotte tropical sunset", "lagoon waves shore", "palm trees beach"],
             "image_prompt": "Mayotte tropical island at sunset, cinematic, vertical 9:16",
         })
+    ambiance_count = 0
     for s in scenes:
         visuals = s.get("visuals") or []
         if isinstance(visuals, str):
@@ -292,11 +397,37 @@ def _normalize_plan(plan: dict, default_title: str) -> dict:
         while len(visuals) < VISUALS_PER_SCENE:
             visuals.append(s.get("idea", default_title))
         s["visuals"] = visuals[:VISUALS_PER_SCENE]
+
+        # visual_kind : "ambiance" (plan générique → vrai clip vidéo stock)
+        # ou "specifique" (image IA). Défaut si absent/invalide : specifique.
+        kind = str(s.get("visual_kind") or "").strip().lower()
+        if kind not in ("ambiance", "specifique"):
+            kind = "specifique"
+        if kind == "ambiance":
+            ambiance_count += 1
+            if ambiance_count > AMBIANCE_MAX_SCENES:
+                kind = "specifique"  # garde le budget ~8-12 clips stock
+        s["visual_kind"] = kind
+
+        # Cohérence visuelle : chaque image_prompt hérite du même look
+        # (éclairage/palette identiques sur toute la vidéo).
+        prompt = str(s.get("image_prompt") or s.get("idea") or default_title).strip()
+        if look and look.lower() not in prompt.lower():
+            prompt = f"{prompt}, {look}"
+        s["image_prompt"] = prompt
+
     plan["scenes"] = scenes
+
+    # hook_punch : fallback sur les premiers mots du hook si le LLM renvoie
+    # une chaîne vide (avant : chaîne vide → pas de texte d'accroche à l'écran).
+    punch = (plan.get("hook_punch") or "").strip()
+    if not punch:
+        punch = _fallback_hook_punch(plan.get("hook") or default_title)
+    plan["hook_punch"] = punch[:28].strip()
     return plan
 
 
-def _build_plan_for_knowledge(theme: str) -> tuple[dict, str, str]:
+def _build_plan_for_knowledge(theme: str, look: str = "") -> tuple[dict, str, str]:
     """Renvoie (plan, context_for_expand, anchor_id)."""
     entry = random_topic_for(theme)
     facts_str = "\n".join(f"  • {f}" for f in entry["key_facts"])
@@ -321,21 +452,27 @@ def _build_plan_for_knowledge(theme: str) -> tuple[dict, str, str]:
         narrative_intro_hint=style["intro_hint"],
         narrative_construction=style["construction"],
         narrative_closing_hint=style["closing_hint"],
+        visual_kind_field=_VISUAL_KIND_FIELD,
+        mid_scene=NUM_SCENES // 2,
+        look=look,
     )
     plan = chat_json(GLOBAL_CONTEXT_PROMPT, user_prompt, temperature=0.85)
-    plan = _normalize_plan(plan, entry["title"])
+    plan = _normalize_plan(plan, entry["title"], look=look)
 
-    # Inject fact_used by-scene si LLM a oublié, on map proportionnellement
+    # Injecte fact_used scène par scène si le LLM a oublié : mapping ORDONNÉ
+    # (chaque fait couvre un bloc de scènes consécutives, dans l'ordre de la
+    # liste) au lieu du modulo qui recyclait les faits dans le désordre.
     if not all("fact_used" in s for s in plan["scenes"]):
         facts = entry["key_facts"]
+        n = len(plan["scenes"]) or 1
         for i, s in enumerate(plan["scenes"]):
-            s.setdefault("fact_used", facts[i % len(facts)])
+            s.setdefault("fact_used", facts[min(i * len(facts) // n, len(facts) - 1)])
 
     context = f"Sujet ancré : {entry['title']}. Titre TikTok : {plan.get('title', '')}"
     return plan, context, entry["title"]
 
 
-def _build_plan_for_news() -> tuple[dict, str, str] | None:
+def _build_plan_for_news(look: str = "") -> tuple[dict, str, str] | None:
     print("   📰 Recherche d'actualités Mayotte...")
     news = fetch_recent_news()
     chosen = pick_news_topic(news)
@@ -350,14 +487,17 @@ def _build_plan_for_news() -> tuple[dict, str, str] | None:
         news_description=chosen.description or "(pas de description fournie)",
         n_scenes=NUM_SCENES,
         n_visuals=VISUALS_PER_SCENE,
+        visual_kind_field=_VISUAL_KIND_FIELD,
+        mid_scene=NUM_SCENES // 2,
+        look=look,
     )
     plan = chat_json(GLOBAL_CONTEXT_PROMPT, user_prompt, temperature=0.7)
-    plan = _normalize_plan(plan, chosen.title)
+    plan = _normalize_plan(plan, chosen.title, look=look)
     context = f"Actualité Mayotte : {chosen.title}. Source : {chosen.source}"
     return plan, context, chosen.title
 
 
-CAPTION_PROMPT = """Tu écris la LÉGENDE TikTok pour cette vidéo sur Mayotte.
+CAPTION_PROMPT = """Tu écris la LÉGENDE TikTok (optimisée SEO) pour cette vidéo sur Mayotte.
 
 Titre de la vidéo : {title}
 Sujet : {anchor}
@@ -365,14 +505,14 @@ Accroche : {hook}
 
 Renvoie UNIQUEMENT du JSON :
 {{
-  "caption": "1 à 2 phrases engageantes pour la description TikTok, avec 2-3 emojis bien placés, qui donne envie de regarder ET de commenter (pose une mini-question à la fin)",
-  "hashtags": ["liste de 10 à 14 hashtags SANS le # — mélange hashtags larges (mayotte, oceanindien, dom976) et hashtags de niche liés au sujet"]
+  "caption": "description TikTok de 150 caractères max. Le MOT-CLÉ LONG-TAIL du sujet (ex. « lagon de Mayotte », « légende mahoraise du lac Dziani ») DOIT apparaître dans les 100 PREMIERS caractères. 1-2 emojis bien placés. Termine par une mini-question qui invite à commenter",
+  "hashtags": ["EXACTEMENT 3 à 5 hashtags SANS le # : 1-2 larges (mayotte, outremer) + 2-3 nichés collés au sujet précis (ex. oceanindien, culturemahoraise, lagondemayotte)"]
 }}
 
 CONTRAINTES :
-- Le caption fait 150 caractères max
-- Hashtags pertinents : toujours inclure mayotte, 976, oceanindien ; ajoute des hashtags liés au thème précis
-- Pas de hashtags interdits ou trompeurs
+- Le mot-clé long-tail décrit le sujet PRÉCIS de la vidéo (pas juste « Mayotte »)
+- INTERDIT : fyp, pourtoi, foryou, viral et tout hashtag générique « de portée »
+- Pas de hashtags trompeurs
 - Français
 """
 
@@ -380,10 +520,11 @@ CONTRAINTES :
 def generate_caption(title: str, anchor: str, hook: str, theme: str = "") -> dict:
     """Génère la légende + hashtags TikTok. Renvoie {'caption', 'hashtags', 'text'}.
 
-    Les hashtags sont enrichis automatiquement avec :
-    - Le noyau identité (mayotte, 976, oceanindien, mahorais) — toujours présent
-    - Des hashtags spécifiques au thème (legende/tradition/etc.) — variés à chaque vidéo
-    - 1-2 hashtags TikTok pour la portée algorithmique
+    Stratégie SEO TikTok 2026 :
+    - Le mot-clé long-tail du sujet dans les 100 premiers caractères (imposé au LLM)
+    - EXACTEMENT 3-5 hashtags : 1-2 larges (mayotte, outremer) + 2-3 nichés
+      (oceanindien, culturemahoraise, thème du jour…)
+    - Aucun hashtag générique de portée (#fyp/#pourtoi/#viral) — bannis
     """
     try:
         data = chat_json(
@@ -398,38 +539,51 @@ def generate_caption(title: str, anchor: str, hook: str, theme: str = "") -> dic
         caption = title
         tags = []
 
-    # Nettoie les hashtags LLM : sans #, sans espace, minuscules
+    # Le LLM déborde parfois les 150 caractères demandés : on coupe proprement
+    # à la fin de la dernière phrase complète sous 220 caractères (le mot-clé
+    # SEO des 100 premiers caractères est préservé).
+    if len(caption) > 220:
+        cut = caption[:220]
+        end = max(cut.rfind("."), cut.rfind("!"), cut.rfind("?"), cut.rfind("…"))
+        caption = (cut[:end + 1] if end > 60 else cut).strip()
+
+    # Nettoie les hashtags LLM : sans #, sans espace, minuscules, sans bannis
     clean_tags: list[str] = []
     for t in tags:
         t = re.sub(r"[^\w]", "", str(t)).lower()
-        if t and t not in clean_tags:
+        if t and t not in clean_tags and t not in BANNED_HASHTAGS:
             clean_tags.append(t)
 
-    # Noyau identité (mayotte/976/oceanindien/mahorais) — toujours en tête
-    core_in = [t for t in HASHTAGS_CORE if t in clean_tags]
-    other = [t for t in clean_tags if t not in HASHTAGS_CORE]
-    for t in HASHTAGS_CORE:
-        if t not in core_in:
-            core_in.append(t)
-    clean_tags = core_in + other
+    # 1-2 hashtags LARGES en tête (mayotte toujours, outremer ensuite)
+    broad = [t for t in HASHTAGS_BROAD if t in clean_tags]
+    for t in HASHTAGS_BROAD:
+        if t not in broad:
+            broad.append(t)
+    broad = broad[:2]
 
-    # Thème : 3-4 hashtags tirés au hasard de la banque (varient à chaque vidéo)
-    theme_pool = HASHTAGS_BY_THEME.get(theme, [])
+    # 2-3 hashtags NICHÉS : ceux du LLM d'abord (collés au sujet précis),
+    # puis la banque thématique (thème du jour), puis le noyau niche.
+    niche = [t for t in clean_tags if t not in broad]
+    theme_pool = [t for t in HASHTAGS_BY_THEME.get(theme, []) if t not in BANNED_HASHTAGS]
     if theme_pool:
-        picks = random.sample(theme_pool, min(4, len(theme_pool)))
-        for t in picks:
-            if t not in clean_tags:
-                clean_tags.append(t)
+        for t in random.sample(theme_pool, min(2, len(theme_pool))):
+            if t not in niche:
+                niche.append(t)
+    for t in HASHTAGS_NICHE_CORE:
+        if t not in niche and t not in broad:
+            niche.append(t)
+    niche = niche[:3]
 
-    # Broadcast TikTok (1-2 hashtags pour le push algo)
-    broadcast_picks = random.sample(
-        HASHTAGS_BROADCAST, min(2, len(HASHTAGS_BROADCAST))
-    )
-    for t in broadcast_picks:
-        if t not in clean_tags:
-            clean_tags.append(t)
+    # Total : exactement 3-5 hashtags (1-2 larges + 2-3 nichés)
+    final = (broad + niche)[:5]
 
-    final = clean_tags[:14]
+    # Contrôle SEO doux : le mot-clé du sujet doit apparaître dans les 100
+    # premiers caractères de la description (l'algorithme indexe ce segment).
+    head = caption[:100].lower()
+    anchor_tokens = re.findall(r"\w{4,}", anchor.lower())
+    if anchor_tokens and not any(w in head for w in anchor_tokens) and "mayotte" not in head:
+        print("   ⚠️  SEO : mot-clé long-tail absent des 100 premiers caractères de la légende")
+
     hashtag_line = " ".join(f"#{t}" for t in final)
     full_text = f"{caption}\n\n{hashtag_line}"
     return {"caption": caption, "hashtags": final, "text": full_text}
@@ -438,15 +592,20 @@ def generate_caption(title: str, anchor: str, hook: str, theme: str = "") -> dic
 def generate_script(topic_def: dict) -> dict:
     print(f"   ⚙️  LLM provider : {get_provider()}")
 
+    # Cohérence visuelle : UN look (éclairage/palette) tiré au sort pour TOUTE
+    # la vidéo — chaque image_prompt en hérite (48 visuels homogènes).
+    look = random.choice(VISUAL_LOOKS)
+    print(f"   🎨 Look visuel : {look}")
+
     if topic_def.get("kind") == "rss":
-        result = _build_plan_for_news()
+        result = _build_plan_for_news(look=look)
         if result is None:
             # fallback sur Découverte
-            plan, context, anchor = _build_plan_for_knowledge("decouverte_mayotte")
+            plan, context, anchor = _build_plan_for_knowledge("decouverte_mayotte", look=look)
         else:
             plan, context, anchor = result
     else:
-        plan, context, anchor = _build_plan_for_knowledge(topic_def["knowledge_theme"])
+        plan, context, anchor = _build_plan_for_knowledge(topic_def["knowledge_theme"], look=look)
 
     print(f"   📋 Plan : {plan.get('title', '?')} ({len(plan['scenes'])} scènes)")
 
@@ -459,6 +618,7 @@ def generate_script(topic_def: dict) -> dict:
             context=context,
             prev=prev,
             fact=scene.get("fact_used"),
+            is_hook=(i == 0),  # scène 1 = hook parlé : « Mayotte » obligatoire
         )
         wc = _wc(narration)
         print(f"   Scène {i+1:>2}/{NUM_SCENES} · {wc} mots · {narration[:55]}...")
@@ -467,6 +627,8 @@ def generate_script(topic_def: dict) -> dict:
             "visuals": scene.get("visuals", []),
             "image_prompt": scene.get("image_prompt", scene.get("idea", "")),
             "fact_used": scene.get("fact_used"),
+            # Routage smart mix : "ambiance" → vrai clip stock, sinon IA
+            "visual_kind": scene.get("visual_kind", "specifique"),
         })
         prev = narration
 
@@ -485,8 +647,11 @@ def generate_script(topic_def: dict) -> dict:
     return {
         "title": title,
         "hook": hook,
+        # _normalize_plan garantit un hook_punch non vide (fallback = 3-5
+        # premiers mots du hook), plus jamais de chaîne vide ici.
         "hook_punch": (plan.get("hook_punch") or "").strip(),
         "anchor": anchor,
+        "look": look,
         "scenes": final_scenes,
         "caption": caption,
     }

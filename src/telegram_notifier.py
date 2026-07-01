@@ -98,6 +98,35 @@ def send_draft_ready(video_name: str, caption: str, publish_id: str | None = Non
         return False
 
 
+def send_cover(cover_path, video_name: str) -> bool:
+    """Envoie la cover PNG de la vidéo (à définir comme miniature au moment
+    de publier le brouillon TikTok). Best-effort."""
+    token = _env("TELEGRAM_BOT_TOKEN")
+    chat_id = _env("TELEGRAM_CHAT_ID")
+    if not token or not chat_id:
+        return False
+    try:
+        with open(cover_path, "rb") as f:
+            r = SESSION.post(
+                f"{API_BASE}/bot{token}/sendPhoto",
+                data={
+                    "chat_id": chat_id,
+                    "caption": f"🖼️ Cover de {video_name} — à choisir comme "
+                               f"miniature au moment de publier",
+                },
+                files={"photo": (Path(cover_path).name, f, "image/png")},
+                timeout=60,
+            )
+        if r.status_code == 200:
+            print(f"  📲 Telegram : cover envoyée")
+            return True
+        print(f"  ⚠️  Telegram cover HTTP {r.status_code}: {r.text[:200]}")
+        return False
+    except Exception as e:
+        print(f"  ⚠️  Telegram cover échouée : {e}")
+        return False
+
+
 def send_error(message: str) -> bool:
     """Envoie une notif d'erreur (utile pour debug du cron)."""
     token = _env("TELEGRAM_BOT_TOKEN")
