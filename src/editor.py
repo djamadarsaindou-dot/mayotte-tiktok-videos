@@ -1,4 +1,6 @@
 """Montage vidéo : assemble assets (images OU vidéos) + voix + sous-titres."""
+import json
+import re
 import subprocess
 from pathlib import Path
 
@@ -72,49 +74,51 @@ def _normalize_asset(asset_path: Path, target_path: Path, duration: float, scene
             "-an",
             "-t", f"{duration:.3f}",
             "-vf", scale_filter,
-            "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+            "-c:v", "libx264", "-preset", "fast", "-crf", "17",
             "-pix_fmt", "yuv420p",
             "-r", str(VIDEO_FPS),
             str(target_path),
         ]
     else:
-        # IMAGE : Ken Burns via zoompan.
-        # Le bug classique de zoompan : il produit `d` frames PAR FRAME D'INPUT.
-        # Solution : forcer 1 frame d'input (-frames:v 1 sur input, puis re-loop sur output).
-        # Plus simple : `-loop 1 -i image -vf "...,zoompan=d=N:fps=FPS:s=WxH" -t DURATION`
-        # avec -t en SORTIE pour limiter la durée finale.
-        frames = max(1, int(duration * VIDEO_FPS))
+        # IMAGE : Ken Burns via zoompan, version anti-tremblement.
+        # zoompan arrondit x/y au pixel ENTIER de la source → à taille native
+        # le cadre saute d'un pixel de sortie à chaque frame (jitter visible).
+        # Antidote : sur-échantillonner la source 4x AVANT zoompan — l'erreur
+        # d'arrondi tombe à 1/4 de pixel de sortie, le mouvement devient fluide.
+        # Une image = UNE frame d'input (pas de -loop) : zoompan génère ses
+        # `d` frames tout seul, plus d'effet dent de scie au raccord.
+        frames = max(2, int(duration * VIDEO_FPS))
         denom = max(1, frames - 1)
+        inc = 0.0007  # zoom lent (≈2%/s) : un Ken Burns discret fait plus cinéma
         # Ken Burns varié : 4 mouvements de caméra alternés pour éviter
         # l'effet répétitif (zoom avant / arrière / pano horizontal / vertical).
         mode = scene_index % 4
         if mode == 0:            # zoom avant, centré
-            z = "min(zoom+0.0012,1.35)"
+            z = f"min(1.0+{inc}*on,1.15)"
             x, y = "iw/2-(iw/zoom/2)", "ih/2-(ih/zoom/2)"
         elif mode == 1:          # zoom arrière, centré
-            z = "if(lte(zoom,1.0),1.35,max(zoom-0.0012,1.05))"
+            z = f"max(1.12-{inc}*on,1.0)"
             x, y = "iw/2-(iw/zoom/2)", "ih/2-(ih/zoom/2)"
         elif mode == 2:          # panoramique gauche → droite, zoom fixe
-            z = "1.2"
+            z = "1.10"
             x, y = f"(iw-iw/zoom)*on/{denom}", "ih/2-(ih/zoom/2)"
         else:                    # panoramique haut → bas, zoom fixe
-            z = "1.2"
+            z = "1.10"
             x, y = "iw/2-(iw/zoom/2)", f"(ih-ih/zoom)*on/{denom}"
+        ss_w, ss_h = VIDEO_WIDTH * 4, VIDEO_HEIGHT * 4
         kb = (
-            f"scale={VIDEO_WIDTH*2}:{VIDEO_HEIGHT*2}:force_original_aspect_ratio=increase,"
-            f"crop={VIDEO_WIDTH*2}:{VIDEO_HEIGHT*2},"
+            f"scale={ss_w}:{ss_h}:force_original_aspect_ratio=increase:flags=lanczos,"
+            f"crop={ss_w}:{ss_h},"
             f"zoompan=z='{z}':x='{x}':y='{y}':"
-            f"d={frames}:s={VIDEO_WIDTH}x{VIDEO_HEIGHT}:fps={VIDEO_FPS},setsar=1,"
-            f"trim=duration={duration:.3f}{fade_suffix}"
+            f"d={frames}:s={VIDEO_WIDTH}x{VIDEO_HEIGHT}:fps={VIDEO_FPS},setsar=1"
+            f"{fade_suffix}"
         )
         cmd = [
             FFMPEG, "-y",
-            "-loop", "1",
-            "-framerate", "1",       # 1 input frame/sec → zoompan ne multiplie pas
             "-i", str(asset_path),
             "-vf", kb,
-            "-t", f"{duration:.3f}",  # filet de sécurité côté sortie
-            "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+            "-frames:v", str(frames),
+            "-c:v", "libx264", "-preset", "fast", "-crf", "17",
             "-pix_fmt", "yuv420p",
             "-r", str(VIDEO_FPS),
             str(target_path),
@@ -154,19 +158,29 @@ def _mix_sfx(audio_path: Path, scene_durations: list[float], work_dir: Path) -> 
     for _ in transitions:
         inputs += ["-i", str(whoosh)]
 
-    # Impact d'intro à 220 ms (juste après le début), volume modéré pour ne
-    # pas couvrir la voix. Whooshes 80 ms avant chaque transition pour donner
-    # l'impression d'anticiper la coupe.
-    parts = ["[1:a]adelay=220|220,volume=0.45[hookimp]"]
+    # Impact d'intro à 220 ms (juste après le début). Whooshes 80 ms avant
+    # chaque transition pour donner l'impression d'anticiper la coupe.
+    # Les SFX sont regroupés sur un bus [sfx] puis DUCKÉS sous la voix par
+    # compression sidechain (clé = voix) : ils restent audibles entre les
+    # phrases mais s'effacent dès que la voix parle — mix « production pro »
+    # sans le boost aveugle volume=1.1 qui pouvait clipper.
+    parts = ["[1:a]adelay=220|220,volume=0.5[hookimp]"]
     for j, pos in enumerate(transitions):
         delay_ms = max(0, int(pos * 1000) - 80)
-        parts.append(f"[{j+2}:a]adelay={delay_ms}|{delay_ms},volume=0.40[w{j}]")
-    streams = "[0:a][hookimp]" + "".join(f"[w{j}]" for j in range(len(transitions)))
-    n = 2 + len(transitions)
+        parts.append(f"[{j+2}:a]adelay={delay_ms}|{delay_ms},volume=0.45[w{j}]")
+    if transitions:
+        sfx_streams = "[hookimp]" + "".join(f"[w{j}]" for j in range(len(transitions)))
+        parts.append(
+            f"{sfx_streams}amix=inputs={1 + len(transitions)}:"
+            f"duration=longest:normalize=0[sfx]"
+        )
+    else:
+        parts.append("[hookimp]anull[sfx]")
     parts.append(
-        f"{streams}amix=inputs={n}:duration=first:dropout_transition=0,"
-        f"volume=1.1[out]"
+        "[sfx][0:a]sidechaincompress="
+        "threshold=0.05:ratio=3:attack=20:release=250:makeup=1[duck]"
     )
+    parts.append("[0:a][duck]amix=inputs=2:duration=first:normalize=0[out]")
 
     cmd = [FFMPEG, "-y", "-hide_banner", "-loglevel", "error"] + inputs + [
         "-filter_complex", ";".join(parts),
@@ -178,8 +192,52 @@ def _mix_sfx(audio_path: Path, scene_durations: list[float], work_dir: Path) -> 
     if result.returncode != 0:
         print(f"  ⚠️  Sound design : mix échoué, voix brute conservée")
         return audio_path
-    print(f"  🔊 Sound design : impact intro + {len(transitions)} whooshes")
+    print(f"  🔊 Sound design : impact intro + {len(transitions)} whooshes (duckés)")
     return mixed
+
+
+def _master_final_audio(audio_path: Path, work_dir: Path) -> Path:
+    """Loudnorm 2 passes vers la cible TikTok (-14 LUFS, true peak -1.5 dB)
+    sur le mix COMPLET voix+SFX — mesurer puis corriger en linéaire préserve
+    la dynamique (le mode 1 passe pompe). Sortie AAC 48 kHz prête pour un
+    mux en -c:a copy. En cas de pépin : simple transcodage AAC (jamais bloquant)."""
+    out = work_dir / "audio_final.m4a"
+    measure = subprocess.run(
+        [FFMPEG, "-hide_banner", "-i", str(audio_path), "-af",
+         "loudnorm=I=-14:TP=-1.5:LRA=11:print_format=json", "-f", "null", "-"],
+        capture_output=True, text=True,
+    )
+    af = "loudnorm=I=-14:TP=-1.5:LRA=11"
+    m = re.search(r'\{[^{}]*"input_i"[^{}]*\}', measure.stderr, re.S)
+    if m:
+        try:
+            j = json.loads(m.group(0))
+            af += (f":measured_I={j['input_i']}:measured_TP={j['input_tp']}"
+                   f":measured_LRA={j['input_lra']}"
+                   f":measured_thresh={j['input_thresh']}"
+                   f":offset={j['target_offset']}:linear=true")
+            print(f"  🎚️  Loudnorm 2 passes : {j['input_i']} LUFS → -14 LUFS")
+        except (ValueError, KeyError):
+            print("  ⚠️  Loudnorm : mesure illisible, normalisation 1 passe")
+    else:
+        print("  ⚠️  Loudnorm : mesure absente, normalisation 1 passe")
+    result = subprocess.run(
+        [FFMPEG, "-y", "-hide_banner", "-loglevel", "error",
+         "-i", str(audio_path), "-af", af,
+         "-ar", "48000", "-c:a", "aac", "-b:a", "192k", str(out)],
+        capture_output=True, text=True,
+    )
+    if result.returncode != 0:
+        # Toujours produire de l'AAC : le mux final fait -c:a copy.
+        result = subprocess.run(
+            [FFMPEG, "-y", "-hide_banner", "-loglevel", "error",
+             "-i", str(audio_path),
+             "-ar", "48000", "-c:a", "aac", "-b:a", "192k", str(out)],
+            capture_output=True, text=True,
+        )
+        if result.returncode != 0:
+            raise RuntimeError("FFmpeg : transcodage audio final a échoué")
+    return out
 
 
 def assemble_video(
@@ -226,8 +284,10 @@ def assemble_video(
 
     # === Sound design : mixe la voix avec un impact d'intro + whooshes ===
     # à chaque transition de scène. Si les SFX sont absents, on garde la voix
-    # brute (dégradation gracieuse).
+    # brute (dégradation gracieuse). Puis mastering final : loudnorm 2 passes
+    # vers -14 LUFS sur le mix complet (cible TikTok).
     mixed_audio = _mix_sfx(audio_path, scene_durations, work_dir)
+    final_audio = _master_final_audio(mixed_audio, work_dir)
 
     ass_escaped = str(ass_path.resolve()).replace("\\", "/").replace(":", "\\:")
     fonts_escaped = str(FONTS_DIR.resolve()).replace("\\", "/").replace(":", "\\:")
@@ -255,28 +315,50 @@ def assemble_video(
     # Harmonise les images de sources variées (Pexels, Cloudflare IA, Pixabay)
     # en un look tropical chaud et contrasté, type documentaire. Appliqué AVANT
     # l'ass pour ne pas altérer les couleurs des sous-titres/emojis.
-    grade_filter = (
-        "eq=contrast=1.08:saturation=1.20:brightness=0.01:gamma=0.98,"
-        "colorbalance=rs=0.03:gm=0.01:bs=-0.04"
-    )
+    # L'identité visuelle de la chaîne = UNE LUT .cube fixe (générée par
+    # scripts/make_luts.py) + vignette légère. Fallback sur l'ancien étalonnage
+    # eq/colorbalance si la LUT manque (dégradation gracieuse).
+    lut_path = ASSETS_DIR / "luts" / "mayotte_signature.cube"
+    if lut_path.exists():
+        lut_escaped = str(lut_path.resolve()).replace("\\", "/").replace(":", "\\:")
+        grade_filter = (
+            "eq=contrast=1.04:saturation=1.05,"
+            f"lut3d=file='{lut_escaped}':interp=tetrahedral,"
+            "vignette=angle=PI/5"
+        )
+    else:
+        grade_filter = (
+            "eq=contrast=1.08:saturation=1.20:brightness=0.01:gamma=0.98,"
+            "colorbalance=rs=0.03:gm=0.01:bs=-0.04"
+        )
 
     # Branding : le watermark « @mister_decouverte » est dessiné par le
     # système ASS (voir Style "Brand" dans subtitles.py) — plus fiable sur
     # Windows que drawtext FFmpeg qui dépend de fontconfig.
+    # Grain temporel léger (pellicule) appliqué APRÈS le grading mais AVANT
+    # les sous-titres : le texte reste parfaitement net. TikTok recompresse
+    # fort → grain subtil uniquement (c0s>8 serait écrasé en bouillie).
+    grain_filter = "noise=c0s=7:c0f=t+u"
     vf = (
-        f"{grade_filter},{hook_zoom}{hook_intro_fade}{bar_filter},"
+        f"{grade_filter},{hook_zoom}{hook_intro_fade}{bar_filter},{grain_filter},"
         f"ass='{ass_escaped}':fontsdir='{fonts_escaped}'"
     )
 
+    # Encodage final pensé pour la RECOMPRESSION TikTok : la plateforme
+    # ré-encode tout, la qualité de la source est la seule variable qu'on
+    # contrôle. CRF 18 + preset slow + tags bt709 explicites (évite les
+    # dérives couleur post-LUT). L'audio est déjà masterisé en AAC → copy.
     cmd = [
         FFMPEG, "-y",
         "-i", str(silent_concat),
-        "-i", str(mixed_audio),
+        "-i", str(final_audio),
         "-vf", vf,
         "-map", "0:v", "-map", "1:a",
-        "-c:v", "libx264", "-preset", "ultrafast", "-crf", "22",
+        "-c:v", "libx264", "-preset", "slow", "-crf", "18",
+        "-profile:v", "high", "-level", "4.1",
         "-pix_fmt", "yuv420p",
-        "-c:a", "aac", "-b:a", "192k",
+        "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709",
+        "-c:a", "copy",
         "-r", str(VIDEO_FPS),
         "-shortest",
         "-movflags", "+faststart",
@@ -290,3 +372,84 @@ def assemble_video(
         raise RuntimeError(f"FFmpeg final a échoué (code {result.returncode})")
 
     return output_path
+
+
+def make_cover(
+    image_path: Path,
+    title: str,
+    output_path: Path,
+    badge: str = "MAYOTTE",
+) -> Path | None:
+    """Génère la cover 1080x1920 de la vidéo : image héro + badge de série +
+    titre 3-5 mots en gros. Sur la grille profil, TikTok superpose la
+    description sur le bas de la vignette → rien sous les 80% de hauteur.
+    Rendu via Pillow : drawtext FFmpeg plante sur ce build Windows
+    (fontconfig), même piège que pour les sous-titres → ASS/PIL only.
+    Best-effort : retourne None en cas d'échec (la cover est un bonus)."""
+    font_path = FONTS_DIR / "Montserrat-Black.ttf"
+    if not font_path.exists() or not image_path.exists():
+        return None
+    try:
+        from PIL import Image, ImageDraw, ImageEnhance, ImageFont
+
+        img = Image.open(image_path).convert("RGB")
+        # crop central vers 9:16 puis redimensionnement exact
+        target_ratio = VIDEO_WIDTH / VIDEO_HEIGHT
+        w, h = img.size
+        if w / h > target_ratio:
+            new_w = int(h * target_ratio)
+            img = img.crop(((w - new_w) // 2, 0, (w + new_w) // 2, h))
+        else:
+            new_h = int(w / target_ratio)
+            img = img.crop((0, (h - new_h) // 2, w, (h + new_h) // 2))
+        img = img.resize((VIDEO_WIDTH, VIDEO_HEIGHT), Image.LANCZOS)
+        # assombrit légèrement pour la lisibilité du titre
+        img = ImageEnhance.Brightness(img).enhance(0.88)
+        draw = ImageDraw.Draw(img, "RGBA")
+
+        # Titre en majuscules, coupé en 2 lignes équilibrées au-delà de ~14 car.
+        words = title.upper().split()
+        lines = [" ".join(words)]
+        if len(lines[0]) > 14 and len(words) >= 2:
+            best, gap = 1, float("inf")
+            for i in range(1, len(words)):
+                a, b = " ".join(words[:i]), " ".join(words[i:])
+                if abs(len(a) - len(b)) < gap:
+                    best, gap = i, abs(len(a) - len(b))
+            lines = [" ".join(words[:best]), " ".join(words[best:])]
+
+        def fitted_font(text: str, max_size: int) -> "ImageFont.FreeTypeFont":
+            size = max_size
+            while size > 40:
+                f = ImageFont.truetype(str(font_path), size)
+                if draw.textlength(text, font=f) <= VIDEO_WIDTH - 160:
+                    return f
+                size -= 6
+            return ImageFont.truetype(str(font_path), size)
+
+        y = int(VIDEO_HEIGHT * 0.32)
+        badge_font = ImageFont.truetype(str(font_path), 52)
+        bw = draw.textlength(badge, font=badge_font)
+        draw.text(((VIDEO_WIDTH - bw) / 2, y), badge, font=badge_font,
+                  fill=(0, 240, 255), stroke_width=4, stroke_fill=(0, 0, 0))
+        y += 110
+        for line in lines:
+            f = fitted_font(line, 118)
+            lw = draw.textlength(line, font=f)
+            lh = f.size
+            # bandeau semi-transparent derrière le texte
+            draw.rectangle(
+                [(VIDEO_WIDTH - lw) / 2 - 24, y - 14,
+                 (VIDEO_WIDTH + lw) / 2 + 24, y + lh + 18],
+                fill=(0, 0, 0, 90),
+            )
+            draw.text(((VIDEO_WIDTH - lw) / 2, y), line, font=f,
+                      fill=(255, 255, 255), stroke_width=7, stroke_fill=(0, 0, 0))
+            y += int(lh * 1.3)
+
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        img.save(output_path, "PNG")
+        return output_path
+    except Exception as e:
+        print(f"  ⚠️  Cover : génération échouée ({e})")
+        return None
