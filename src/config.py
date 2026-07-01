@@ -33,13 +33,19 @@ COQUI_SPEAKER = os.getenv("COQUI_SPEAKER", "Damien Black").strip()
 COQUI_LANGUAGE = os.getenv("COQUI_LANGUAGE", "fr").strip()
 
 # Voice cloning : si ce fichier WAV existe, XTTS clone CETTE voix au lieu
-# d'utiliser le speaker intégré (qui a un accent anglo). reference_fr.wav =
-# échantillon de voix française métropolitaine native.
-COQUI_SPEAKER_WAV = ASSETS_DIR / "voice" / "reference_fr.wav"
+# d'utiliser le speaker intégré (qui a un accent anglo).
+# reference_fr_8s.wav = 7.6s de parole continue, débruitée AVANT clonage —
+# XTTS recommande 5-10s : l'ancien sample de 15.7s rendait le timbre
+# instable d'une vidéo à l'autre (backup : reference_fr_15s_backup.wav,
+# revenir en arrière = COQUI_SPEAKER_WAV_NAME=reference_fr.wav dans .env).
+COQUI_SPEAKER_WAV = ASSETS_DIR / "voice" / os.getenv(
+    "COQUI_SPEAKER_WAV_NAME", "reference_fr_8s.wav").strip()
 
 # Réglages fins XTTS (qualité + style de la synthèse)
-# Style "vulgarisation dynamique" : débit rapide, intonations marquées
-COQUI_TEMPERATURE = float(os.getenv("COQUI_TEMPERATURE", "0.74"))
+# Style "vulgarisation dynamique" : débit rapide, intonations marquées.
+# Température 0.60 (au lieu de 0.74) : intonation plus stable sur les
+# narrations longues de 100s+, moins de dérives de ton en fin de vidéo.
+COQUI_TEMPERATURE = float(os.getenv("COQUI_TEMPERATURE", "0.60"))
 COQUI_REPETITION_PENALTY = float(os.getenv("COQUI_REPETITION_PENALTY", "3.0"))
 COQUI_LENGTH_PENALTY = float(os.getenv("COQUI_LENGTH_PENALTY", "1.0"))
 COQUI_TOP_K = int(os.getenv("COQUI_TOP_K", "50"))
@@ -90,7 +96,25 @@ VISUAL_PROVIDER = os.getenv("VISUAL_PROVIDER", "ai_first").strip().lower()
 # 100% images IA : TOUS les visuels passent par l'IA (Cloudflare FLUX), le
 # stock (Pexels/Pixabay) ne servant plus que de fallback si l'IA échoue.
 # Quota Cloudflare gratuit ~130 images/jour → viser 2 vidéos/jour (2×48=96).
+# PRIORITAIRE sur VISUALS_SMART_MIX (rétro-compatibilité).
 VISUALS_AI_ONLY = os.getenv("VISUALS_AI_ONLY", "false").strip().lower() == "true"
+
+# Mix hybride intelligent : les scènes taguées « ambiance » par le LLM (lagon,
+# plage, nature générique, drone) utilisent de VRAIS clips vidéo stock (Pexels
+# portrait en priorité — mouvement réel = meilleure rétention), les scènes
+# « specifique » (légende, personnage, lieu précis) restent en image IA.
+# Ignoré si VISUALS_AI_ONLY=true. Objectif : 8-12 vrais clips par vidéo.
+VISUALS_SMART_MIX = os.getenv("VISUALS_SMART_MIX", "true").strip().lower() == "true"
+
+# Cache disque des clips stock récurrents (lagon, tortue, maki, marché…).
+# Clé = requête normalisée. LRU : au-delà de N fichiers, les plus anciens
+# sont supprimés (le disque n'a que ~35 Go libres).
+STOCK_CACHE_DIR = ASSETS_DIR / "stock_cache"
+STOCK_CACHE_MAX_FILES = int(os.getenv("STOCK_CACHE_MAX_FILES", "30"))
+
+# Taille max (en Mo) d'un clip stock téléchargé en mode smart mix — connexion
+# fragile à Mayotte : on préfère une variante ~720p légère à un 4K de 50 Mo.
+STOCK_CLIP_MAX_MB = float(os.getenv("STOCK_CLIP_MAX_MB", "10"))
 # Pollinations a introduit un paywall (HTTP 402) en mai 2026. Mettre à "false"
 # pour ne même pas le tenter (100% stock, génération bien plus rapide).
 # Si "true" : on tente, mais un circuit breaker coupe Pollinations dès le

@@ -1,29 +1,48 @@
 """Mastering audio de la voix off via FFmpeg.
 
-Transforme une voix TTS « brute » en voix « radio » : présente, claire, sans
-grondement ni boue, à un volume normalisé pour les plateformes sociales.
+Transforme une voix TTS « brute » (XTTS v2, ~24 kHz, sibilantes dures + un peu
+de souffle) en voix « radio » : présente, claire, sans grondement ni boue.
 
-Chaîne :
-- highpass 80 Hz       : enlève le grondement / souffle basse fréquence
-- afftdn               : débruitage léger (artefacts TTS)
-- EQ -2 dB @ 300 Hz    : enlève la « boue » des bas-médiums
-- EQ +3 dB @ 3 kHz     : présence / clarté de la voix
-- acompressor          : compression douce → voix dense et constante
-- loudnorm -14 LUFS    : volume normalisé (cible réseaux sociaux)
+Chaîne (audit + recherche juillet 2026) :
+- aresample 48 kHz soxr : rééchantillonnage haute qualité 24 kHz → 48 kHz
+- highpass 80 Hz (2 pôles) : enlève le grondement / souffle basse fréquence
+- afftdn                : débruitage léger (souffle résiduel XTTS)
+- deesser               : adoucit les sibilantes dures du TTS
+- acompressor           : compression douce → voix dense et constante
+- EQ -2 dB @ 250 Hz     : enlève la « boue » des bas-médiums
+- EQ +2 dB @ 3 kHz      : présence / clarté de la voix
+- treble +2 dB @ 7.5 kHz : « air » / brillance
+- lowpass 10 kHz        : coupe le hash haute fréquence des artefacts TTS
+
+NB : pas de loudnorm ici — la normalisation de volume est faite en aval dans
+editor.py, sur le mix complet (voix + SFX).
+
+Vérifié sur le build FFmpeg local (8.1 full, gyan.dev) : libsoxr et le filtre
+deesser sont bien présents.
 """
+import os
 import subprocess
 from pathlib import Path
 
 from src.config import FFMPEG
 
+# Paramètres clés du compresseur, surchargeables par variables d'environnement
+# (valeurs recommandées par défaut, ne pas toucher config.py)
+VOICE_COMP_THRESHOLD = os.getenv("VOICE_COMP_THRESHOLD", "-18dB").strip()
+VOICE_COMP_RATIO = os.getenv("VOICE_COMP_RATIO", "3").strip()
+
 # Chaîne de filtres pour la voix finale (mixée dans la vidéo)
 VOICE_MASTER_CHAIN = (
-    "highpass=f=80,"
-    "afftdn=nr=12:nf=-25,"
-    "equalizer=f=300:t=q:w=1.4:g=-2,"
-    "equalizer=f=3000:t=q:w=1.6:g=3,"
-    "acompressor=threshold=-20dB:ratio=3:attack=10:release=150,"
-    "loudnorm=I=-14:TP=-1.5:LRA=11"
+    "aresample=48000:resampler=soxr,"
+    "highpass=f=80:p=2,"
+    "afftdn=nf=-25,"
+    "deesser=i=0.4:m=0.5:f=0.5:s=o,"
+    f"acompressor=threshold={VOICE_COMP_THRESHOLD}:ratio={VOICE_COMP_RATIO}:"
+    "attack=10:release=150:makeup=4dB:knee=6,"
+    "equalizer=f=250:t=q:w=1.0:g=-2,"
+    "equalizer=f=3000:t=q:w=1.0:g=2,"
+    "treble=g=2:f=7500,"
+    "lowpass=f=10000:t=q:w=0.7"
 )
 
 # Nettoyage MINIMAL d'un échantillon de référence (voice cloning).
@@ -50,6 +69,7 @@ def master_voice(audio_path: Path) -> Path:
     cmd = [
         FFMPEG, "-y", "-i", str(audio_path),
         "-af", VOICE_MASTER_CHAIN,
+        "-ar", "48000",  # garantit la sortie 48 kHz (déjà rééchantillonnée dans la chaîne)
         "-codec:a", "libmp3lame", "-q:a", "2",
         str(tmp),
     ]

@@ -145,7 +145,7 @@ def synthesize(text: str, audio_path: Path) -> list[dict]:
         {"speaker_wav": str(COQUI_SPEAKER_WAV)} if use_clone
         else {"speaker": COQUI_SPEAKER}
     )
-    voix_label = "clone FR (reference_fr.wav)" if use_clone else COQUI_SPEAKER
+    voix_label = f"clone FR ({COQUI_SPEAKER_WAV.name})" if use_clone else COQUI_SPEAKER
     print(f"   🎤 Synthèse Coqui XTTS v2 [{voix_label}, {len(sentences)} phrases]...")
 
     for i, sent in enumerate(sentences):
