@@ -1,7 +1,9 @@
 """Montage vidéo : assemble assets (images OU vidéos) + voix + sous-titres."""
 import json
+import os
 import re
 import subprocess
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from src.config import (
@@ -255,12 +257,25 @@ def assemble_video(
     clips_dir = work_dir / "clips"
     clips_dir.mkdir(parents=True, exist_ok=True)
 
-    print(f"  ▶ Normalisation des {len(asset_paths)} clips...")
-    normalized: list[Path] = []
-    for i, (asset, dur) in enumerate(zip(asset_paths, scene_durations)):
-        clip = clips_dir / f"clip_{i:02d}.mp4"
-        _normalize_asset(asset, clip, dur, i)
-        normalized.append(clip)
+    # Normalisation en PARALLÈLE : chaque clip = un subprocess FFmpeg (pas de
+    # GIL en jeu), un encode x264 preset fast n'occupe que quelques threads →
+    # 4 encodes simultanés saturent bien un CPU 14 cœurs sans étouffer la
+    # machine. Réglable via NORMALIZE_WORKERS dans .env.
+    workers = int(os.getenv("NORMALIZE_WORKERS", "4"))
+    print(f"  ▶ Normalisation des {len(asset_paths)} clips ({workers} en parallèle)...")
+
+    def _normalize_job(job: tuple[int, Path, float]) -> Path:
+        i, asset, dur = job
+        return _normalize_asset(asset, clips_dir / f"clip_{i:02d}.mp4", dur, i)
+
+    jobs = list(zip(range(len(asset_paths)), asset_paths, scene_durations))
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        # executor.map restitue les résultats DANS L'ORDRE de soumission :
+        # l'ordre des clips (= le déroulé de la vidéo) est préservé. Si un
+        # clip échoue, sa RuntimeError (avec le nom de l'asset fautif) remonte
+        # ici ; l'itérateur de map annule les tâches pas encore lancées et le
+        # `with` attend la fin des encodes déjà en cours (annulation propre).
+        normalized: list[Path] = list(executor.map(_normalize_job, jobs))
 
     concat_list = clips_dir / "concat.txt"
     concat_list.write_text(

@@ -21,7 +21,8 @@ import os
 import time
 from pathlib import Path
 
-import requests  # conservé pour le type hint requests.Response
+import requests
+from requests.adapters import HTTPAdapter
 
 from src.net import SESSION
 
@@ -133,6 +134,33 @@ MIN_CHUNK = 5 * 1024 * 1024   # TikTok : chunk_size min 5 MB
 # volume à reprendre — beaucoup plus robuste à Mayotte qu'un upload de 60 MB.
 TARGET_CHUNK = 10 * 1024 * 1024  # 10 MB
 
+# ---------------------------------------------------------------------------
+# Session dédiée aux PUT de chunks — SANS retry automatique urllib3.
+#
+# Pourquoi : la session partagée src.net.SESSION retente TOUTES les méthodes
+# (allowed_methods=None). Sur un PUT de chunk, si la RÉPONSE se perd (connexion
+# Mayotte instable), urllib3 re-envoie silencieusement le MÊME PUT alors que
+# TikTok a déjà stocké ces bytes → TikTok répond 416 (Range Not Satisfiable)
+# au doublon, et l'upload était considéré comme échoué à tort.
+# Ici : aucun retry urllib3 (max_retries=0) ; le retry est géré EXPLICITEMENT
+# par _put_chunk, qui sait interpréter chaque cas (416 = déjà reçu, etc.).
+# ---------------------------------------------------------------------------
+_UPLOAD_SESSION = requests.Session()
+_UPLOAD_SESSION.mount("https://", HTTPAdapter(max_retries=0))
+_UPLOAD_SESSION.mount("http://", HTTPAdapter(max_retries=0))
+
+# Retry explicite par chunk : 5 tentatives, attentes progressives entre deux
+# essais (3/6/12/24 s) — le temps que la connexion revienne.
+_CHUNK_MAX_ATTEMPTS = 5
+_CHUNK_BACKOFF_S = (3, 6, 12, 24)
+
+# Exceptions réseau transitoires : on retente le même chunk.
+_RETRYABLE_EXCEPTIONS = (
+    requests.exceptions.ConnectionError,
+    requests.exceptions.Timeout,
+    requests.exceptions.ChunkedEncodingError,
+)
+
 
 def _compute_chunks(size: int) -> tuple[int, int]:
     """Calcule (chunk_size, total_chunks) selon les règles strictes TikTok :
@@ -154,6 +182,74 @@ def _compute_chunks(size: int) -> tuple[int, int]:
         total = max(1, size // MIN_CHUNK)
         chunk = size // total
     return chunk, total
+
+
+def _put_chunk(upload_url: str, content: bytes, *, start: int, total_size: int,
+               index: int, total_chunks: int) -> None:
+    """PUT d'un chunk avec retry EXPLICITE selon la sémantique de chaque cas.
+
+    - Exception réseau (coupure, timeout) → on retente le MÊME chunk ;
+    - HTTP 416 → TikTok a DÉJÀ reçu ces bytes (doublon après coupure de la
+      réponse) → ce n'est PAS une erreur, on passe au chunk suivant ;
+    - HTTP 429 / 5xx → transitoire, on retente avec backoff ;
+    - HTTP 200/201/206 → chunk accepté ;
+    - autres 4xx → erreur définitive (auth, requête invalide…), inutile de
+      retenter : on échoue immédiatement.
+
+    `content` est déjà en mémoire : en cas de retry, on re-PUT les mêmes bytes
+    sans relire le fichier. Lève RuntimeError après épuisement des tentatives.
+    """
+    this_chunk = len(content)
+    headers = {
+        "Content-Type": "video/mp4",
+        "Content-Length": str(this_chunk),
+        "Content-Range": f"bytes {start}-{start + this_chunk - 1}/{total_size}",
+    }
+    last_error = "?"
+    for attempt in range(1, _CHUNK_MAX_ATTEMPTS + 1):
+        try:
+            up = _UPLOAD_SESSION.put(
+                upload_url,
+                data=content,
+                headers=headers,
+                # Timeout court : sur connexion instable, mieux vaut échouer
+                # vite et relancer nous-mêmes que bloquer 5 minutes sur une
+                # socket en train de mourir.
+                timeout=120,
+            )
+        except _RETRYABLE_EXCEPTIONS as exc:
+            last_error = f"{type(exc).__name__}: {exc}"
+        else:
+            # 206 = partial accepted, 200/201 = final accepted
+            if up.status_code in (200, 201, 206):
+                print(f"     chunk {index}/{total_chunks} "
+                      f"({this_chunk/1024/1024:.1f} MB) → HTTP {up.status_code}")
+                return
+            if up.status_code == 416:
+                # Doublon : TikTok a déjà stocké ces bytes (le PUT précédent
+                # était passé mais sa réponse s'est perdue). Tout va bien.
+                print(f"     chunk {index}/{total_chunks} déjà reçu par TikTok "
+                      f"(HTTP 416, doublon) → chunk suivant")
+                return
+            if up.status_code == 429 or up.status_code >= 500:
+                last_error = f"HTTP {up.status_code}: {up.text[:200]}"
+            else:
+                # 4xx définitif : retenter ne changera rien.
+                raise RuntimeError(
+                    f"TikTok upload chunk {index}/{total_chunks} "
+                    f"HTTP {up.status_code}: {up.text[:400]}"
+                )
+        if attempt >= _CHUNK_MAX_ATTEMPTS:
+            break
+        wait = _CHUNK_BACKOFF_S[min(attempt - 1, len(_CHUNK_BACKOFF_S) - 1)]
+        print(f"     ⚠️ chunk {index}/{total_chunks} tentative "
+              f"{attempt + 1}/{_CHUNK_MAX_ATTEMPTS} après {last_error} "
+              f"— attente {wait}s")
+        time.sleep(wait)
+    raise RuntimeError(
+        f"TikTok upload chunk {index}/{total_chunks} échoué après "
+        f"{_CHUNK_MAX_ATTEMPTS} tentatives — dernière erreur : {last_error}"
+    )
 
 
 def publish_inbox(video_path: Path) -> dict:
@@ -200,27 +296,13 @@ def publish_inbox(video_path: Path) -> dict:
             # (peut être plus gros que chunk_size, c'est la règle TikTok)
             this_chunk = chunk_size if i < total_chunks - 1 else size - start
             content = f.read(this_chunk)
-            up = SESSION.put(
-                upload_url,
-                data=content,
-                headers={
-                    "Content-Type": "video/mp4",
-                    "Content-Length": str(this_chunk),
-                    "Content-Range": f"bytes {start}-{start+this_chunk-1}/{size}",
-                },
-                # Timeout court : sur connexion instable, mieux vaut échouer
-                # vite et relancer (la session retente automatiquement) que
-                # bloquer 5 minutes sur une socket en train de mourir.
-                timeout=120,
+            # PUT via la session dédiée SANS retry urllib3 : le retry est
+            # explicite dans _put_chunk (416 = déjà reçu → on continue).
+            _put_chunk(
+                upload_url, content,
+                start=start, total_size=size,
+                index=i + 1, total_chunks=total_chunks,
             )
-            # 206 = partial accepted, 200/201 = final accepted
-            if up.status_code not in (200, 201, 206):
-                raise RuntimeError(
-                    f"TikTok upload chunk {i+1}/{total_chunks} HTTP {up.status_code}: "
-                    f"{up.text[:400]}"
-                )
-            print(f"     chunk {i+1}/{total_chunks} ({this_chunk/1024/1024:.1f} MB) → "
-                  f"HTTP {up.status_code}")
 
     # Petit poll de statut (best-effort)
     time.sleep(2)
