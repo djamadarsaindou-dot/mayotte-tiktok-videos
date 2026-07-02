@@ -249,7 +249,14 @@ def assemble_video(
     ass_path: Path,
     output_path: Path,
     work_dir: Path,
+    punch_times: list[float] | None = None,
 ) -> Path:
+    """Assemble le montage final.
+
+    punch_times : timestamps (secondes) des « punch-in » — micro-zooms secs
+    de 0.18 s posés sur les moments forts (mots-clés). None ou liste vide =
+    comportement historique, aucun filtre ajouté (rétro-compatible).
+    """
     if len(asset_paths) != len(scene_durations):
         raise ValueError("asset_paths et scene_durations doivent avoir la même longueur")
 
@@ -319,12 +326,45 @@ def assemble_video(
     # === Hook visuel des 3 premières secondes ===
     # 1. Flash blanc en intro (fade-in from white sur 0.3s) — pattern interrupt
     #    qui stoppe le scroll TikTok dès les premières frames.
-    # 2. Zoom out subtil 110% → 100% sur 2s — effet cinéma qui happe le regard.
+    # 2. Zoom out vif 110% → 100% sur 1.2s — intro plus nerveuse (rétention),
+    #    0.0833 ≈ 0.10/1.2 : on atteint exactement 100% à t=1.2s.
+    # PIÈGE crop : son x/y par défaut ((in_w-out_w)/2) est figé à l'init du
+    # graphe — quand scale change la taille des frames EN COURS de flux, le
+    # crop ne se recentre pas (zoom ancré en haut-gauche puis clampé à droite,
+    # vérifié sur frames). Antidote : x/y EXPLICITES recalculés à chaque frame
+    # via t (crop ré-évalue x/y par frame), centrés sur la taille zoomée.
+    zoom_expr = "(1.10-0.0833*min(t\\,1.2))"
     hook_zoom = (
-        f"scale='iw*(1.10-0.05*min(t\\,2))':'ih*(1.10-0.05*min(t\\,2))':eval=frame,"
-        f"crop={VIDEO_WIDTH}:{VIDEO_HEIGHT},"
+        f"scale='iw*{zoom_expr}':'ih*{zoom_expr}':eval=frame,"
+        f"crop={VIDEO_WIDTH}:{VIDEO_HEIGHT}:"
+        f"x='{VIDEO_WIDTH}*({zoom_expr}-1)/2':y='{VIDEO_HEIGHT}*({zoom_expr}-1)/2',"
     )
     hook_intro_fade = "fade=t=in:st=0:d=0.3:color=white,"
+
+    # === Punch-in : micro-zoom sec sur les moments forts ===
+    # Zoom de PUNCH_SCALE (7 % par défaut, surchargeable via .env) pendant
+    # 0.18 s à chaque timestamp fourni : between(t, tk, tk+0.18) vaut 1
+    # pendant le punch, 0 sinon. Les punchs ne se chevauchent jamais
+    # (min_gap 2.5 s garanti en amont) → la somme des between() reste 0/1.
+    # trunc(…/2)*2 force des dimensions paires (exigence yuv420p). Le crop
+    # ramène au cadre 1080x1920 avec un x/y EXPLICITE recalculé à chaque
+    # frame (même piège que hook_zoom : le x/y par défaut du crop est figé à
+    # l'init → zoom ancré en haut-gauche au lieu du centre). Position dans la
+    # chaîne : APRÈS le grading (couleurs stables) mais AVANT bar_filter et
+    # ass — ni la barre de progression ni les sous-titres ne doivent zoomer.
+    # Plafond : 12 punchs max (limite de longueur de ligne de commande Windows).
+    punch_filter = ""
+    if punch_times:
+        punch_scale = float(os.getenv("PUNCH_SCALE", "0.07"))
+        terms = "+".join(
+            f"between(t\\,{tk:.3f}\\,{tk + 0.18:.3f})" for tk in punch_times[:12]
+        )
+        punch_expr = f"(1+{punch_scale:g}*({terms}))"
+        punch_filter = (
+            f"scale=w='trunc(iw*{punch_expr}/2)*2':h='trunc(ih*{punch_expr}/2)*2':eval=frame,"
+            f"crop={VIDEO_WIDTH}:{VIDEO_HEIGHT}:"
+            f"x='{VIDEO_WIDTH}*({punch_expr}-1)/2':y='{VIDEO_HEIGHT}*({punch_expr}-1)/2',"
+        )
 
     # === Color grading cinéma ===
     # Harmonise les images de sources variées (Pexels, Cloudflare IA, Pixabay)
@@ -354,8 +394,10 @@ def assemble_video(
     # les sous-titres : le texte reste parfaitement net. TikTok recompresse
     # fort → grain subtil uniquement (c0s>8 serait écrasé en bouillie).
     grain_filter = "noise=c0s=7:c0f=t+u"
+    # Ordre impératif : grade → punch → hook_zoom → fade → bar → grain → ass
+    # (le punch-in zoome l'image seule ; barre et sous-titres restent fixes).
     vf = (
-        f"{grade_filter},{hook_zoom}{hook_intro_fade}{bar_filter},{grain_filter},"
+        f"{grade_filter},{punch_filter}{hook_zoom}{hook_intro_fade}{bar_filter},{grain_filter},"
         f"ass='{ass_escaped}':fontsdir='{fonts_escaped}'"
     )
 

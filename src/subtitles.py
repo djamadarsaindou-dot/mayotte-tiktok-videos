@@ -209,11 +209,75 @@ def _wrap_balanced(text: str, max_chars_per_line: int = 18) -> str:
     return " ".join(words[:best_split]) + r"\N" + " ".join(words[best_split:])
 
 
+def extract_punch_times(words: list[dict], start_after: float = 3.8,
+                        min_gap: float = 2.5, limit: int = 10) -> list[float]:
+    """Timestamps 'start' des mots FORTS, pour caler des punchs visuels.
+
+    Un mot est FORT s'il est dans le dictionnaire de mots-clés (même
+    normalisation NFD que le reste du module), s'il contient un chiffre
+    (1500, 2011, 95%…), ou s'il est une unité collée à un nombre qui le
+    précède immédiatement (km², %, ans…).
+
+    - Exclut tout ce qui est avant `start_after` (la zone hook a déjà sa
+      propre dynamique).
+    - Garantit un écart >= `min_gap` entre deux punchs : dans une grappe
+      serrée, seul le premier est conservé.
+    - Plafonné à `limit` punchs, triés par ordre chronologique.
+    - Robuste : liste vide ou mots sans timing exploitable -> [].
+    """
+    if not words or limit <= 0:
+        return []
+    candidates: list[float] = []
+    prev_has_digit = False  # le mot PRÉCÉDENT contenait-il un chiffre ?
+    for w in words:
+        raw = str(w.get("word") or "").strip()
+        has_digit = bool(_NUMBER_RE.search(raw))
+        # Unité qui suit directement un nombre (« 1500 km² », « 95 % »)
+        is_unit = prev_has_digit and raw.strip(".,;:!?").lower() in _UNIT_WORDS
+        prev_has_digit = has_digit
+        if not raw:
+            continue
+        strong = (has_digit or is_unit
+                  or _normalize_word(raw) in KEYWORD_COLORS)
+        if not strong:
+            continue
+        try:
+            t = float(w.get("start"))
+        except (TypeError, ValueError):
+            continue  # mot sans timing exploitable : ignoré
+        if t < start_after:
+            continue
+        candidates.append(t)
+    candidates.sort()
+    punches: list[float] = []
+    for t in candidates:
+        # Grappe serrée : on garde le premier, on saute les suivants
+        if punches and t - punches[-1] < min_gap:
+            continue
+        punches.append(t)
+        if len(punches) >= limit:
+            break
+    return punches
+
+
+# Interligne du hook : fontsize 82 × ~1.22 (ascender 968 + descender 251
+# pour 1000 UPM dans Montserrat Black) ≈ l'interligne naturel de libass,
+# pour que les lignes en events séparés s'empilent comme l'ancien bloc \N.
+_HOOK_LINE_H = 100
+
+
 def _hook_lines(hook_text: str, width: int, height: int) -> list[str]:
-    """Génère les lignes ASS du hook affiché ~0-3.5s en haut de l'écran.
+    """Génère les lignes ASS du hook affiché ~0-3.6s en haut de l'écran.
 
     Texte sur 1-2 lignes équilibrées, taille modérée, effet « stop scroll »
-    (pop-in + léger pulse + fondu de sortie).
+    CINÉTIQUE : chaque ligne apparaît en cascade (~0.25s de décalage) avec
+    un pop 80 → 100 % + fondu alpha rapide, puis un léger pulse synchronisé
+    entre les lignes. Disparition inchangée (fondu 250 ms, fin à 3.6s).
+
+    Un event ASS SÉPARÉ par ligne : les tags d'animation sont en tête
+    d'event et s'appliquent à la ligne entière — jamais à une queue de
+    ligne d'un autre event (le bug de chevauchement corrigé sur le karaoké
+    ne peut pas se reproduire ici).
     """
     if not hook_text or not hook_text.strip():
         return []
@@ -222,19 +286,42 @@ def _hook_lines(hook_text: str, width: int, height: int) -> list[str]:
     # 16 caractères max par ligne à la taille 82 → ~140 px libres de chaque
     # côté (zone safe encoche/UI droite TikTok)
     text = _wrap_balanced(text, max_chars_per_line=16)
+    line_texts = text.split(r"\N")
     pos_x = width // 2
     pos_y = int(height * 0.26)  # haut de l'écran, au-dessus des sous-titres
 
-    # 0 → 3.6s : pop-in + pulse léger + fondu de sortie
-    fx = (
-        f"{{\\an5\\pos({pos_x},{pos_y})\\bord8\\shad4"
-        f"\\fad(0,250)"
-        f"\\t(0,180,\\fscx108\\fscy108)"
-        f"\\t(180,320,\\fscx100\\fscy100)"
-        f"\\t(1500,1750,\\fscx104\\fscy104)"
-        f"\\t(1750,2000,\\fscx100\\fscy100)}}"
-    )
-    return [f"Dialogue: 2,{_t(0.10)},{_t(3.60)},Hook,,0,0,0,,{fx}{text}"]
+    hook_start, hook_end = 0.10, 3.60
+    stagger = 0.25  # décalage d'apparition entre les lignes (cascade)
+
+    events: list[str] = []
+    n = len(line_texts)
+    for i, line in enumerate(line_texts):
+        # Empilement centré sur pos_y (même centre visuel que l'ancien bloc)
+        y = pos_y + round((i - (n - 1) / 2) * _HOOK_LINE_H)
+        line_start = min(hook_start + i * stagger, hook_end - 0.5)
+        delay_ms = round((line_start - hook_start) * 1000)
+        # Pulse léger à ~1.6s ABSOLUES : offsets recalés sur le départ décalé
+        # de chaque ligne pour que toutes pulsent ENSEMBLE.
+        p = 1500 - delay_ms
+        pulse = (
+            f"\\t({p},{p + 250},\\fscx104\\fscy104)"
+            f"\\t({p + 250},{p + 500},\\fscx100\\fscy100)"
+        ) if p > 400 else ""
+        # État initial : invisible (alpha FF) et 80 %, puis pop + fondu
+        # rapide via \t. \fad(0,250) ne gère QUE la sortie (multiplicateur
+        # global libass, compatible avec l'animation \alpha d'entrée).
+        fx = (
+            f"{{\\an5\\pos({pos_x},{y})\\bord8\\shad4"
+            f"\\alpha&HFF&\\fscx80\\fscy80"
+            f"\\fad(0,250)"
+            f"\\t(0,120,\\alpha&H00&)"
+            f"\\t(0,180,\\fscx100\\fscy100)"
+            f"{pulse}}}"
+        )
+        events.append(
+            f"Dialogue: 2,{_t(line_start)},{_t(hook_end)},Hook,,0,0,0,,{fx}{line}"
+        )
+    return events
 
 
 def _number_lines(words: list[dict], width: int, height: int) -> list[str]:

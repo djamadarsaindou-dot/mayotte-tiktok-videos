@@ -40,7 +40,7 @@ from src.stock_finder import (
     find_asset,
     find_stock_asset,
 )
-from src.subtitles import build_karaoke_ass
+from src.subtitles import build_karaoke_ass, extract_punch_times
 from src.topics import TOPICS, random_topic
 from src.voice import assemble_narration, synthesize
 
@@ -67,6 +67,27 @@ GENERIC_FALLBACK_PROMPT = (
     "tropical island Indian Ocean turquoise lagoon palm trees aerial view, "
     "cinematic, vertical 9:16, photorealistic"
 )
+
+# Rafale d'intro (rétention TikTok) : pondération des visuels de la scène 1
+# — deux plans très courts qui claquent, un plan moyen, puis on pose le rythme.
+INTRO_BURST_WEIGHTS = [0.16, 0.16, 0.22, 0.46]
+
+
+def split_scene_durations(scene_dur: float, n_visuals: int, first_scene: bool) -> list[float]:
+    """Répartit la durée d'une scène entre ses visuels.
+
+    Scène 1 (si elle dure >= 5 s et compte exactement 4 visuels) : rafale
+    d'intro pondérée par INTRO_BURST_WEIGHTS. La durée totale de la scène ne
+    change pas (synchro voix intouchable) : le dernier plan est calculé par
+    différence pour que la somme fasse EXACTEMENT scene_dur.
+    Sinon : répartition égale (comportement historique).
+    """
+    if first_scene and scene_dur >= 5.0 and n_visuals == len(INTRO_BURST_WEIGHTS):
+        durations = [scene_dur * w for w in INTRO_BURST_WEIGHTS[:-1]]
+        durations.append(scene_dur - sum(durations))  # somme exacte
+        return durations
+    return [scene_dur / n_visuals] * n_visuals
+
 
 # Chronométrage par phase — sert à diagnostiquer les goulots d'étranglement
 # (quelle phase prend le plus de temps : voix, visuels, montage, upload…).
@@ -192,6 +213,11 @@ def build_video(topic_key: str | None = None) -> Path:
         topic_label=script.get("anchor", ""),
     )
 
+    # Punch-in : micro-zooms secs calés sur les mots forts (mots-clés,
+    # chiffres) détectés dans les timings TTS — appliqués par assemble_video.
+    punch_times = extract_punch_times(words)
+    print(f"   🥊 Punch-in : {len(punch_times)} moments forts")
+
     # Sauvegarde les timings des mots → permet de re-générer les sous-titres
     # plus tard (rerender) sans relancer la synthèse vocale.
     (work_dir / "words.json").write_text(
@@ -252,22 +278,24 @@ def build_video(topic_key: str | None = None) -> Path:
                 print(f"   ✓ s{s_idx+1:02d}.v{v_idx+1} [{source[:22]:22s}] {query[:42]}")
 
     # Calcul des durées : chaque scène consomme une fraction de l'audio
-    # proportionnelle à son nombre de mots, puis on divise entre ses 3 visuels
+    # proportionnelle à son nombre de mots, puis on répartit entre ses visuels
+    # (scène 1 en rafale d'intro, cf. split_scene_durations).
     word_counts = [len(s["narration"].split()) for s in script["scenes"]]
     total_words = sum(word_counts) or 1
     asset_paths: list[Path] = []
     asset_durations: list[float] = []
     for s_idx, scene in enumerate(script["scenes"]):
         scene_dur = audio_duration * (word_counts[s_idx] / total_words)
-        per_visual = scene_dur / VISUALS_PER_SCENE
+        durations = split_scene_durations(scene_dur, VISUALS_PER_SCENE, s_idx == 0)
         for v_idx in range(VISUALS_PER_SCENE):
             asset_paths.append(visual_results[(s_idx, v_idx)])
-            asset_durations.append(per_visual)
+            asset_durations.append(durations[v_idx])
 
     output_path = OUTPUT_DIR / f"{timestamp}_{slug}.mp4"
     print(f"🎞️  Montage final ({len(asset_paths)} clips, durée moy {sum(asset_durations)/len(asset_durations):.1f}s)...")
     with _timed("Montage FFmpeg"):
-        assemble_video(asset_paths, asset_durations, audio_path, ass_path, output_path, work_dir)
+        assemble_video(asset_paths, asset_durations, audio_path, ass_path, output_path, work_dir,
+                       punch_times=punch_times)
 
     caption = script.get("caption", {})
 
