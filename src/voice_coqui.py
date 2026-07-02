@@ -33,9 +33,14 @@ _tts = None
 def _get_tts():
     global _tts
     if _tts is None:
+        import torch
         from TTS.api import TTS
-        print("   ⏳ Chargement modèle XTTS v2 (lent au 1er run)...")
-        _tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2")
+        # GPU si le build torch le permet (RTX 5060 : synthèse ~10x plus
+        # rapide). Le venv de prod est en torch CPU tant que la bascule
+        # cu128 n'est pas faite — ce code s'adapte tout seul.
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        print(f"   ⏳ Chargement modèle XTTS v2 sur {device} (lent au 1er run)...")
+        _tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(device)
     return _tts
 
 
