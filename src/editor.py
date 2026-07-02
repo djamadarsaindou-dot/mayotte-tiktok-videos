@@ -449,6 +449,21 @@ def make_cover(
     try:
         from PIL import Image, ImageDraw, ImageEnhance, ImageFont
 
+        # Si le visuel héro est un clip VIDÉO (ex. fallback stock quand l'IA
+        # est à quota), on en extrait une frame — Pillow ne lit pas les mp4.
+        if _is_video(image_path):
+            frame = output_path.with_suffix(".frame.png")
+            r = subprocess.run(
+                [FFMPEG, "-y", "-hide_banner", "-loglevel", "error",
+                 "-ss", "0.5", "-i", str(image_path),
+                 "-frames:v", "1", str(frame)],
+                capture_output=True, text=True,
+            )
+            if r.returncode != 0 or not frame.exists():
+                print("  ⚠️  Cover : extraction de frame vidéo échouée")
+                return None
+            image_path = frame
+
         img = Image.open(image_path).convert("RGB")
         # crop central vers 9:16 puis redimensionnement exact
         target_ratio = VIDEO_WIDTH / VIDEO_HEIGHT
