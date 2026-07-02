@@ -11,6 +11,7 @@ Choix du provider :
 from __future__ import annotations
 
 import json
+import os
 from typing import Any
 
 from src.config import (
@@ -192,18 +193,10 @@ def _model_for(name: str) -> str:
     return GROQ_MODEL
 
 
-def chat(system: str, user: str, json_mode: bool = False, temperature: float = 0.85) -> str:
+def _try_all_providers(system: str, user: str, json_mode: bool, temperature: float) -> str:
+    """Une vague d'essais : provider primaire puis tous les fallbacks configurés."""
     primary = _resolve_provider()
     last_err: Exception | None = None
-
-    # Cache hit ? On essaye d'abord sans payer l'appel
-    try:
-        from src.llm_cache import get as _cache_get
-        cached = _cache_get(primary, _model_for(primary), system, user, json_mode, temperature)
-        if cached is not None:
-            return cached
-    except Exception:
-        pass
 
     try:
         result = _BACKENDS[primary][1](system, user, json_mode, temperature)
@@ -235,6 +228,71 @@ def chat(system: str, user: str, json_mode: bool = False, temperature: float = 0
             print(f"  ⚠️  Fallback {name} a aussi échoué : {str(e2)[:120]}")
 
     raise RuntimeError(f"Tous les providers LLM ont échoué : {last_err}")
+
+
+# La connexion Mayotte fait du yo-yo : elle coupe plusieurs minutes puis
+# revient. Quand TOUS les providers tombent sur une erreur réseau, plutôt
+# que de tuer la génération (12 scènes de script déjà payées...), on sonde
+# la connectivité et on reprend dès qu'elle revient.
+LLM_NET_WAIT_MAX = int(os.getenv("LLM_NET_WAIT_MAX", "720"))   # 12 min / vague
+LLM_NET_WAVES = int(os.getenv("LLM_NET_WAVES", "2"))           # nb d'attentes
+
+_NET_ERROR_MARKERS = ("connection", "max retries", "timed out", "timeout",
+                      "nameresolution", "remote", "reset", "unreachable",
+                      "getaddrinfo", "réseau")
+
+_PROBE_URLS = ("https://api.mistral.ai", "https://api.groq.com",
+               "https://www.cloudflare.com")
+
+
+def _is_network_error(err: Exception) -> bool:
+    return any(m in str(err).lower() for m in _NET_ERROR_MARKERS)
+
+
+def _wait_for_network(max_wait_s: int) -> bool:
+    """Sonde la connectivité toutes les 30 s. True dès qu'elle revient."""
+    import time as _time
+
+    import requests as _requests  # direct, SANS la session auto-retry (sonde rapide)
+
+    deadline = _time.time() + max_wait_s
+    while _time.time() < deadline:
+        for url in _PROBE_URLS:
+            try:
+                _requests.head(url, timeout=5)
+                return True  # toute réponse HTTP = le réseau est là
+            except Exception:
+                continue
+        _time.sleep(30)
+    return False
+
+
+def chat(system: str, user: str, json_mode: bool = False, temperature: float = 0.85) -> str:
+    # Cache hit ? On essaye d'abord sans payer l'appel
+    primary = _resolve_provider()
+    try:
+        from src.llm_cache import get as _cache_get
+        cached = _cache_get(primary, _model_for(primary), system, user, json_mode, temperature)
+        if cached is not None:
+            return cached
+    except Exception:
+        pass
+
+    for wave in range(LLM_NET_WAVES + 1):
+        try:
+            return _try_all_providers(system, user, json_mode, temperature)
+        except RuntimeError as e:
+            if wave >= LLM_NET_WAVES or not _is_network_error(e):
+                raise
+            print(f"  📡 Coupure réseau probable — attente du retour de la "
+                  f"connexion (max {LLM_NET_WAIT_MAX // 60} min, "
+                  f"vague {wave + 1}/{LLM_NET_WAVES})...")
+            if not _wait_for_network(LLM_NET_WAIT_MAX):
+                raise RuntimeError(
+                    f"Réseau toujours coupé après {LLM_NET_WAIT_MAX // 60} min "
+                    f"d'attente : {e}")
+            print("  📡 Réseau revenu — reprise de la génération.")
+    raise RuntimeError("inatteignable")  # garde-fou (la boucle raise toujours)
 
 
 def chat_json(system: str, user: str, temperature: float = 0.85) -> dict:
