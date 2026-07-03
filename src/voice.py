@@ -1,7 +1,12 @@
-"""Synthèse vocale avec dispatch entre Edge-TTS et Coqui XTTS v2.
+"""Synthèse vocale avec dispatch entre Chatterbox, Coqui XTTS v2 et Edge-TTS.
 
-TTS_PROVIDER=edge   → Edge-TTS (rapide, synthétique, défaut)
-TTS_PROVIDER=coqui  → Coqui XTTS v2 (lent CPU, voix humaine)
+TTS_PROVIDER=chatterbox → Chatterbox multilingue (GPU, voix clonée expressive,
+                          choisie à l'oreille le 2026-07-03)
+TTS_PROVIDER=coqui      → Coqui XTTS v2 (voix clonée, GPU/CPU)
+TTS_PROVIDER=edge       → Edge-TTS (rapide, synthétique, défaut)
+
+Chaîne de secours : chatterbox → coqui → edge (une voix de repli vaut mieux
+qu'une génération plantée ; le changement de voix est visible dans les logs).
 
 API publique :
 - assemble_narration(scenes_narrations) : joint avec ponctuation/sauts pour pauses TTS
@@ -76,7 +81,15 @@ def _synthesize_edge(text: str, audio_path: Path) -> list[dict]:
 
 def synthesize(text: str, audio_path: Path) -> list[dict]:
     audio_path.parent.mkdir(parents=True, exist_ok=True)
-    if TTS_PROVIDER == "coqui":
+    provider = TTS_PROVIDER
+    if provider == "chatterbox":
+        try:
+            from src.voice_chatterbox import synthesize as cb_synthesize
+            return cb_synthesize(text, audio_path)
+        except Exception as e:
+            print(f"   ⚠️  Chatterbox a échoué ({str(e)[:120]}) — fallback Coqui XTTS")
+            provider = "coqui"
+    if provider == "coqui":
         try:
             from src.voice_coqui import synthesize as coqui_synthesize
             return coqui_synthesize(text, audio_path)

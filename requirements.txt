@@ -10,3 +10,7 @@ python-dotenv>=1.0.1
 coqui-tts[codec]>=0.27.0
 transformers>=4.57
 
+# Alignement mot-à-mot des sous-titres (src/word_align.py) — pin validé
+# avec torch 2.11 cu128 / Python 3.14 (aucune dépendance existante touchée)
+faster-whisper==1.2.1
+

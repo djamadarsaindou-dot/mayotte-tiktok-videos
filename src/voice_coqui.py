@@ -202,4 +202,13 @@ def synthesize(text: str, audio_path: Path) -> list[dict]:
         except Exception:
             pass
 
+    # --- Alignement mot-à-mot Whisper (timings réels ±20-100 ms au lieu
+    # des ~235 ms estimés). Ne doit JAMAIS faire échouer la génération :
+    # au moindre souci, align_words rend les timings estimés tels quels.
+    try:
+        from src.word_align import align_words
+        word_items = align_words(audio_path, " ".join(sentences), word_items)
+    except Exception as e:
+        print(f"   ⚠️ Alignement Whisper indisponible ({e}) → timings estimés conservés")
+
     return word_items
