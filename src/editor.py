@@ -52,11 +52,23 @@ def _normalize_asset(asset_path: Path, target_path: Path, duration: float, scene
     """
     target_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # Fondu d'entrée court sur les clips qui démarrent une nouvelle scène
-    # (transition douce). Le tout 1er clip est exclu : il a déjà le flash
-    # blanc d'intro géré au montage final.
+    # Transition d'entrée sur les clips qui démarrent une nouvelle scène.
+    # On alterne deux styles pour la variété (couplés au whoosh audio) :
+    # - scènes impaires : fondu d'entrée doux (0.22s)
+    # - scènes paires  : punch-in (zoom 110% → 100% en 0.35s, effet dynamique)
+    # Le tout 1er clip est exclu : il a le flash blanc d'intro au montage final.
     is_scene_start = scene_index % VISUALS_PER_SCENE == 0 and scene_index > 0
-    fade_suffix = ",fade=t=in:st=0:d=0.22" if is_scene_start else ""
+    scene_num = scene_index // VISUALS_PER_SCENE
+    if not is_scene_start:
+        fade_suffix = ""
+    elif scene_num % 2 == 1:
+        fade_suffix = ",fade=t=in:st=0:d=0.22"
+    else:
+        fade_suffix = (
+            ",scale='iw*(1.10-0.10*min(t/0.35\\,1))':"
+            "'ih*(1.10-0.10*min(t/0.35\\,1))':eval=frame,"
+            f"crop={VIDEO_WIDTH}:{VIDEO_HEIGHT}"
+        )
 
     if _is_video(asset_path):
         src_dur = _ffprobe_duration(asset_path)

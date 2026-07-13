@@ -82,7 +82,13 @@ def _ai_generate(query: str, image_prompt_fallback: str, output_path: Path,
     base = image_prompt_fallback or query
     # FLUX-schnell génère carré → « centered composition » pour que le sujet
     # survive au recadrage 9:16 effectué ensuite par le montage FFmpeg.
-    suffix = ", cinematic, centered composition, no text, photorealistic"
+    # Style photo documentaire : lumière dorée + 35mm → images moins « IA »,
+    # plus National Geographic. FLUX-schnell répond très bien à ces ancres.
+    suffix = (
+        ", cinematic documentary photography, shot on 35mm film, "
+        "golden hour light, rich natural colors, centered composition, "
+        "high detail, no text, photorealistic"
+    )
     if mayotte_specific and "mayotte" not in base.lower():
         prompt = f"{base}, Mayotte Indian Ocean French overseas department{suffix}"
     else:
