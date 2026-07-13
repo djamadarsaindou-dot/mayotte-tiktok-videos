@@ -132,7 +132,9 @@ MIN_CHUNK = 5 * 1024 * 1024   # TikTok : chunk_size min 5 MB
 # Petits chunks volontairement, pour résister aux connexions instables :
 # si la liaison coupe en plein milieu d'un chunk, le retry n'a qu'un petit
 # volume à reprendre — beaucoup plus robuste à Mayotte qu'un upload de 60 MB.
-TARGET_CHUNK = 10 * 1024 * 1024  # 10 MB
+# Surchargeable via TIKTOK_CHUNK_MB dans .env (min 5, le plancher TikTok) :
+# sur connexion très dégradée, passer à 5 MB double la tolérance aux coupures.
+TARGET_CHUNK = max(5, int(float(os.getenv("TIKTOK_CHUNK_MB", "10")))) * 1024 * 1024
 
 # ---------------------------------------------------------------------------
 # Session dédiée aux PUT de chunks — SANS retry automatique urllib3.
