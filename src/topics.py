@@ -38,15 +38,53 @@ TOPICS = {
         "label": "Actu Mayotte",
         "kind": "rss",
     },
+    # --- Thèmes MONDE (au-delà de Mayotte) — sujets à fort potentiel viral ---
+    "espace": {
+        "label": "Espace & Univers",
+        "kind": "knowledge",
+        "knowledge_theme": "espace",
+    },
+    "animaux": {
+        "label": "Animaux incroyables",
+        "kind": "knowledge",
+        "knowledge_theme": "animaux",
+    },
+    "lieux_extremes": {
+        "label": "Lieux extrêmes du monde",
+        "kind": "knowledge",
+        "knowledge_theme": "lieux_extremes",
+    },
+    "corps_humain": {
+        "label": "Corps humain & cerveau",
+        "kind": "knowledge",
+        "knowledge_theme": "corps_humain",
+    },
+    "histoires_vraies": {
+        "label": "Histoires vraies stupéfiantes",
+        "kind": "knowledge",
+        "knowledge_theme": "histoires_vraies",
+    },
 }
 
-# Ordre de rotation : alterne types pour la variété (intemporel ↔ actu, etc.)
+# Ordre de rotation : alterne MONDE (viral) et Mayotte (identité de la chaîne).
+# Les sujets monde sont majoritaires (potentiel de percée), tout en gardant
+# Mayotte régulièrement présent. Un thème ne revient jamais 2 fois de suite.
 ROTATION_ORDER = [
+    "espace",
     "decouverte_mayotte",
-    "fait_insolite",
+    "animaux",
+    "histoires_vraies",
     "legende_mahoraise",
+    "lieux_extremes",
+    "corps_humain",
+    "fait_insolite",
+    "espace",
     "actu_mayotte",
+    "animaux",
     "tradition_mahoraise",
+    "histoires_vraies",
+    "lieux_extremes",
+    "corps_humain",
 ]
 
 # Compteur persistant : output/rotation_counter.txt

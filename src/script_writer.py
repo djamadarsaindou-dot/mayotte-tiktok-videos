@@ -20,8 +20,13 @@ from src.config import (
     VISUALS_PER_SCENE,
 )
 from src.llm import chat, chat_json, get_provider
+from src import mayotte_knowledge, world_knowledge
 from src.mayotte_knowledge import GLOBAL_CONTEXT_PROMPT, random_topic_for
 from src.news_rss import fetch_recent_news, pick_news_topic
+
+# Thèmes « monde » (au-delà de Mayotte) : servis par world_knowledge, avec un
+# cadrage LLM générique. Tout autre thème knowledge = Mayotte.
+WORLD_THEMES = set(world_knowledge.ALL_TOPICS_BY_THEME.keys())
 
 
 # Styles narratifs alternés aléatoirement pour éviter que toutes les vidéos
@@ -41,7 +46,7 @@ NARRATIVE_STYLES = [
         "closing_hint": (
             "Termine sur la révélation qui laisse pensif, puis demande au "
             "spectateur s'il connaissait + invite à s'abonner pour d'autres "
-            "secrets de Mayotte."
+            "découvertes fascinantes."
         ),
     },
     {
@@ -63,7 +68,7 @@ NARRATIVE_STYLES = [
         "name": "anecdote",
         "intro_hint": (
             "Commence comme si tu racontais une histoire vraie ou une "
-            "rencontre personnelle (« Un Mahorais m'a raconté que… »)."
+            "scène vécue (« Ce jour-là… », « Personne n'y croyait, mais… »)."
         ),
         "construction": (
             "scène d'ouverture immersive → développement narratif avec "
@@ -113,7 +118,17 @@ HASHTAGS_BY_THEME = {
     "actu_mayotte": [
         "actu", "info", "news", "actualite", "mayotte2026",
     ],
+    # --- Thèmes monde ---
+    "espace": ["espace", "univers", "astronomie", "planete", "science", "cosmos", "saviezvous"],
+    "animaux": ["animaux", "nature", "animal", "faune", "incroyable", "saviezvous", "science"],
+    "lieux_extremes": ["voyage", "nature", "monde", "insolite", "geographie", "incroyable"],
+    "corps_humain": ["corpshumain", "science", "sante", "cerveau", "saviezvous", "biologie"],
+    "histoires_vraies": ["histoire", "histoirevraie", "incroyable", "survie", "culture", "saviezvous"],
 }
+
+# Hashtags larges par famille : les thèmes monde n'utilisent PAS #mayotte.
+HASHTAGS_BROAD_WORLD = ["apprendresurtiktok", "culturetiktok"]
+HASHTAGS_NICHE_CORE_WORLD = ["leprisdesavoir", "science", "incroyable"]
 
 # Stratégie hashtags 2026 : EXACTEMENT 3-5 hashtags = 1-2 larges + 2-3 nichés.
 # Les tags génériques « de portée » (#fyp/#pourtoi/#viral) sont ignorés voire
@@ -257,9 +272,77 @@ CONTRAINTES :
 """ + _HOOK_RULES + _RETENTION_RULES
 
 
+# --- Variante MONDE (sujets hors Mayotte) ---
+# Le hook ne force PAS « Mayotte » : il force le FAIT CHOC du sujet.
+_HOOK_RULES_WORLD = """
+CONTRAINTES STRICTES SUR L'ACCROCHE (hook + scène 1) :
+- La 1re phrase du script (l'« idea » de la scène 1) = le FAIT LE PLUS CHOC du sujet, énoncé dès les premiers mots (chiffre précis, superlatif, ou affirmation contre-intuitive)
+- Le champ "hook" suit la même règle (le fait le plus fort en ouverture)
+- FORMULES INTERDITES, ni dans le hook ni dans les scènes : « Saviez-vous que », « Et si je vous disais », « Bienvenue »
+- Choisis librement UNE de ces formules d'accroche (varie d'une vidéo à l'autre) :
+  1. Affirmation contre-intuitive (qui contredit ce qu'on croit savoir)
+  2. Question de VRAIE curiosité (pas une question rhétorique creuse)
+  3. Preuve chiffrée d'abord (le chiffre le plus fort dès les premiers mots)
+"""
+
+PLAN_PROMPT_KNOWLEDGE_WORLD = """Tu vas écrire le plan d'un mini-reportage TikTok de 2min10 à 2min30 sur ce sujet fascinant.
+
+SUJET (à narrer fidèlement, sans inventer ni exagérer) :
+Titre : {title}
+Faits vérifiés (utilise UNIQUEMENT ces faits, sans en ajouter d'autres) :
+{facts}
+
+INDICES VISUELS POUR LE SUJET (à utiliser comme inspiration pour les image_prompt) :
+{visual_hints}
+
+À éviter (pièges factuels) : {avoid}
+
+Renvoie UNIQUEMENT du JSON valide :
+{{
+  "title": "titre TikTok accrocheur (max 55 caractères) — peut être différent du titre source",
+  "hook": "phrase d'accroche, 15-22 mots, intrigante",
+  "hook_punch": "accroche ULTRA-courte de 3 à 5 mots, MAXIMUM 28 caractères (ex: 'Plus vieux que toi', 'Personne ne sait ça')",
+  "scenes": [
+    {{
+      "idea": "1 phrase d'idée (12-18 mots) — utilise UN des faits ci-dessus",
+      "fact_used": "le fait précis utilisé (copie-colle depuis la liste)",
+      "visual_kind": "specifique",
+      "visuals": [<EXACTEMENT {n_visuals} PHRASES EN ANGLAIS, chacune décrivant une SCÈNE PHYSIQUE CONCRÈTE visible à l'écran, angles différents (large/moyen/gros-plan/détail)>],
+      "image_prompt": "description en ANGLAIS riche et détaillée d'une scène cinématique vertical 9:16 photoréaliste"
+    }}
+  ]
+}}
+
+EXEMPLES de "visuals" CORRECTS (concrets, angles variés) :
+  ✅ "aerial view of a glowing volcano erupting at night"
+  ✅ "extreme close-up of a tardigrade micro-animal, scientific macro"
+  ✅ "a lone spacecraft drifting in deep starry space"
+  ✅ "a diver's flashlight beam in the dark deep ocean"
+
+CONTRAINTES STRICTES POUR LES VISUELS :
+- INTERDIT : abstractions ("mystery", "the unknown", "science", "time"). Trop vague pour générer une image.
+- OBLIGATOIRE : phrases visuelles décrivant CE QUI EST À L'ÉCRAN. Format « action + sujet + lieu/objet ».
+- EXACTEMENT {n_visuals} visuels par scène, TOUS DIFFÉRENTS, angles variés (aérien, moyen, gros plan, détail, ambiance…)
+- Chaque visual de 6 à 12 mots, suffisamment précis pour générer une image IA cohérente
+
+CONTRAINTES STRICTES NARRATIVES :
+- EXACTEMENT {n_scenes} scènes
+- Style narratif imposé : {narrative_name}
+  • Intro : {narrative_intro_hint}
+  • Construction : {narrative_construction}
+  • Conclusion (dernière scène) : {narrative_closing_hint}
+- Chaque scène s'appuie sur UN fait précis de la liste — pas d'invention, pas d'exagération
+""" + _HOOK_RULES_WORLD + _RETENTION_RULES
+
+
 EXPAND_SYSTEM = (
     GLOBAL_CONTEXT_PROMPT
     + "\n\nTu rédiges les phrases de narration. Style oral fluide, dynamique, type Brut ou France TV Slash."
+)
+
+EXPAND_SYSTEM_WORLD = (
+    world_knowledge.GLOBAL_CONTEXT_PROMPT_WORLD
+    + "\n\nTu rédiges les phrases de narration. Style oral fluide, dynamique, type Brut ou vulgarisation qui capte."
 )
 
 EXPAND_PROMPT = """Réécris cette idée en UNE phrase complète, fluide, à l'oral, en français.
@@ -276,10 +359,13 @@ CONTRAINTES NON-NÉGOCIABLES :
 - Ton dynamique, narratif, oral, comme un reportage TF1/Brut
 - Pas de répétition avec la phrase précédente
 - Évite les énumérations à virgules en cascade
-- Utilise « les Mahorais » (pas « les Mayottes »)
-{extra_rules}- Réponds avec UNIQUEMENT la phrase, sans guillemets ni préfixe
+{locale_rule}{extra_rules}- Réponds avec UNIQUEMENT la phrase, sans guillemets ni préfixe
 
 Ta phrase :"""
+
+# Ligne « locale » injectée dans EXPAND_PROMPT : impose « les Mahorais » pour
+# Mayotte, vide pour les sujets monde.
+_LOCALE_RULE_MAYOTTE = "- Utilise « les Mahorais » (pas « les Mayottes »)\n"
 
 
 # Règles supplémentaires pour la 1re phrase parlée de la vidéo (le hook) :
@@ -288,6 +374,15 @@ HOOK_EXPAND_RULES = (
     "- C'est la TOUTE PREMIÈRE phrase de la vidéo : elle DOIT contenir le mot "
     "« Mayotte » et ouvrir sur le fait choc (chiffre, lieu ou superlatif) dès "
     "les premiers mots\n"
+    "- INTERDIT de commencer par : « Saviez-vous que », « Et si je vous "
+    "disais », « Bienvenue »\n"
+)
+
+# Variante monde : le hook ouvre sur le fait choc, sans imposer « Mayotte ».
+HOOK_EXPAND_RULES_WORLD = (
+    "- C'est la TOUTE PREMIÈRE phrase de la vidéo : elle DOIT ouvrir sur le "
+    "fait le plus CHOC du sujet (chiffre, superlatif ou affirmation "
+    "contre-intuitive) dès les premiers mots\n"
     "- INTERDIT de commencer par : « Saviez-vous que », « Et si je vous "
     "disais », « Bienvenue »\n"
 )
@@ -314,17 +409,27 @@ def _clean_sentence(s: str) -> str:
     return _ensure_period(s)
 
 
-def _hook_ok(sentence: str) -> bool:
-    """Vrai si la phrase respecte les règles du hook parlé :
-    contient « Mayotte » et aucune formule d'accroche bannie."""
+def _hook_ok(sentence: str, world: bool = False) -> bool:
+    """Vrai si la phrase respecte les règles du hook parlé.
+
+    Mayotte : contient « Mayotte » et aucune formule bannie.
+    Monde : seulement l'absence de formule bannie (pas de mot imposé)."""
     low = sentence.lower()
-    return "mayotte" in low and not any(b in low for b in BANNED_HOOK_PHRASES)
+    no_banned = not any(b in low for b in BANNED_HOOK_PHRASES)
+    if world:
+        return no_banned
+    return "mayotte" in low and no_banned
 
 
 def _expand(idea: str, context: str, prev: str, fact: str | None = None,
-            is_hook: bool = False) -> str:
+            is_hook: bool = False, world: bool = False) -> str:
     fact_block = f"Fait vérifié à narrer : {fact}\n" if fact else ""
-    extra_rules = HOOK_EXPAND_RULES if is_hook else ""
+    if is_hook:
+        extra_rules = HOOK_EXPAND_RULES_WORLD if world else HOOK_EXPAND_RULES
+    else:
+        extra_rules = ""
+    system = EXPAND_SYSTEM_WORLD if world else EXPAND_SYSTEM
+    locale_rule = "" if world else _LOCALE_RULE_MAYOTTE
     sentence = ""
     for attempt in range(3):
         prompt = EXPAND_PROMPT.format(
@@ -333,14 +438,14 @@ def _expand(idea: str, context: str, prev: str, fact: str | None = None,
             fact_block=fact_block,
             prev=prev or "(début)",
             extra_rules=extra_rules,
+            locale_rule=locale_rule,
         )
-        sentence = _clean_sentence(chat(EXPAND_SYSTEM, prompt, temperature=0.7 + attempt * 0.1))
+        sentence = _clean_sentence(chat(system, prompt, temperature=0.7 + attempt * 0.1))
         wc = _wc(sentence)
-        if 22 <= wc <= 31 and (not is_hook or _hook_ok(sentence)):
+        if 22 <= wc <= 31 and (not is_hook or _hook_ok(sentence, world)):
             return sentence
-        if is_hook and not _hook_ok(sentence):
-            # Hook non conforme (« Mayotte » absent ou formule bannie) :
-            # on retente avec une température différente.
+        if is_hook and not _hook_ok(sentence, world):
+            # Hook non conforme : on retente avec une température différente.
             continue
         if wc < 22:
             adjust = (
@@ -354,12 +459,12 @@ def _expand(idea: str, context: str, prev: str, fact: str | None = None,
                 f"exactement entre 25 et 28 mots, sans perdre le fait. Termine par un point. "
                 f"Réponds avec UNIQUEMENT la phrase.\n\nPhrase : {sentence}"
             )
-        sentence2 = _clean_sentence(chat(EXPAND_SYSTEM, adjust, temperature=0.5))
-        if 22 <= _wc(sentence2) <= 31 and (not is_hook or _hook_ok(sentence2)):
+        sentence2 = _clean_sentence(chat(system, adjust, temperature=0.5))
+        if 22 <= _wc(sentence2) <= 31 and (not is_hook or _hook_ok(sentence2, world)):
             return sentence2
-    # Dernier filet pour le hook : on injecte « Mayotte » si toujours absent
+    # Dernier filet pour le hook Mayotte : on injecte « Mayotte » si absent
     # (l'ASR TikTok indexe la voix — le mot doit être prononcé en 1er).
-    if is_hook and sentence and "mayotte" not in sentence.lower():
+    if is_hook and not world and sentence and "mayotte" not in sentence.lower():
         print("   ⚠️  Hook sans « Mayotte » après 3 essais → injection manuelle")
         sentence = _ensure_period("À Mayotte, " + sentence[0].lower() + sentence[1:])
     return sentence
@@ -428,8 +533,23 @@ def _normalize_plan(plan: dict, default_title: str, look: str = "") -> dict:
 
 
 def _build_plan_for_knowledge(theme: str, look: str = "") -> tuple[dict, str, str]:
-    """Renvoie (plan, context_for_expand, anchor_id)."""
-    entry = random_topic_for(theme)
+    """Renvoie (plan, context_for_expand, anchor_id).
+
+    Route automatiquement entre la banque Mayotte et la banque MONDE (espace,
+    animaux, lieux extrêmes, corps humain, histoires vraies) selon le thème.
+    """
+    is_world = theme in WORLD_THEMES
+    if is_world:
+        entry = world_knowledge.random_topic_for(theme)
+        system_prompt = world_knowledge.GLOBAL_CONTEXT_PROMPT_WORLD
+        plan_template = PLAN_PROMPT_KNOWLEDGE_WORLD
+        hints_fallback = "  (aucun, décris une scène concrète liée au sujet)"
+    else:
+        entry = random_topic_for(theme)
+        system_prompt = GLOBAL_CONTEXT_PROMPT
+        plan_template = PLAN_PROMPT_KNOWLEDGE
+        hints_fallback = "  (aucun, utilise le contexte général Mayotte)"
+
     facts_str = "\n".join(f"  • {f}" for f in entry["key_facts"])
     visual_hints_str = "\n".join(f"  • {h}" for h in entry.get("visual_hints", []))
     avoid_str = ", ".join(entry["avoid"]) if entry["avoid"] else "rien de spécifique"
@@ -441,10 +561,10 @@ def _build_plan_for_knowledge(theme: str, look: str = "") -> tuple[dict, str, st
     print(f"   🎯 Sujet ancré : {entry['title']}")
     print(f"   🎭 Style narratif : {style['name']}")
 
-    user_prompt = PLAN_PROMPT_KNOWLEDGE.format(
+    user_prompt = plan_template.format(
         title=entry["title"],
         facts=facts_str,
-        visual_hints=visual_hints_str or "  (aucun, utilise le contexte général Mayotte)",
+        visual_hints=visual_hints_str or hints_fallback,
         avoid=avoid_str,
         n_scenes=NUM_SCENES,
         n_visuals=VISUALS_PER_SCENE,
@@ -456,7 +576,7 @@ def _build_plan_for_knowledge(theme: str, look: str = "") -> tuple[dict, str, st
         mid_scene=NUM_SCENES // 2,
         look=look,
     )
-    plan = chat_json(GLOBAL_CONTEXT_PROMPT, user_prompt, temperature=0.85)
+    plan = chat_json(system_prompt, user_prompt, temperature=0.85)
     plan = _normalize_plan(plan, entry["title"], look=look)
 
     # Injecte fact_used scène par scène si le LLM a oublié : mapping ORDONNÉ
@@ -517,7 +637,35 @@ CONTRAINTES :
 """
 
 
-def generate_caption(title: str, anchor: str, hook: str, theme: str = "") -> dict:
+# Variante MONDE : aucune référence à Mayotte (sujets espace/animaux/etc.).
+CAPTION_PROMPT_WORLD = """Tu écris la LÉGENDE TikTok (optimisée SEO) pour cette vidéo de vulgarisation « le sais-tu ? ».
+
+Titre de la vidéo : {title}
+Sujet : {anchor}
+Accroche : {hook}
+
+Renvoie UNIQUEMENT du JSON :
+{{
+  "caption": "description TikTok de 150 caractères max. Le MOT-CLÉ du sujet DOIT apparaître dans les 100 PREMIERS caractères. 1-2 emojis bien placés. Termine par une mini-question qui invite à commenter",
+  "hashtags": ["EXACTEMENT 3 à 5 hashtags SANS le # : nichés et collés au sujet précis (ex. espace, tardigrade, océan, cerveau, histoirevraie)"]
+}}
+
+CONTRAINTES :
+- Le sujet n'a AUCUN rapport avec Mayotte : NE MENTIONNE JAMAIS Mayotte, le lagon, les Mahorais ni l'océan Indien
+- Le mot-clé décrit le sujet PRÉCIS de la vidéo
+- INTERDIT : fyp, pourtoi, foryou, viral et tout hashtag générique « de portée »
+- Pas de hashtags trompeurs
+- Français
+"""
+
+# Hashtags Mayotte à retirer d'office des légendes MONDE (le LLM les glisse
+# parfois par habitude).
+_MAYOTTE_TAGS = {"mayotte", "oceanindien", "outremer", "mahorais", "mahoraise",
+                 "976", "iledemayotte", "culturemahoraise", "comores", "lagon"}
+
+
+def generate_caption(title: str, anchor: str, hook: str, theme: str = "",
+                     world: bool = False) -> dict:
     """Génère la légende + hashtags TikTok. Renvoie {'caption', 'hashtags', 'text'}.
 
     Stratégie SEO TikTok 2026 :
@@ -526,10 +674,11 @@ def generate_caption(title: str, anchor: str, hook: str, theme: str = "") -> dic
       (oceanindien, culturemahoraise, thème du jour…)
     - Aucun hashtag générique de portée (#fyp/#pourtoi/#viral) — bannis
     """
+    caption_template = CAPTION_PROMPT_WORLD if world else CAPTION_PROMPT
     try:
         data = chat_json(
             "Tu es expert en croissance TikTok francophone.",
-            CAPTION_PROMPT.format(title=title, anchor=anchor, hook=hook),
+            caption_template.format(title=title, anchor=anchor, hook=hook),
             temperature=0.8,
         )
         caption = (data.get("caption") or title).strip()
@@ -547,16 +696,24 @@ def generate_caption(title: str, anchor: str, hook: str, theme: str = "") -> dic
         end = max(cut.rfind("."), cut.rfind("!"), cut.rfind("?"), cut.rfind("…"))
         caption = (cut[:end + 1] if end > 60 else cut).strip()
 
-    # Nettoie les hashtags LLM : sans #, sans espace, minuscules, sans bannis
+    # Nettoie les hashtags LLM : sans #, sans espace, minuscules, sans bannis.
+    # Pour les sujets monde, on retire aussi tout hashtag Mayotte parasite.
     clean_tags: list[str] = []
     for t in tags:
         t = re.sub(r"[^\w]", "", str(t)).lower()
-        if t and t not in clean_tags and t not in BANNED_HASHTAGS:
-            clean_tags.append(t)
+        if not t or t in clean_tags or t in BANNED_HASHTAGS:
+            continue
+        if world and t in _MAYOTTE_TAGS:
+            continue
+        clean_tags.append(t)
 
-    # 1-2 hashtags LARGES en tête (mayotte toujours, outremer ensuite)
-    broad = [t for t in HASHTAGS_BROAD if t in clean_tags]
-    for t in HASHTAGS_BROAD:
+    # Noyau larges/nichés selon la famille (Mayotte vs Monde)
+    broad_pool = HASHTAGS_BROAD_WORLD if world else HASHTAGS_BROAD
+    niche_core = HASHTAGS_NICHE_CORE_WORLD if world else HASHTAGS_NICHE_CORE
+
+    # 1-2 hashtags LARGES en tête
+    broad = [t for t in broad_pool if t in clean_tags]
+    for t in broad_pool:
         if t not in broad:
             broad.append(t)
     broad = broad[:2]
@@ -569,7 +726,7 @@ def generate_caption(title: str, anchor: str, hook: str, theme: str = "") -> dic
         for t in random.sample(theme_pool, min(2, len(theme_pool))):
             if t not in niche:
                 niche.append(t)
-    for t in HASHTAGS_NICHE_CORE:
+    for t in niche_core:
         if t not in niche and t not in broad:
             niche.append(t)
     niche = niche[:3]
@@ -581,7 +738,8 @@ def generate_caption(title: str, anchor: str, hook: str, theme: str = "") -> dic
     # premiers caractères de la description (l'algorithme indexe ce segment).
     head = caption[:100].lower()
     anchor_tokens = re.findall(r"\w{4,}", anchor.lower())
-    if anchor_tokens and not any(w in head for w in anchor_tokens) and "mayotte" not in head:
+    seo_anchor = "mayotte" not in head if not world else True
+    if anchor_tokens and not any(w in head for w in anchor_tokens) and seo_anchor:
         print("   ⚠️  SEO : mot-clé long-tail absent des 100 premiers caractères de la légende")
 
     hashtag_line = " ".join(f"#{t}" for t in final)
@@ -597,6 +755,8 @@ def generate_script(topic_def: dict) -> dict:
     look = random.choice(VISUAL_LOOKS)
     print(f"   🎨 Look visuel : {look}")
 
+    theme_key = topic_def.get("knowledge_theme", "")
+    is_world = theme_key in WORLD_THEMES
     if topic_def.get("kind") == "rss":
         result = _build_plan_for_news(look=look)
         if result is None:
@@ -605,7 +765,7 @@ def generate_script(topic_def: dict) -> dict:
         else:
             plan, context, anchor = result
     else:
-        plan, context, anchor = _build_plan_for_knowledge(topic_def["knowledge_theme"], look=look)
+        plan, context, anchor = _build_plan_for_knowledge(theme_key, look=look)
 
     print(f"   📋 Plan : {plan.get('title', '?')} ({len(plan['scenes'])} scènes)")
 
@@ -618,7 +778,8 @@ def generate_script(topic_def: dict) -> dict:
             context=context,
             prev=prev,
             fact=scene.get("fact_used"),
-            is_hook=(i == 0),  # scène 1 = hook parlé : « Mayotte » obligatoire
+            is_hook=(i == 0),  # scène 1 = hook parlé
+            world=is_world,
         )
         wc = _wc(narration)
         print(f"   Scène {i+1:>2}/{NUM_SCENES} · {wc} mots · {narration[:55]}...")
@@ -642,7 +803,7 @@ def generate_script(topic_def: dict) -> dict:
     # On passe le thème pour enrichir les hashtags avec la banque thématique.
     theme = topic_def.get("knowledge_theme") or topic_def.get("kind", "")
     print("   📱 Génération de la légende TikTok...")
-    caption = generate_caption(title, anchor, hook, theme=theme)
+    caption = generate_caption(title, anchor, hook, theme=theme, world=is_world)
 
     return {
         "title": title,
