@@ -464,41 +464,48 @@ def build_karaoke_ass(
     - Une ligne 'Base' affiche tout le groupe en blanc (avec fade in/out 80ms)
     - Pour chaque mot, une ligne 'Hilite' jaune POP-IN pendant qu'il est dit
       (scale 115 → 100 sur 120ms, fade-out 100ms après)
+
+    Si MINIMAL_STYLE (config), toutes les surcouches (watermark, hook géant,
+    étiquette lieu, chiffres géants, emojis, CTA) sont désactivées : il ne
+    reste QUE les sous-titres karaoké. Choix de sobriété de l'utilisateur.
     """
+    from src.config import MINIMAL_STYLE
+
     lines = [ASS_HEADER.format(w=width, h=height)]
     pos_x = width // 2
     pos_y = int(height * POS_Y_RATIO)
 
-    # Watermark de la chaîne (@mister_decouverte) en haut à droite,
-    # visible toute la vidéo, semi-transparent pour ne pas distraire.
-    # Ancré à 200 px du bord droit : zone safe encoche/UI droite TikTok.
-    if words:
-        total_dur = words[-1]["end"]
-        wm_x = width - 200
-        wm_y = 40
-        lines.append(
-            f"Dialogue: 0,{_t(0)},{_t(total_dur)},Brand,,0,0,0,,"
-            f"{{\\an9\\pos({wm_x},{wm_y})\\alpha&H40&}}@mister_decouverte"
-        )
+    if not MINIMAL_STYLE:
+        # Watermark de la chaîne (@mister_decouverte) en haut à droite,
+        # visible toute la vidéo, semi-transparent pour ne pas distraire.
+        # Ancré à 200 px du bord droit : zone safe encoche/UI droite TikTok.
+        if words:
+            total_dur = words[-1]["end"]
+            wm_x = width - 200
+            wm_y = 40
+            lines.append(
+                f"Dialogue: 0,{_t(0)},{_t(total_dur)},Brand,,0,0,0,,"
+                f"{{\\an9\\pos({wm_x},{wm_y})\\alpha&H40&}}@mister_decouverte"
+            )
 
-    # Hook géant 0-3.6s (texte « stop scroll » en haut)
-    lines.extend(_hook_lines(hook_text, width, height))
+        # Hook géant 0-3.6s (texte « stop scroll » en haut)
+        lines.extend(_hook_lines(hook_text, width, height))
 
-    # Étiquette lower-third (nom du sujet) ~4-9s, style reportage
-    lines.extend(_label_lines(topic_label, width, height))
+        # Étiquette lower-third (nom du sujet) ~4-9s, style reportage
+        lines.extend(_label_lines(topic_label, width, height))
 
-    # Chiffres animés géants (1500 km², 95 %…)
-    if show_numbers and words:
-        lines.extend(_number_lines(words, width, height))
+        # Chiffres animés géants (1500 km², 95 %…)
+        if show_numbers and words:
+            lines.extend(_number_lines(words, width, height))
 
-    # Emojis pop sur les mots-clés Mayotte (1 occurrence par emoji max)
-    if words:
-        lines.extend(_emoji_lines(words, width, height))
+        # Emojis pop sur les mots-clés (1 occurrence par emoji max)
+        if words:
+            lines.extend(_emoji_lines(words, width, height))
 
-    # CTA « Abonne-toi » sur les 4 dernières secondes
-    if cta and words:
-        total_dur = words[-1]["end"]
-        lines.extend(_cta_lines(total_dur, width, height))
+        # CTA « Abonne-toi » sur les 4 dernières secondes
+        if cta and words:
+            total_dur = words[-1]["end"]
+            lines.extend(_cta_lines(total_dur, width, height))
 
     groups = _group_words(words, max_per_group=5)
 

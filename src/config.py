@@ -85,6 +85,13 @@ LLM_PROVIDER = (os.getenv("LLM_PROVIDER", "auto").strip().lower() or "auto")
 PEXELS_API_KEY = os.getenv("PEXELS_API_KEY", "").strip()
 PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY", "").strip()
 
+# --- Style de montage ---
+# MINIMAL_STYLE=true : montage épuré = images + sous-titres karaoké UNIQUEMENT.
+# Désactive toutes les surcouches (watermark, hook géant, étiquette lieu,
+# chiffres géants, emojis pop, CTA « abonne-toi », barre de progression,
+# flash blanc d'intro, punch-ins, grain, vignette). Choix utilisateur.
+MINIMAL_STYLE = os.getenv("MINIMAL_STYLE", "true").strip().lower() == "true"
+
 # Cloudflare Workers AI — génération d'images IA (remplace Pollinations payant).
 # Free tier 10k neurons/jour (~130 images), sans carte bancaire.
 # Setup : scripts/setup_cloudflare.py

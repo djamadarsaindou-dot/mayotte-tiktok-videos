@@ -9,6 +9,7 @@ from pathlib import Path
 from src.config import (
     ASSETS_DIR,
     FFMPEG,
+    MINIMAL_STYLE,
     VIDEO_FPS,
     VIDEO_HEIGHT,
     VIDEO_WIDTH,
@@ -61,7 +62,8 @@ def _normalize_asset(asset_path: Path, target_path: Path, duration: float, scene
     scene_num = scene_index // VISUALS_PER_SCENE
     if not is_scene_start:
         fade_suffix = ""
-    elif scene_num % 2 == 1:
+    elif MINIMAL_STYLE or scene_num % 2 == 1:
+        # Mode épuré (ou scènes impaires en mode complet) : simple fondu doux.
         fade_suffix = ",fade=t=in:st=0:d=0.22"
     else:
         fade_suffix = (
@@ -151,8 +153,11 @@ def _mix_sfx(audio_path: Path, scene_durations: list[float], work_dir: Path) -> 
     SFX sont absents ou si le mix échoue (dégradation gracieuse).
 
     Le sound design léger rend les transitions audibles et donne un effet
-    « production pro » sans masquer la voix.
+    « production pro » sans masquer la voix. Désactivé en mode épuré
+    (MINIMAL_STYLE) : on garde la voix seule.
     """
+    if MINIMAL_STYLE:
+        return audio_path
     whoosh = SFX_DIR / "whoosh.wav"
     impact = SFX_DIR / "impact.wav"
     if not whoosh.exists() or not impact.exists():
@@ -406,12 +411,21 @@ def assemble_video(
     # les sous-titres : le texte reste parfaitement net. TikTok recompresse
     # fort → grain subtil uniquement (c0s>8 serait écrasé en bouillie).
     grain_filter = "noise=c0s=7:c0f=t+u"
-    # Ordre impératif : grade → punch → hook_zoom → fade → bar → grain → ass
-    # (le punch-in zoome l'image seule ; barre et sous-titres restent fixes).
-    vf = (
-        f"{grade_filter},{punch_filter}{hook_zoom}{hook_intro_fade}{bar_filter},{grain_filter},"
-        f"ass='{ass_escaped}':fontsdir='{fonts_escaped}'"
-    )
+    if MINIMAL_STYLE:
+        # Montage épuré : léger étalonnage pour harmoniser les images IA, puis
+        # UNIQUEMENT les sous-titres karaoké. Pas de barre, flash, punch, grain,
+        # vignette ni zoom d'intro. Choix de sobriété de l'utilisateur.
+        vf = (
+            "eq=contrast=1.05:saturation=1.10,"
+            f"ass='{ass_escaped}':fontsdir='{fonts_escaped}'"
+        )
+    else:
+        # Ordre impératif : grade → punch → hook_zoom → fade → bar → grain → ass
+        # (le punch-in zoome l'image seule ; barre et sous-titres restent fixes).
+        vf = (
+            f"{grade_filter},{punch_filter}{hook_zoom}{hook_intro_fade}{bar_filter},{grain_filter},"
+            f"ass='{ass_escaped}':fontsdir='{fonts_escaped}'"
+        )
 
     # Encodage final pensé pour la RECOMPRESSION TikTok : la plateforme
     # ré-encode tout, la qualité de la source est la seule variable qu'on
