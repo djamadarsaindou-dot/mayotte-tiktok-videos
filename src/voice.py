@@ -16,7 +16,7 @@ import asyncio
 import re
 from pathlib import Path
 
-from src.config import TTS_PROVIDER, VOICE, VOICE_RATE
+from src.config import TTS_PROVIDER, VOICE, VOICE_PITCH, VOICE_RATE
 
 
 def _split_words(sentence: str) -> list[str]:
@@ -55,7 +55,9 @@ def assemble_narration(scenes_narrations: list[str]) -> str:
 
 async def _edge_synthesize(text: str, audio_path: Path) -> list[dict]:
     import edge_tts
-    communicate = edge_tts.Communicate(text=text, voice=VOICE, rate=VOICE_RATE)
+    communicate = edge_tts.Communicate(
+        text=text, voice=VOICE, rate=VOICE_RATE, pitch=VOICE_PITCH,
+    )
     word_items: list[dict] = []
     with audio_path.open("wb") as f:
         async for chunk in communicate.stream():

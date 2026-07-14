@@ -27,6 +27,9 @@ TTS_PROVIDER = os.getenv("TTS_PROVIDER", "edge").strip().lower()
 # Edge-TTS (Microsoft, gratuit, rapide)
 VOICE = os.getenv("EDGE_VOICE", "fr-FR-HenriNeural").strip()
 VOICE_RATE = os.getenv("EDGE_RATE", "-3%").strip()
+# Hauteur de la voix Edge : négatif = plus grave (ex. "-10Hz" → ton plus âgé,
+# style vieux conteur). "+0Hz" = timbre d'origine.
+VOICE_PITCH = os.getenv("EDGE_PITCH", "+0Hz").strip()
 
 # Coqui XTTS v2 (téléchargement modèle ~1.8 GB la 1ère fois, voix beaucoup plus humaine)
 COQUI_SPEAKER = os.getenv("COQUI_SPEAKER", "Damien Black").strip()
